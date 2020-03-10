@@ -1,0 +1,26 @@
+.appLayout-header {
+    background-color: lightgrey;
+    box-shadow: 2px 1px 5px 0px grey;
+}
+
+.appLayout-drawer {
+  background-color: lightgrey;
+  width: 500px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+}
+
+.module-header {
+    overflow: auto;
+    background-color: lightgrey;
+    box-shadow: 2px 1px 5px 0px grey;
+}
+
+.ok {
+    color: green;
+}
+
+.bad {
+    color: red;
+}
