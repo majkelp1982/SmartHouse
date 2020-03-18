@@ -1,6 +1,8 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -37,9 +39,9 @@ public class ViewComponents {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Label lastUpdateLabel = new Label("Update : "+simpleDateFormat.format(module.getFrameLastUpdate()));
-        setComponentColor(lastUpdateLabel,module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
+        setComponentColor(lastUpdateLabel,true,module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
         Label diagnoseUpdateLabel = new Label("Diagnose : "+simpleDateFormat.format(module.getDiagnosticLastUpdate()));
-        setComponentColor(diagnoseUpdateLabel,module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
+        setComponentColor(diagnoseUpdateLabel,true, module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
         VerticalLayout info = new VerticalLayout();
         info.setAlignItems(FlexComponent.Alignment.CENTER);
         info.add(lastUpdateLabel,diagnoseUpdateLabel);
@@ -62,7 +64,7 @@ public class ViewComponents {
         tile.addClassName("module");
 
         Image image = new Image(imageSrc, imageSrc);
-        image.setHeight("50px");
+        image.setHeight("80px");
 
         Label tittleLabel = new Label(tittle);
 
@@ -70,17 +72,39 @@ public class ViewComponents {
         return tile;
     }
 
+    public VerticalLayout createDetailsContainer () {
+        VerticalLayout tileDetails = new VerticalLayout();
+        tileDetails.setAlignItems(FlexComponent.Alignment.CENTER);
+        //tileDetails.addClassName("module");
+
+        return  tileDetails;
+    }
+
+    public HorizontalLayout addDetails (String name, String unit, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+        HorizontalLayout item = new HorizontalLayout();
+        Label nameLabel = new Label(""+name);
+        nameLabel.getStyle().set("color",COLOR_NORMAL);
+        Label valueLabel = new Label(""+isValue+"["+unit+"]");
+        setComponentColor(valueLabel,true,isValue,expectedValue,warningLimit,alarmLimit);
+
+        item.add(nameLabel,valueLabel);
+        return item;
+    }
+
     private Date getCurrentDate() {
         return new Date();
     }
 
-    private void setComponentColor(HtmlContainer component, long isValue, long expectedValue, long warningLimit, long alarmLimit) {
-        if (Math.abs(isValue-expectedValue)>alarmLimit)
-            component.getStyle().set("color", COLOR_ALARM);
-        else
-            if (Math.abs(isValue-expectedValue)>warningLimit)
-            component.getStyle().set("color", COLOR_WARNING);
-        else
-            component.getStyle().set("color", COLOR_OK);
+    private void setComponentColor(HtmlContainer component, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+        if (colorEnabled) {
+            if (Math.abs(isValue.doubleValue() - expectedValue.doubleValue()) > alarmLimit.doubleValue())
+                component.getStyle().set("color", COLOR_ALARM);
+            else if (Math.abs(isValue.doubleValue() - expectedValue.doubleValue()) > warningLimit.doubleValue())
+                component.getStyle().set("color", COLOR_WARNING);
+            else
+                component.getStyle().set("color", COLOR_OK);
+        }
+        else component.getStyle().set("color", COLOR_NORMAL);
     }
+
 }
