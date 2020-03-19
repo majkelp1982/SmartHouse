@@ -30,6 +30,7 @@ public class MainLayout extends AppLayout {
         H1 logo = new H1("Smart House");
         logo.getStyle().set("color", "grey");
         header.setWidth("100%");
+        header.setMinWidth("800px");
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         header.add(new DrawerToggle(), logo);
@@ -43,9 +44,9 @@ public class MainLayout extends AppLayout {
         drawer.addClassName("appLayout-drawer");
 
         //prepare links
-        RouterLink ventViewLink = createDrawerElement("vent.svg","Wentylacja", VentView.class);
+        RouterLink ventViewLink = createDrawerElement("fan.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
-        RouterLink heatingViewLink = createDrawerElement("heating.svg","Ogrzewaine", HeatingView.class);
+        RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewaine", HeatingView.class);
 
         drawer.add(ventViewLink,comfortViewLink,heatingViewLink);
         drawer.setSizeFull();

@@ -19,7 +19,7 @@ public class VentView extends VerticalLayout {
         this.module_vent = module_vent;
         ViewComponents viewComponents = new ViewComponents();
         //Create header
-        HorizontalLayout header = viewComponents.createHeader(module_vent,"vent.svg");
+        HorizontalLayout header = viewComponents.createHeader(module_vent,"fan.svg");
 
         add(header);
     }

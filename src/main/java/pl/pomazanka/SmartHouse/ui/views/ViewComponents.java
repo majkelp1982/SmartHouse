@@ -1,8 +1,6 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -13,7 +11,7 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ViewComponents {
+public class ViewComponents extends VerticalLayout {
 
     // static variables
     //***************************************
@@ -54,6 +52,7 @@ public class ViewComponents {
         header.setHeight("80px");
         header.setAlignItems(FlexComponent.Alignment.CENTER);
         header.add(image,moduleTyp,info);
+        header.setMinWidth("800px");
         return header;
     }
 
@@ -74,9 +73,8 @@ public class ViewComponents {
 
     public VerticalLayout createDetailsContainer () {
         VerticalLayout tileDetails = new VerticalLayout();
-        tileDetails.setAlignItems(FlexComponent.Alignment.CENTER);
-        //tileDetails.addClassName("module");
-
+ //       tileDetails.setAlignItems(Alignment.CENTER);
+        tileDetails.setAlignItems(Alignment.START);
         return  tileDetails;
     }
 
@@ -84,10 +82,30 @@ public class ViewComponents {
         HorizontalLayout item = new HorizontalLayout();
         Label nameLabel = new Label(""+name);
         nameLabel.getStyle().set("color",COLOR_NORMAL);
-        Label valueLabel = new Label(""+isValue+"["+unit+"]");
-        setComponentColor(valueLabel,true,isValue,expectedValue,warningLimit,alarmLimit);
+        Label valueLabel = new Label(" "+isValue+"["+unit+"]");
+        setComponentColor(valueLabel,colorEnabled,isValue,expectedValue,warningLimit,alarmLimit);
 
         item.add(nameLabel,valueLabel);
+        return item;
+    }
+
+    public HorizontalLayout addDetails (String name, String value) {
+        HorizontalLayout item = new HorizontalLayout();
+        Label nameLabel = new Label(""+name);
+        nameLabel.getStyle().set("color",COLOR_NORMAL);
+        Label valueLabel = new Label(" "+value);
+        nameLabel.getStyle().set("color",COLOR_NORMAL);
+
+        item.add(nameLabel,valueLabel);
+        return item;
+    }
+
+    public HorizontalLayout addDetails (String name, boolean colorEnabled, boolean status) {
+        HorizontalLayout item = new HorizontalLayout();
+        Label nameLabel = new Label(""+name);
+        setComponentColor(nameLabel, colorEnabled, status);
+
+        item.add(nameLabel);
         return item;
     }
 
@@ -107,4 +125,11 @@ public class ViewComponents {
         else component.getStyle().set("color", COLOR_NORMAL);
     }
 
+    private void setComponentColor(HtmlContainer component, boolean colorEnabled, boolean status) {
+        if (colorEnabled) {
+            if (status) component.getStyle().set("color", COLOR_ON);
+            else component.getStyle().set("color",COLOR_OFF);
+        }
+        else component.getStyle().set("color", COLOR_NORMAL);
+    }
 }
