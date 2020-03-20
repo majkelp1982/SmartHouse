@@ -1,11 +1,14 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 
 import java.text.SimpleDateFormat;
@@ -52,7 +55,6 @@ public class ViewComponents extends VerticalLayout {
         header.setHeight("80px");
         header.setAlignItems(FlexComponent.Alignment.CENTER);
         header.add(image,moduleTyp,info);
-        header.setMinWidth("800px");
         return header;
     }
 
@@ -78,7 +80,7 @@ public class ViewComponents extends VerticalLayout {
         return  tileDetails;
     }
 
-    public HorizontalLayout addDetails (String name, String unit, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+    public HorizontalLayout addInfo (String name, String unit, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
         HorizontalLayout item = new HorizontalLayout();
         Label nameLabel = new Label(""+name);
         nameLabel.getStyle().set("color",COLOR_NORMAL);
@@ -89,7 +91,7 @@ public class ViewComponents extends VerticalLayout {
         return item;
     }
 
-    public HorizontalLayout addDetails (String name, String value) {
+    public HorizontalLayout addInfo (String name, String value) {
         HorizontalLayout item = new HorizontalLayout();
         Label nameLabel = new Label(""+name);
         nameLabel.getStyle().set("color",COLOR_NORMAL);
@@ -100,13 +102,32 @@ public class ViewComponents extends VerticalLayout {
         return item;
     }
 
-    public HorizontalLayout addDetails (String name, boolean colorEnabled, boolean status) {
+    public HorizontalLayout addInfo (String name, boolean colorEnabled, boolean status) {
         HorizontalLayout item = new HorizontalLayout();
         Label nameLabel = new Label(""+name);
         setComponentColor(nameLabel, colorEnabled, status);
 
         item.add(nameLabel);
         return item;
+    }
+
+    public Component addButton(String name, boolean colorEnabled, boolean status) {
+
+        //FIXME need to be extend colors, etc.
+        return new Button(name);
+    }
+
+    public Component addNumberField(String name, double initValue, double min, double max, double step) {
+        NumberField numberField = new NumberField(name);
+        numberField.setHasControls(true);
+        numberField.setValue(initValue);
+        numberField.setStep(0.5d);
+ //       numberField.setStep(step);
+        numberField.setMin(min);
+        numberField.setMax(max);
+
+        //FIXME need to be extend colors, etc.
+        return numberField;
     }
 
     private Date getCurrentDate() {
