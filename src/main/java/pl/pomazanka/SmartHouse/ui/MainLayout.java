@@ -1,8 +1,10 @@
 package pl.pomazanka.SmartHouse.ui;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
@@ -11,11 +13,14 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 import pl.pomazanka.SmartHouse.ui.views.ComfortView;
 import pl.pomazanka.SmartHouse.ui.views.HeatingView;
 import pl.pomazanka.SmartHouse.ui.views.VentView;
 
 @CssImport("styles.css")
+@Theme(value = Lumo.class, variant = Lumo.DARK)
 public class MainLayout extends AppLayout {
 
     public MainLayout() {
@@ -28,13 +33,14 @@ public class MainLayout extends AppLayout {
         header.addClassName("appLayout-header");
 
         H1 logo = new H1("Smart House");
-        logo.getStyle().set("color", "grey");
         header.setWidth("100%");
         header.setMinWidth("800px");
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-        header.add(new DrawerToggle(), logo);
+        Button loginButton = new Button("Zaloguj");
+        loginButton.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
 
+        header.add(new DrawerToggle(), logo,loginButton);
         addToNavbar(header);
     }
 

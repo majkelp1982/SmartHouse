@@ -1,5 +1,6 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -27,6 +28,14 @@ public class HeatingView extends ViewComponents {
 
         // Section 3 - Settings
         HorizontalLayout section3 = createSection3();
+
+        // Notification if user doesn't logged
+        Notification notification = new Notification(
+                "Nie jesteś zalogowany. Brak możliwości zmian ustawień.", 3000);
+        section3.addClickListener(event -> {
+            if (!isUserLoggedIn())
+                notification.open();
+        });
 
         // Add all created elements
         header.setMinWidth(section1.getWidth());
@@ -164,7 +173,12 @@ public class HeatingView extends ViewComponents {
         sectionTile1Details2Container.add(addNumberField("CWU",module_heating.getReqTempBufferCWU(),40,55,0.5));
 
         sectionTile0.add(sectionTile1Details1Container,sectionTile1Details2Container);
+
+        //  <--!!!settings disabled when user not sign in !!!-->
+        sectionTile0.setEnabled(isUserLoggedIn());
+
         section.add(sectionTile0);
+
         return section;
     }
 }

@@ -9,6 +9,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 
 import java.text.SimpleDateFormat;
@@ -122,7 +125,6 @@ public class ViewComponents extends VerticalLayout {
         numberField.setHasControls(true);
         numberField.setValue(initValue);
         numberField.setStep(0.5d);
- //       numberField.setStep(step);
         numberField.setMin(min);
         numberField.setMax(max);
 
@@ -152,5 +154,12 @@ public class ViewComponents extends VerticalLayout {
             else component.getStyle().set("color",COLOR_OFF);
         }
         else component.getStyle().set("color", COLOR_NORMAL);
+    }
+
+    public static boolean isUserLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+                && !(authentication instanceof AnonymousAuthenticationToken) //
+                && authentication.isAuthenticated();
     }
 }
