@@ -90,11 +90,11 @@ public class Module_Comfort extends Module implements Cloneable {
         return result;
     }
 
-    private class Zone implements Cloneable {
-        private float isTemp=0;
-        private float reqTemp=0;
-        private float NVReqTemp = 0;
-        private int isHumidity=0;
+    public class Zone implements Cloneable {
+        public float isTemp=0;
+        public float reqTemp=0;
+        public float NVReqTemp = 0;
+        public int isHumidity=0;
 
         @Override
         protected Zone clone() throws CloneNotSupportedException {

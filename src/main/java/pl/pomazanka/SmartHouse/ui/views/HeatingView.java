@@ -51,7 +51,6 @@ public class HeatingView extends ViewComponents {
         HorizontalLayout sectionTile2 = createTile("CWU.svg", "Bufor CWU");
         HorizontalLayout sectionTile3 = createTile("water-distribution.svg", "Podłogówka");
 
-
         //Section Tile 0 Main data
         VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
         sectionTile0DetailsContainer.add(addInfo("źródła", "stC", false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5));
