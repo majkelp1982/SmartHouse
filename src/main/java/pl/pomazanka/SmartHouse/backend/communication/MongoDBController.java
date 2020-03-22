@@ -6,10 +6,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+import pl.pomazanka.SmartHouse.backend.security.UserInstance;
 
 @Service
 public class MongoDBController {
@@ -100,5 +102,13 @@ public class MongoDBController {
         Document documentToUpdate = (Document) mongoCollection.find().limit(1).sort(new Document("_id",-1)).first();
         if (documentToUpdate != null) mongoCollection.deleteOne(documentToUpdate);
         mongoCollection.insertOne(documentNew);;
+    }
+
+    public UserDetails getUser ()  {
+        MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
+        Document doc = (Document) mongoCollection.find().first();
+        UserInstance userInstance = new Gson().fromJson(doc.toJson(), UserInstance.class);
+
+        return userInstance;
     }
 }
