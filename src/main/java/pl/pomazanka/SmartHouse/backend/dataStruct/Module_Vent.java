@@ -103,6 +103,7 @@ public class Module_Vent extends Module implements Cloneable {
                 // copy relevant data received into array
                 for (int i=0; i<12; i++)
                     hour[i] = packetData[4+i];
+                setFrameLastUpdate(getCurrentDate());
                 break;
 
             case 200: //diagnostic frame
