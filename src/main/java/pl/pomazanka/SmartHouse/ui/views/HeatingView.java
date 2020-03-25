@@ -31,7 +31,7 @@ public class HeatingView extends ViewComponents {
 
         // Notification if user doesn't logged
         Notification notification = new Notification(
-                "Nie jesteś zalogowany. Brak możliwości zmian ustawień.", 3000);
+                "Brak możliwości zmian ustawień. Zaloguj się.", 3000);
         section3.addClickListener(event -> {
             if (!isUserLoggedIn())
                 notification.open();

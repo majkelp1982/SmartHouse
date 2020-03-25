@@ -68,7 +68,7 @@ public class ViewComponents extends VerticalLayout {
         tile.addClassName("module");
 
         Image image = new Image(imageSrc, imageSrc);
-        image.setHeight("80px");
+        image.setHeight("50px");
 
         Label tittleLabel = new Label(tittle);
 

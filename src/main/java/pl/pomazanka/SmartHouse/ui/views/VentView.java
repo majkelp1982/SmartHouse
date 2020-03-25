@@ -1,11 +1,14 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.pomazanka.SmartHouse.backend.communication.UDPController;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
@@ -23,14 +26,45 @@ public class VentView extends ViewComponents {
         this.module_vent = module_vent;
         ViewComponents viewComponents = new ViewComponents();
         //Create header
-        HorizontalLayout header = viewComponents.createHeader(module_vent,"fan.svg");
+        HorizontalLayout header = viewComponents.createHeader(module_vent,"recu.svg");
+        // Section 1 - fan
+        HorizontalLayout section1 = createSection1();
 
-        HorizontalLayout ventActiveGrid = new HorizontalLayout();
+        // Section 1 - Settings
+        HorizontalLayout section2 = createSection2();
+        // Notification if user doesn't logged
+        Notification notification = new Notification(
+                "Brak możliwości zmian ustawień. Zaloguj się.", 3000);
+        section2.addClickListener(event -> {
+            if (!isUserLoggedIn())
+                notification.open();
+        });
 
-        //FIXME swap to proper list (not test list)
-        List<VentByHour> ventDiagram = new ArrayList<>();
-        ventDiagram = getActualDiagram();
+        add(header,section1,section2);
 
+     }
+
+     private HorizontalLayout createSection1() {
+         HorizontalLayout section = new HorizontalLayout();
+         HorizontalLayout sectionTile0 = createTile("fan.svg", "Status");
+
+         //Section Tile 0 fan
+         VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
+         sectionTile0DetailsContainer.add(addInfo("Wentylator",true, module_vent.isFanON()));
+         sectionTile0.add(sectionTile0DetailsContainer);
+         section.add(sectionTile0);
+         return section;
+
+     }
+
+    private HorizontalLayout createSection2() {
+        HorizontalLayout section = new HorizontalLayout();
+        HorizontalLayout sectionTile0 = createTile("settings.svg", "Ustawienia");
+
+        //Section Tile 0 Main data
+        VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
+
+        List<VentByHour> ventDiagramList = getActualDiagram();
         Grid<VentByHour> grid = new Grid<>();
         grid.addColumn(VentByHour::getHour).setHeader("Godzina");
 
@@ -38,47 +72,43 @@ public class VentView extends ViewComponents {
             boolean result = VentActive.isQuarter1();
             String text = result ? "Wł" : "Wył";
             HorizontalLayout info = addInfo(text,true, result);
+            info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),1));
             return info;
-        })).setHeader("Kwadrans 0-14");
+        })).setHeader("0-14");
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter2();
             String text = result ? "Wł" : "Wył";
             HorizontalLayout info = addInfo(text,true, result);
+            info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),2));
             return info;
-        })).setHeader("Kwadrans 15-29");
+        })).setHeader("15-29");
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter3();
             String text = result ? "Wł" : "Wył";
             HorizontalLayout info = addInfo(text,true, result);
+            info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),3));
             return info;
-        })).setHeader("Kwadrans 30-44");
+        })).setHeader("30-44");
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter4();
             String text = result ? "Wł" : "Wył";
             HorizontalLayout info = addInfo(text,true, result);
+            info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),4));
             return info;
-        })).setHeader("Kwadrans 45-59");
+        })).setHeader("45-59");
 
-        grid.setItems(ventDiagram);
+        grid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+        grid.setItems(ventDiagramList);
 
-        grid.addItemClickListener(ventActiveItemClickEvent -> {
-            System.out.println(ventActiveItemClickEvent.getItem());
-        });
+        sectionTile0DetailsContainer.add(grid);
+        sectionTile0.add(sectionTile0DetailsContainer);
+        sectionTile0.setWidth("600px");
 
-        grid.addItemClickListener(ventActiveItemClickEvent -> {
-            //TODO reaction on cell clicked
-            VentByHour item = ventActiveItemClickEvent.getItem();
-
-            System.out.println("hour:"+item.getHour()+" column : "+ventActiveItemClickEvent.getColumn());
-        });
-
-        ventActiveGrid.add(grid);
-        ventActiveGrid.setSizeFull();
-
-        add(header,ventActiveGrid);
+        section.add(sectionTile0);
+        return section;
     }
 
     public class VentByHour {
@@ -167,7 +197,12 @@ public class VentView extends ViewComponents {
 
     // return bit status from corresponding byte according to position in byte
     private boolean bitStatus(int data, int bytePos) {
-        if (((data >> bytePos) & 1) == 1) return true;
-        else return false;
+        return (((data >> bytePos) & 1) == 1);
+    }
+
+    private void gridListener(int hour, int quarter) {
+        if (!isUserLoggedIn()) return;
+        //TODO
+        System.out.println("Clicked Hour:"+hour+" quarter:"+quarter);
     }
 }

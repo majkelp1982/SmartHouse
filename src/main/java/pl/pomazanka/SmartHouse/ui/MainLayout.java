@@ -50,7 +50,7 @@ public class MainLayout extends AppLayout {
         drawer.addClassName("appLayout-drawer");
 
         //prepare links
-        RouterLink ventViewLink = createDrawerElement("fan.svg","Wentylacja", VentView.class);
+        RouterLink ventViewLink = createDrawerElement("recu.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
         RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewaine", HeatingView.class);
 
