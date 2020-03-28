@@ -33,15 +33,14 @@ public class MainLayout extends AppLayout {
         header.addClassName("appLayout-header");
 
         H1 logo = new H1("Smart House");
-        header.setWidth("100%");
-        header.setMinWidth("800px");
-        header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-
         Button loginButton = new Button("Zaloguj");
         loginButton.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
-
-        header.add(new DrawerToggle(), logo,loginButton);
-        addToNavbar(header);
+        header.add(new DrawerToggle(), logo, loginButton);
+        header.setSizeFull();
+        header.setMinWidth("1000px");
+        header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        final boolean touchOptimized = true;
+        addToNavbar(touchOptimized, header);
     }
 
     private void createDrawer() {

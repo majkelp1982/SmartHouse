@@ -54,6 +54,7 @@ public class ViewComponents extends VerticalLayout {
         // Header summary
         HorizontalLayout header = new HorizontalLayout();
         header.addClassName("module");
+        header.setMinWidth("800px");
         header.setSizeFull();
         header.setHeight("80px");
         header.setAlignItems(FlexComponent.Alignment.CENTER);
