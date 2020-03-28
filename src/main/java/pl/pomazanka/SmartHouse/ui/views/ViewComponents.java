@@ -43,9 +43,9 @@ public class ViewComponents extends VerticalLayout {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Label lastUpdateLabel = new Label("Update : "+simpleDateFormat.format(module.getFrameLastUpdate()));
-        setComponentColor(lastUpdateLabel,true,module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
+        setComponentColor(lastUpdateLabel,true,true,module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
         Label diagnoseUpdateLabel = new Label("Diagnose : "+simpleDateFormat.format(module.getDiagnosticLastUpdate()));
-        setComponentColor(diagnoseUpdateLabel,true, module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
+        setComponentColor(diagnoseUpdateLabel,true, true, module.getFrameLastUpdate().getTime(),getCurrentDate().getTime(),60000, 120000);
         VerticalLayout info = new VerticalLayout();
         info.setAlignItems(FlexComponent.Alignment.CENTER);
         info.add(lastUpdateLabel,diagnoseUpdateLabel);
@@ -84,12 +84,12 @@ public class ViewComponents extends VerticalLayout {
         return  tileDetails;
     }
 
-    public HorizontalLayout addInfo (String name, String unit, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+    public HorizontalLayout addInfo (String name, String unit, boolean colorEnabled, boolean exceedAlarm, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
         HorizontalLayout item = new HorizontalLayout();
         Label nameLabel = new Label(""+name);
         nameLabel.getStyle().set("color",COLOR_NORMAL);
         Label valueLabel = new Label(" "+isValue+"["+unit+"]");
-        setComponentColor(valueLabel,colorEnabled,isValue,expectedValue,warningLimit,alarmLimit);
+        setComponentColor(valueLabel,colorEnabled,exceedAlarm,isValue,expectedValue,warningLimit,alarmLimit);
 
         item.add(nameLabel,valueLabel);
         return item;
@@ -137,7 +137,7 @@ public class ViewComponents extends VerticalLayout {
         return new Date();
     }
 
-    private void setComponentColor(HtmlContainer component, boolean colorEnabled, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+    private void setComponentColor(HtmlContainer component, boolean colorEnabled, boolean exceedAlarm, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
         if (colorEnabled) {
             if (Math.abs(isValue.doubleValue() - expectedValue.doubleValue()) > alarmLimit.doubleValue())
                 component.getStyle().set("color", COLOR_ALARM);
@@ -145,6 +145,10 @@ public class ViewComponents extends VerticalLayout {
                 component.getStyle().set("color", COLOR_WARNING);
             else
                 component.getStyle().set("color", COLOR_OK);
+            if (!exceedAlarm) {
+                if ((component.getStyle().get("color").equals(COLOR_OK)) && (isValue.doubleValue()>expectedValue.doubleValue()))
+                    component.getStyle().set("color",COLOR_OK);
+            }
         }
         else component.getStyle().set("color", COLOR_NORMAL);
     }

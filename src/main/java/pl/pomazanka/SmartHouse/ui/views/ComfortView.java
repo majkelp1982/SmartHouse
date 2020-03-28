@@ -50,23 +50,23 @@ public class ComfortView extends ViewComponents {
 
         //Section Tile 0 Main data
         VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
-        sectionTile0DetailsContainer.add(addInfo("temperatura", "stC", true, zone[0].isTemp, zone[0].reqTemp, 1, 2));
-        sectionTile0DetailsContainer.add(addInfo("wilgotność", "%", true, zone[0].isHumidity, 50, 10, 20));
-        sectionTile0DetailsContainer.add(addNumberField("nastawa",zone[0].reqTemp,18,28,0.5));
+        sectionTile0DetailsContainer.add(addInfo("temperatura", "°C", true, false, zone[0].isTemp, zone[0].reqTemp, 1, 2));
+        sectionTile0DetailsContainer.add(addInfo("wilgotność", "%", true, false, zone[0].isHumidity, 50, 10, 20));
+        sectionTile0DetailsContainer.add(addNumberField("nastawa [°C]",zone[0].reqTemp,18,28,0.5));
         sectionTile0.add(sectionTile0DetailsContainer);
 
         //Section Tile 1 Main data
         VerticalLayout sectionTile1DetailsContainer = createDetailsContainer();
-        sectionTile1DetailsContainer.add(addInfo("temperatura", "stC", true, zone[1].isTemp, zone[1].reqTemp, 1, 2));
-        sectionTile1DetailsContainer.add(addInfo("wilgotność", "%", true, zone[1].isHumidity, 50, 10, 20));
-        sectionTile1DetailsContainer.add(addNumberField("nastawa",zone[1].reqTemp,18,28,0.5));
+        sectionTile1DetailsContainer.add(addInfo("temperatura", "°C", true, false, zone[1].isTemp, zone[1].reqTemp, 1, 2));
+        sectionTile1DetailsContainer.add(addInfo("wilgotność", "%", true, false, zone[1].isHumidity, 50, 10, 20));
+        sectionTile1DetailsContainer.add(addNumberField("nastawa [°C]",zone[1].reqTemp,18,28,0.5));
         sectionTile1.add(sectionTile1DetailsContainer);
 
         //Section Tile 2 Main data
         VerticalLayout sectionTile2DetailsContainer = createDetailsContainer();
-        sectionTile2DetailsContainer.add(addInfo("temperatura", "stC", true, zone[2].isTemp, zone[2].reqTemp, 1, 2));
-        sectionTile2DetailsContainer.add(addInfo("wilgotność", "%", true, zone[2].isHumidity, 50, 10, 20));
-        sectionTile2DetailsContainer.add(addNumberField("nastawa",zone[2].reqTemp,18,28,0.5));
+        sectionTile2DetailsContainer.add(addInfo("temperatura", "°C", true,false, zone[2].isTemp, zone[2].reqTemp, 1, 2));
+        sectionTile2DetailsContainer.add(addInfo("wilgotność", "%", true,false, zone[2].isHumidity, 50, 10, 20));
+        sectionTile2DetailsContainer.add(addNumberField("nastawa [°C]",zone[2].reqTemp,18,28,0.5));
         sectionTile2.add(sectionTile2DetailsContainer);
 
         section.add(sectionTile0,sectionTile1,sectionTile2);
@@ -90,30 +90,30 @@ public class ComfortView extends ViewComponents {
 
         //Section Tile 0 Main data
         VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
-        sectionTile0DetailsContainer.add(addInfo("temperatura", "stC", true, zone[3].isTemp, zone[3].reqTemp, 1, 2));
-        sectionTile0DetailsContainer.add(addInfo("wilgotność", "%", true, zone[3].isHumidity, 50, 10, 20));
-        sectionTile0DetailsContainer.add(addNumberField("nastawa",zone[3].reqTemp,18,28,0.5));
+        sectionTile0DetailsContainer.add(addInfo("temperatura", "°C", true,false, zone[3].isTemp, zone[3].reqTemp, 1, 2));
+        sectionTile0DetailsContainer.add(addInfo("wilgotność", "%", true,false, zone[3].isHumidity, 50, 10, 20));
+        sectionTile0DetailsContainer.add(addNumberField("nastawa [°C]",zone[3].reqTemp,18,28,0.5));
         sectionTile0.add(sectionTile0DetailsContainer);
 
         //Section Tile 1 Main data
         VerticalLayout sectionTile1DetailsContainer = createDetailsContainer();
-        sectionTile1DetailsContainer.add(addInfo("temperatura", "stC", true, zone[4].isTemp, zone[4].reqTemp, 1, 2));
-        sectionTile1DetailsContainer.add(addInfo("wilgotność", "%", true, zone[4].isHumidity, 50, 10, 20));
-        sectionTile1DetailsContainer.add(addNumberField("nastawa",zone[4].reqTemp,18,28,0.5));
+        sectionTile1DetailsContainer.add(addInfo("temperatura", "°C", true,false, zone[4].isTemp, zone[4].reqTemp, 1, 2));
+        sectionTile1DetailsContainer.add(addInfo("wilgotność", "%", true,false, zone[4].isHumidity, 50, 10, 20));
+        sectionTile1DetailsContainer.add(addNumberField("nastawa [°C]",zone[4].reqTemp,18,28,0.5));
         sectionTile1.add(sectionTile1DetailsContainer);
 
         //Section Tile 2 Main data
         VerticalLayout sectionTile2DetailsContainer = createDetailsContainer();
-        sectionTile2DetailsContainer.add(addInfo("temperatura", "stC", true, zone[5].isTemp, zone[5].reqTemp, 1, 2));
-        sectionTile2DetailsContainer.add(addInfo("wilgotność", "%", true, zone[5].isHumidity, 50, 10, 20));
-        sectionTile2DetailsContainer.add(addNumberField("nastawa",zone[5].reqTemp,18,28,0.5));
+        sectionTile2DetailsContainer.add(addInfo("temperatura", "°C", true,false, zone[5].isTemp, zone[5].reqTemp, 1, 2));
+        sectionTile2DetailsContainer.add(addInfo("wilgotność", "%", true,false, zone[5].isHumidity, 50, 10, 20));
+        sectionTile2DetailsContainer.add(addNumberField("nastawa [°C]",zone[5].reqTemp,18,28,0.5));
         sectionTile2.add(sectionTile2DetailsContainer);
 
         //Section Tile 3 Main data
         VerticalLayout sectionTile3DetailsContainer = createDetailsContainer();
-        sectionTile3DetailsContainer.add(addInfo("temperatura", "stC", true, zone[6].isTemp, zone[6].reqTemp, 1, 2));
-        sectionTile3DetailsContainer.add(addInfo("wilgotność", "%", true, zone[6].isHumidity, 50, 10, 20));
-        sectionTile3DetailsContainer.add(addNumberField("nastawa",zone[6].reqTemp,18,28,0.5));
+        sectionTile3DetailsContainer.add(addInfo("temperatura", "°C", true,false, zone[6].isTemp, zone[6].reqTemp, 1, 2));
+        sectionTile3DetailsContainer.add(addInfo("wilgotność", "%", true,false, zone[6].isHumidity, 50, 10, 20));
+        sectionTile3DetailsContainer.add(addNumberField("nastawa [°C]",zone[6].reqTemp,18,28,0.5));
         sectionTile3.add(sectionTile3DetailsContainer);
 
         section.add(sectionTile0,sectionTile1,sectionTile2,sectionTile3);

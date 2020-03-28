@@ -53,31 +53,32 @@ public class HeatingView extends ViewComponents {
 
         //Section Tile 0 Main data
         VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
-        sectionTile0DetailsContainer.add(addInfo("źródła", "stC", false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("powrót", "stC", false, module_heating.gettReturn(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("kominek", "stC", false, module_heating.gettFirePlace(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("kolektor", "stC", false, module_heating.gettGroundSource(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile0DetailsContainer.add(addInfo("źródła", "°C", false, false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile0DetailsContainer.add(addInfo("powrót", "°C", false, false, module_heating.gettReturn(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile0DetailsContainer.add(addInfo("kominek", "°C", false, false, module_heating.gettFirePlace(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile0DetailsContainer.add(addInfo("kolektor", "°C", false, false, module_heating.gettGroundSource(), module_heating.getReqTempBufferCO(), 3, 5));
         sectionTile0.add(sectionTile0DetailsContainer);
 
         //Section Tile 1 Buffer CO
         VerticalLayout sectionTile1DetailsContainer = createDetailsContainer();
-        sectionTile1DetailsContainer.add(addInfo("góra", "stC", module_heating.isHeatingActivated(), module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile1DetailsContainer.add(addInfo("środek", "stC", module_heating.isHeatingActivated(), module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile1DetailsContainer.add(addInfo("dół", "stC", module_heating.isHeatingActivated(), module_heating.gettBufferCODown(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile1DetailsContainer.add(addInfo("góra", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile1DetailsContainer.add(addInfo("środek", "°C", module_heating.isHeatingActivated(), false , module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5));
+        sectionTile1DetailsContainer.add(addInfo("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCODown(), module_heating.getReqTempBufferCO(), 3, 5));
         sectionTile1.add(sectionTile1DetailsContainer);
 
         //Section Tile 2 Buffer CWU
         VerticalLayout sectionTile2DetailsContainer = createDetailsContainer();
-        sectionTile2DetailsContainer.add(addInfo("góra", "stC", true, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5));
-        sectionTile2DetailsContainer.add(addInfo("środek", "stC", true, module_heating.gettBufferCWUMid(), module_heating.getReqTempBufferCWU(), 3, 5));
-        sectionTile2DetailsContainer.add(addInfo("dół", "stC", true, module_heating.gettBufferCWUDown(), module_heating.getReqTempBufferCWU(), 3, 5));
+        sectionTile2DetailsContainer.add(addInfo("góra", "°C", true, false, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5));
+        sectionTile2DetailsContainer.add(addInfo("środek", "°C", true, false, module_heating.gettBufferCWUMid(), module_heating.getReqTempBufferCWU(), 3, 5));
+        sectionTile2DetailsContainer.add(addInfo("dół", "°C", true, false, module_heating.gettBufferCWUDown(), module_heating.getReqTempBufferCWU(), 3, 5));
         sectionTile2.add(sectionTile2DetailsContainer);
 
         //Section Tile 3 Floor heating water distribution
         VerticalLayout sectionTile3DetailsContainer = createDetailsContainer();
-        sectionTile3DetailsContainer.add(addInfo("rozdzielacz", "stC", module_heating.isHeatingActivated(), module_heating.gettManifold(), 34, 3, 5));
-        sectionTile3DetailsContainer.add(addInfo("powrót parter", "stC", module_heating.isHeatingActivated(), module_heating.gettReturnGroundFloor(), 30, 3, 5));
-        sectionTile3DetailsContainer.add(addInfo("powrót piętro", "stC", module_heating.isHeatingActivated(), module_heating.gettReturnLoft(), 30, 3, 5));
+        sectionTile3DetailsContainer.add(addInfo("rozdzielacz", "°C", module_heating.isHeatingActivated(), false, module_heating.gettManifold(), 34, 3, 5));
+        sectionTile3DetailsContainer.add(addInfo("powrót parter", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnGroundFloor(), 30, 3, 5));
+        sectionTile3DetailsContainer.add(addInfo("powrót piętro", "°C" +
+                "", module_heating.isHeatingActivated(), false, module_heating.gettReturnLoft(), 30, 3, 5));
         sectionTile3.add(sectionTile3DetailsContainer);
 
         section.add(sectionTile0, sectionTile1, sectionTile2, sectionTile3);
@@ -168,8 +169,8 @@ public class HeatingView extends ViewComponents {
 
         //Section Tile 1 required temperatures
         VerticalLayout sectionTile1Details2Container = createDetailsContainer();
-        sectionTile1Details2Container.add(addNumberField("CO", module_heating.getReqTempBufferCO(), 35,45,0.5));
-        sectionTile1Details2Container.add(addNumberField("CWU",module_heating.getReqTempBufferCWU(),40,55,0.5));
+        sectionTile1Details2Container.add(addNumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5));
+        sectionTile1Details2Container.add(addNumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5));
 
         sectionTile0.add(sectionTile1Details1Container,sectionTile1Details2Container);
 

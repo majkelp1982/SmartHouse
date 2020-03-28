@@ -8,7 +8,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.pomazanka.SmartHouse.backend.communication.UDPController;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 

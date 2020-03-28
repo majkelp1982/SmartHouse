@@ -2,9 +2,10 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
 import java.io.IOException;
 import java.net.*;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class UDPController {
@@ -14,6 +15,7 @@ public class UDPController {
     MongoDBController mongoDBController;
 
     // UDP variables
+    private int timeSynchroLast = 100;
     private static DatagramSocket datagramSocket;
     private static final int BUFFER_SIZE = 128;
     private static byte[] buffer;
@@ -34,6 +36,8 @@ public class UDPController {
             e.printStackTrace();
         }
         new Thread(new UDPListener()).start();
+        // Set new thread
+        new Thread(new EventRunBackground()).start();
     }
 
     private boolean packetDataCorrect(int[] packetData, int packetLength) {
@@ -60,21 +64,20 @@ public class UDPController {
     }
 
     public void UDPSend(byte[] packetData) {
-        DatagramPacket dp = null;
+        DatagramPacket dp;
         try {
             //Prepare broadcast address
             byte[] broadcastAddress = InetAddress.getLocalHost().getAddress();
             broadcastAddress[3] = (byte)0xff;
             dp = new DatagramPacket(packetData, packetData.length, InetAddress.getByAddress(broadcastAddress), localPort);
             datagramSocket.send(dp);
-        } catch (UnknownHostException e1) {
+        } catch (IOException e1) {
             e1.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     public class UDPListener implements Runnable {
+        @SuppressWarnings("InfiniteLoopStatement")
         @Override
         public void run() {
             while (true) {
@@ -103,6 +106,44 @@ public class UDPController {
                     }
                 }
             }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void sendTimeSynchro() {
+        Date actual = new Date();
+        int minutes = actual.getMinutes();
+        if (minutes != timeSynchroLast) {
+            timeSynchroLast = minutes;
+
+            byte[] buf = new byte[10];
+            buf[0] = 1;
+            buf[1] = 0;
+            buf[2] = 0;
+            buf[3] = (byte) (actual.getYear()-100);
+            buf[4] = (byte) (actual.getMonth()+1);
+            buf[5] = (byte) actual.getDate();
+            buf[6] = (byte) actual.getDay();
+            buf[7] = (byte) actual.getHours();
+            buf[8] = (byte) actual.getMinutes();
+            buf[9] = (byte) actual.getSeconds();
+
+            UDPSend(buf);
+        }
+    }
+
+    public class EventRunBackground implements Runnable {
+        @SuppressWarnings("InfiniteLoopStatement")
+        @Override
+        public void run() {
+            do {
+                sendTimeSynchro();
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (true);
         }
     }
 }
