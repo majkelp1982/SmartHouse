@@ -2,6 +2,10 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.Date;
@@ -10,9 +14,17 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class UDPController {
 
+    private static int moduleMain = 1;
+
     //Wired classes
     @Autowired
     MongoDBController mongoDBController;
+    @Autowired
+    Module_Heating module_heating;
+    @Autowired
+    Module_Comfort module_comfort;
+    @Autowired
+    Module_Vent module_vent;
 
     // UDP variables
     private int timeSynchroLast = 100;
@@ -132,17 +144,79 @@ public class UDPController {
         }
     }
 
-    public class EventRunBackground implements Runnable {
+    private void sendData(int senderTyp, int receiverTyp, int receiverNo, int byteNo, int newValue) {
+        byte[] buffer = new byte[5];
+
+        buffer[0] = (byte)senderTyp;
+        buffer[1] = (byte)receiverTyp;
+        buffer[2] = (byte)receiverNo;
+        buffer[3] = (byte)byteNo;
+        buffer[4] = (byte)newValue;
+        UDPSend(buffer);
+    }
+
+    //send Heating Module NV
+    private void sendHeatingNV() {
+        int newValue;
+
+        newValue = (((module_heating.isNVCheapTariffOnly()? 1:0 ) << 2) | ((module_heating.isNVHeatingActivated()? 1:0 ) << 1) | ((module_heating.isNVWaterSuperheat()? 1:0 ) << 0));
+        sendData(moduleMain, module_heating.getModuleType(), 0, 3, newValue);
+
+        newValue = (int)(module_heating.getNVReqTempBufferCO()*2);
+        sendData(moduleMain, module_heating.getModuleType(), 0, 6, newValue);
+
+        newValue = (int)(module_heating.getNVReqTempBufferCWU()*2);
+        sendData(moduleMain, module_heating.getModuleType(), 0, 7, newValue);
+    }
+
+    //send Comfort Module NV
+    private void sendComfortNV() {
+        Module_Comfort.Zone[] zone = module_comfort.getZone();
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 5, (int)zone[0].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 9, (int)zone[1].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 13, (int)zone[2].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 17, (int)zone[3].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 21, (int)zone[4].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 25, (int)zone[5].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 29, (int)zone[6].NVReqTemp*2);
+    }
+
+    //send Vent Module NV
+    private void sendVentNV() {
+        int[] hours = module_vent.getNVHour();
+
+        sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[0]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[1]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[2]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[3]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[4]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[5]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[6]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[7]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[8]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 13, hours[9]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 14, hours[10]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 15, hours[11]);
+    }
+
+
+        public class EventRunBackground implements Runnable {
         @SuppressWarnings("InfiniteLoopStatement")
         @Override
         public void run() {
             do {
-                sendTimeSynchro();
                 try {
                     TimeUnit.MILLISECONDS.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                sendTimeSynchro();
+                if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
+                if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
+                if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
+
+
             } while (true);
         }
     }

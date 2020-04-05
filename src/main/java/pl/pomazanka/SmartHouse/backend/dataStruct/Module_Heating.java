@@ -5,6 +5,9 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class Module_Heating extends Module implements Cloneable {
 
+    //Module heating type
+    private static byte MODULE_TYPE = 14;
+
     // Values only to read
     private int heatSourceActive;
     private boolean pump_InHouse;
@@ -36,11 +39,11 @@ public class Module_Heating extends Module implements Cloneable {
     private boolean NVCheapTariffOnly;
     private boolean NVHeatingActivated;
     private boolean NVWaterSuperheat;
-    private float NVReqTempBufferCO;
-    private float NVReqTempBufferCWU;
+    private double NVReqTempBufferCO;
+    private double NVReqTempBufferCWU;
 
     public Module_Heating() {
-        super(14, "Ogrzewanie");
+        super(MODULE_TYPE, "Ogrzewanie");
     }
 
     public int getHeatSourceActive() {
@@ -143,58 +146,59 @@ public class Module_Heating extends Module implements Cloneable {
         return tReturnLoft;
     }
 
-    protected boolean isNVCheapTariffOnly() {
+    public boolean isNVCheapTariffOnly() {
         return NVCheapTariffOnly;
     }
 
-    protected boolean isNVHeatingActivated() {
+    public boolean isNVHeatingActivated() {
         return NVHeatingActivated;
     }
 
-    protected boolean isNVWaterSuperheat() {
+    public boolean isNVWaterSuperheat() {
         return NVWaterSuperheat;
     }
 
-    protected float getNVReqTempBufferCO() {
+    public double getNVReqTempBufferCO() {
         return NVReqTempBufferCO;
     }
 
-    protected float getNVReqTempBufferCWU() {
+    public double getNVReqTempBufferCWU() {
         return NVReqTempBufferCWU;
     }
 
-    protected void setNVCheapTariffOnly(boolean NVCheapTariffOnly) {
+    public void setNVCheapTariffOnly(boolean NVCheapTariffOnly) {
         this.NVCheapTariffOnly = NVCheapTariffOnly;
         setUpToDate(false);
     }
 
-    protected void setNVHeatingActivated(boolean NVHeatingActivated) {
+    public void setNVHeatingActivated(boolean NVHeatingActivated) {
         this.NVHeatingActivated = NVHeatingActivated;
         setUpToDate(false);
     }
 
-    protected void setNVWaterSuperheat(boolean NVWaterSuperheat) {
+    public void setNVWaterSuperheat(boolean NVWaterSuperheat) {
         this.NVWaterSuperheat = NVWaterSuperheat;
         setUpToDate(false);
     }
 
-    protected void setNVReqTempBufferCO(float NVReqTempBufferCO) {
+    public void setNVReqTempBufferCO(double NVReqTempBufferCO) {
         this.NVReqTempBufferCO = NVReqTempBufferCO;
         setUpToDate(false);
     }
 
-    protected void setNVReqTempBufferCWU(float NVReqTempBufferCWU) {
+    public void setNVReqTempBufferCWU(double NVReqTempBufferCWU) {
         this.NVReqTempBufferCWU = NVReqTempBufferCWU;
         setUpToDate(false);
     }
 
-    protected boolean isAllUpToDate() {
+    public boolean isAllUpToDate() {
         setUpToDate(true);
         if (isUpToDate()) setUpToDate(NVCheapTariffOnly     == cheapTariffOnly);
         if (isUpToDate()) setUpToDate(NVHeatingActivated    == heatingActivated);
         if (isUpToDate()) setUpToDate(NVWaterSuperheat      == waterSuperheat);
         if (isUpToDate()) setUpToDate(NVReqTempBufferCO     == reqTempBufferCO);
         if (isUpToDate()) setUpToDate(NVReqTempBufferCWU    == reqTempBufferCWU);
+        setReqUpdateValues(!isUpToDate());
 
         return isUpToDate();
     }
@@ -245,6 +249,7 @@ public class Module_Heating extends Module implements Cloneable {
 
                 setFrameLastUpdate(getCurrentDate());
 
+
                 break;
 
             case 200: //diagnostic frame
@@ -253,6 +258,15 @@ public class Module_Heating extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        if (!isReqUpdateValues()) assignNV();
+    }
+
+    private void assignNV() {
+        NVCheapTariffOnly = cheapTariffOnly;
+        NVHeatingActivated = heatingActivated;
+        NVWaterSuperheat = waterSuperheat;
+        NVReqTempBufferCO = reqTempBufferCO;
+        NVReqTempBufferCWU = reqTempBufferCWU;
     }
 
     //compare data : last save status with new set

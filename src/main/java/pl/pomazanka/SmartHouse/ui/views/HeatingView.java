@@ -1,8 +1,10 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,14 +165,44 @@ public class HeatingView extends ViewComponents {
 
         //Section Tile 1 Mode
         VerticalLayout sectionTile1Details1Container = createDetailsContainer();
-        sectionTile1Details1Container.add(addButton("II taryfa",true,module_heating.isCheapTariffOnly()));
-        sectionTile1Details1Container.add(addButton("ogrzewanie",true,module_heating.isHeatingActivated()));
-        sectionTile1Details1Container.add(addButton("gorąca woda",true,module_heating.isWaterSuperheat()));
+        Button cheapTariffOnly = addButton("II taryfa",true,module_heating.isCheapTariffOnly());
+        Button heatingActivated = addButton("ogrzewanie",true,module_heating.isHeatingActivated());
+        Button waterSuperHeat = addButton("gorąca woda",true,module_heating.isWaterSuperheat());
+
+        //Click Listeners
+        cheapTariffOnly.addClickListener(buttonClickEvent -> {
+            module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
+            module_heating.setReqUpdateValues(true);
+        });
+        heatingActivated.addClickListener(buttonClickEvent -> {
+            module_heating.setNVHeatingActivated(!module_heating.isHeatingActivated());
+            module_heating.setReqUpdateValues(true);
+        });
+        waterSuperHeat.addClickListener(buttonClickEvent -> {
+            module_heating.setNVWaterSuperheat(!module_heating.isWaterSuperheat());
+            module_heating.setReqUpdateValues(true);
+        });
+
+        //Add components to container
+        sectionTile1Details1Container.add(cheapTariffOnly,heatingActivated,waterSuperHeat);
 
         //Section Tile 1 required temperatures
         VerticalLayout sectionTile1Details2Container = createDetailsContainer();
-        sectionTile1Details2Container.add(addNumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5));
-        sectionTile1Details2Container.add(addNumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5));
+        NumberField reqTempBufferCO = addNumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
+        NumberField reqTempBufferCWU = addNumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
+
+        //Click Listeners
+        reqTempBufferCO.addValueChangeListener(valueChangeEvent -> {
+            module_heating.setNVReqTempBufferCO(valueChangeEvent.getValue());
+            module_heating.setReqUpdateValues(true);
+        });
+        reqTempBufferCWU.addValueChangeListener(valueChangeEvent -> {
+            module_heating.setNVReqTempBufferCWU(valueChangeEvent.getValue());
+            module_heating.setReqUpdateValues(true);
+        });
+
+        //Add components to container
+        sectionTile1Details2Container.add(reqTempBufferCO, reqTempBufferCWU);
 
         sectionTile0.add(sectionTile1Details1Container,sectionTile1Details2Container);
 

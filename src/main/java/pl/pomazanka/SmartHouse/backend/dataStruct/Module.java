@@ -3,22 +3,23 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import java.util.Date;
 
 public class Module {
-    private int moduleTyp;
+    private int moduleType;
     private String moduleName;
     private int IP[] = new int[4];
     private boolean error = false;
     private boolean upToDate = false;
     private Date frameLastUpdate = new Date();
     private Date diagnosticLastUpdate = new Date();
+    private boolean reqUpdateValues = false;
 
 
-    public Module(int moduleTyp,String moduleName) {
-        this.moduleTyp = moduleTyp;
+    public Module(int moduleType,String moduleName) {
+        this.moduleType = moduleType;
         this.moduleName = moduleName;
     }
 
-    public int getModuleTyp() {
-        return moduleTyp;
+    public int getModuleType() {
+        return moduleType;
     }
 
     public String getModuleName() {
@@ -63,6 +64,14 @@ public class Module {
 
     public void setUpToDate(boolean upToDate) {
         this.upToDate = upToDate;
+    }
+
+    public boolean isReqUpdateValues() {
+        return reqUpdateValues;
+    }
+
+    public void setReqUpdateValues(boolean reqUpdateValues) {
+        this.reqUpdateValues = reqUpdateValues;
     }
 
     // return bit status from corresponding byte according to position in byte

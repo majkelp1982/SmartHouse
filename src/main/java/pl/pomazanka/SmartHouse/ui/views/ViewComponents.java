@@ -115,13 +115,13 @@ public class ViewComponents extends VerticalLayout {
         return item;
     }
 
-    public Component addButton(String name, boolean colorEnabled, boolean status) {
+    public Button addButton(String name, boolean colorEnabled, boolean status) {
 
         //FIXME need to be extend colors, etc.
         return new Button(name);
     }
 
-    public Component addNumberField(String name, double initValue, double min, double max, double step) {
+    public NumberField addNumberField(String name, double initValue, double min, double max, double step) {
         NumberField numberField = new NumberField(name);
         numberField.setHasControls(true);
         numberField.setValue(initValue);
@@ -146,7 +146,7 @@ public class ViewComponents extends VerticalLayout {
             else
                 component.getStyle().set("color", COLOR_OK);
             if (!exceedAlarm) {
-                if ((component.getStyle().get("color").equals(COLOR_OK)) && (isValue.doubleValue()>expectedValue.doubleValue()))
+                if ((!component.getStyle().get("color").equals(COLOR_OK)) && (isValue.doubleValue()>expectedValue.doubleValue()))
                     component.getStyle().set("color",COLOR_OK);
             }
         }

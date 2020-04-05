@@ -4,13 +4,15 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class Module_Vent extends Module implements Cloneable {
+    //Module ventilation type
+    private static byte MODULE_TYPE = 3;
 
     private boolean fanON;
     private int[] hour = new int[12];
     protected int[] NVHour = new int[12];
 
     public Module_Vent() {
-        super(3,"Wentylacja");
+        super(MODULE_TYPE,"Wentylacja");
     }
 
     public boolean isFanON() {
@@ -21,7 +23,7 @@ public class Module_Vent extends Module implements Cloneable {
         return hour;
     }
 
-    protected int[] getNVHour() {
+    public int[] getNVHour() {
         return NVHour;
     }
 
@@ -85,10 +87,12 @@ public class Module_Vent extends Module implements Cloneable {
         setUpToDate(false);
     }
 
-    protected boolean isAllUpToDate() {
+    public boolean isAllUpToDate() {
         setUpToDate(true);
         for (int i=0; i<=11; i++)
             if (isUpToDate()) setUpToDate(hour[i] == NVHour[i]);
+
+        setReqUpdateValues(!isUpToDate());
         return isUpToDate();
     }
 
@@ -112,6 +116,11 @@ public class Module_Vent extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        if (!isReqUpdateValues()) assignNV();
+    }
+
+    private void assignNV() {
+            NVHour = hour;
     }
 
     public boolean compare(Module_Vent module_vent) {

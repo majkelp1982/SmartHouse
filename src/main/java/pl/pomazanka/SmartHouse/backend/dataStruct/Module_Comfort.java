@@ -4,10 +4,13 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class Module_Comfort extends Module implements Cloneable {
+    //Module comfort type
+    private static byte MODULE_TYPE = 10;
+
     private Zone[] zone = new Zone[7];
 
     public Module_Comfort() {
-        super(10, "Komfort");
+        super(MODULE_TYPE, "Komfort");
         for (int i=0; i<7;i++)
             zone[i] = new Zone();
     }
@@ -16,45 +19,47 @@ public class Module_Comfort extends Module implements Cloneable {
         return zone;
     }
 
-    public void setNVEeqZ0(float NVReqTempZ0) {
+    public void setNVReqZ0(float NVReqTempZ0) {
         zone[0].NVReqTemp = NVReqTempZ0;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ1(float NVReqTempZ1) {
+    public void setNVReqZ1(float NVReqTempZ1) {
         zone[1].NVReqTemp = NVReqTempZ1;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ2(float NVReqTempZ2) {
+    public void setNVReqZ2(float NVReqTempZ2) {
         zone[2].NVReqTemp = NVReqTempZ2;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ3(float NVReqTempZ3) {
+    public void setNVReqZ3(float NVReqTempZ3) {
         zone[3].NVReqTemp = NVReqTempZ3;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ4(float NVReqTempZ4) {
+    public void setNVReqZ4(float NVReqTempZ4) {
         zone[4].NVReqTemp = NVReqTempZ4;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ5(float NVReqTempZ5) {
+    public void setNVReqZ5(float NVReqTempZ5) {
         zone[5].NVReqTemp = NVReqTempZ5;
         setUpToDate(false);
     }
 
-    public void setNVEeqZ6(float NVReqTempZ6) {
+    public void setNVReqZ6(float NVReqTempZ6) {
         zone[6].NVReqTemp = NVReqTempZ6;
         setUpToDate(false);
     }
 
-    protected boolean isAllUpToDate() {
+    public boolean isAllUpToDate() {
         setUpToDate(true);
         for (int i=0; i<=6; i++)
             if (isUpToDate()) setUpToDate(zone[i].NVReqTemp == zone[i].reqTemp);
+
+        setReqUpdateValues(!isUpToDate());
         return isUpToDate();
     }
 
@@ -77,6 +82,12 @@ public class Module_Comfort extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        if (!isReqUpdateValues()) assignNV();
+    }
+
+    private void assignNV() {
+        for (int i=0; i<7; i++)
+            zone[i].NVReqTemp = zone[i].reqTemp;
     }
 
     public boolean compare(Module_Comfort module_comfort) {
