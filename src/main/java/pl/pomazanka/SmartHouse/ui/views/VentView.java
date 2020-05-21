@@ -69,7 +69,7 @@ public class VentView extends ViewComponents {
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter1();
-            String text = result ? "Wł" : "Wył";
+            String text = result ? "❶" : "⓿";
             HorizontalLayout info = addInfo(text,true, result);
             info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),1));
             return info;
@@ -77,7 +77,7 @@ public class VentView extends ViewComponents {
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter2();
-            String text = result ? "Wł" : "Wył";
+            String text = result ? "❶" : "⓿";
             HorizontalLayout info = addInfo(text,true, result);
             info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),2));
             return info;
@@ -85,7 +85,7 @@ public class VentView extends ViewComponents {
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter3();
-            String text = result ? "Wł" : "Wył";
+            String text = result ? "❶" : "⓿";
             HorizontalLayout info = addInfo(text,true, result);
             info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),3));
             return info;
@@ -93,7 +93,7 @@ public class VentView extends ViewComponents {
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
             boolean result = VentActive.isQuarter4();
-            String text = result ? "Wł" : "Wył";
+            String text = result ? "❶" : "⓿";
             HorizontalLayout info = addInfo(text,true, result);
             info.addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),4));
             return info;

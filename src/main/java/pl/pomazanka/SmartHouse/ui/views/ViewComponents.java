@@ -49,6 +49,7 @@ public class ViewComponents extends VerticalLayout {
         VerticalLayout info = new VerticalLayout();
         info.setAlignItems(FlexComponent.Alignment.CENTER);
         info.add(lastUpdateLabel,diagnoseUpdateLabel);
+        info.setWidth("800px");
         info.setSizeFull();
 
         // Header summary
