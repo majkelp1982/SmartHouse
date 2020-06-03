@@ -121,7 +121,7 @@ public class ViewComponents extends VerticalLayout {
     public Button addButton(String name, boolean colorEnabled, boolean status) {
 
         Button button = new Button(name);
-        setActualColor(button, status);
+        setActualColor(button,status);
         return button;
     }
 
