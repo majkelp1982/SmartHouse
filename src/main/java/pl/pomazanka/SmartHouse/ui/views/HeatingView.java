@@ -172,14 +172,17 @@ public class HeatingView extends ViewComponents {
         //Click Listeners
         cheapTariffOnly.addClickListener(buttonClickEvent -> {
             module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
+            setPendingColor(cheapTariffOnly);
             module_heating.setReqUpdateValues(true);
         });
         heatingActivated.addClickListener(buttonClickEvent -> {
             module_heating.setNVHeatingActivated(!module_heating.isHeatingActivated());
+            setPendingColor(heatingActivated);
             module_heating.setReqUpdateValues(true);
         });
         waterSuperHeat.addClickListener(buttonClickEvent -> {
             module_heating.setNVWaterSuperheat(!module_heating.isWaterSuperheat());
+            setPendingColor(waterSuperHeat);
             module_heating.setReqUpdateValues(true);
         });
 
@@ -194,10 +197,12 @@ public class HeatingView extends ViewComponents {
         //Click Listeners
         reqTempBufferCO.addValueChangeListener(valueChangeEvent -> {
             module_heating.setNVReqTempBufferCO(valueChangeEvent.getValue());
+            setPendingColor(reqTempBufferCO);
             module_heating.setReqUpdateValues(true);
         });
         reqTempBufferCWU.addValueChangeListener(valueChangeEvent -> {
             module_heating.setNVReqTempBufferCWU(valueChangeEvent.getValue());
+            setPendingColor(reqTempBufferCWU);
             module_heating.setReqUpdateValues(true);
         });
 

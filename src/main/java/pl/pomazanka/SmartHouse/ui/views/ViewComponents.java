@@ -1,6 +1,7 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
@@ -21,12 +22,13 @@ public class ViewComponents extends VerticalLayout {
 
     // static variables
     //***************************************
-    private static final String COLOR_WARNING = "yellow";
-    private static final String COLOR_ALARM = "red";
-    private static final String COLOR_OK = "green";
-    private static final String COLOR_ON = "green";
-    private static final String COLOR_NORMAL = "white";
-    private static final String COLOR_OFF ="grey";
+    public static final String COLOR_WARNING = "yellow";
+    public static final String COLOR_ALARM = "red";
+    public static final String COLOR_OK = "green";
+    public static final String COLOR_ON = "green";
+    public static final String COLOR_NORMAL = "white";
+    public static final String COLOR_OFF ="grey";
+    public static final String COLOR_NV = "orange";
 
     public ViewComponents() {
     }
@@ -118,8 +120,9 @@ public class ViewComponents extends VerticalLayout {
 
     public Button addButton(String name, boolean colorEnabled, boolean status) {
 
-        //FIXME need to be extend colors, etc.
-        return new Button(name);
+        Button button = new Button(name);
+        setActualColor(button, status);
+        return button;
     }
 
     public NumberField addNumberField(String name, double initValue, double min, double max, double step) {
@@ -129,6 +132,7 @@ public class ViewComponents extends VerticalLayout {
         numberField.setStep(0.5d);
         numberField.setMin(min);
         numberField.setMax(max);
+
 
         //FIXME need to be extend colors, etc.
         return numberField;
@@ -160,6 +164,15 @@ public class ViewComponents extends VerticalLayout {
             else component.getStyle().set("color",COLOR_OFF);
         }
         else component.getStyle().set("color", COLOR_NORMAL);
+    }
+
+    public void setPendingColor(HasStyle hasStyle) {
+        hasStyle.getStyle().set("color",COLOR_NV);
+    }
+
+    public void setActualColor(HasStyle hasStyle, boolean status) {
+        if (status) hasStyle.getStyle().set("color",COLOR_ON);
+        else hasStyle.getStyle().set("color",COLOR_OFF);
     }
 
     public static boolean isUserLoggedIn() {
