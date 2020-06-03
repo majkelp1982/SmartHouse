@@ -122,6 +122,7 @@ public class ViewComponents extends VerticalLayout {
 
         Button button = new Button(name);
         setActualColor(button,status);
+        // FIXME colors,etc
         return button;
     }
 
