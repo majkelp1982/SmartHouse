@@ -26,6 +26,15 @@ public class MainLayout extends AppLayout {
     public MainLayout() {
         createHeader();
         createDrawer();
+
+        //Polling data from backend
+        UI.getCurrent().addPollListener(pollEvent -> pollBackend());
+        UI.getCurrent().setPollInterval(10000);
+    }
+
+    private void pollBackend() {
+        //FIXME quickfix of periodic refresh of UI
+        UI.getCurrent().getPage().reload();
     }
 
     private void createHeader() {
