@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -21,6 +22,7 @@ import pl.pomazanka.SmartHouse.ui.views.VentView;
 
 @CssImport("styles.css")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
+@Push
 public class MainLayout extends AppLayout {
 
     public MainLayout() {

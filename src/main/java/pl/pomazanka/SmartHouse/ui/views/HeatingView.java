@@ -1,35 +1,73 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import elemental.json.impl.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
+
+import java.text.SimpleDateFormat;
+import java.util.stream.Stream;
 
 @PageTitle("Smart House | Ogrzewanie")
 @Route(value = "Ogrzewanie", layout = MainLayout.class)
 public class HeatingView extends ViewComponents {
 
+    private String temp;
+
     @Autowired
     Module_Heating module_heating;
 
+    //Create header
+    HorizontalLayout header;
+    // Section 1 - Buffers
+    HorizontalLayout section1;
+
+    // Section 2 - Status
+    HorizontalLayout section2;
+
+    // Section 3 - Settings
+    HorizontalLayout section3;
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        System.out.println("Attached");
+            //System.out.println(header.getChildren().count());
+        //Last telegram updates info
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        temp = "Update : "+simpleDateFormat.format(module_heating.getFrameLastUpdate());
+       header.getElement().getChild(2).getChild(1).setText(temp);
+        System.out.println(temp);
+    }
+
+    @Override
+    protected void onDetach(DetachEvent attachEvent) {
+        System.out.println("Detached");
+    }
+
     public HeatingView(Module_Heating module_heating) {
         this.module_heating = module_heating;
+
         //Create header
-        HorizontalLayout header = createHeader(module_heating, "thermometer.svg");
+        header = createHeader(module_heating, "thermometer.svg");
         // Section 1 - Buffers
-        HorizontalLayout section1 = createSection1();
+        section1 = createSection1();
 
         // Section 2 - Status
-        HorizontalLayout section2 = createSection2();
+        section2 = createSection2();
 
         // Section 3 - Settings
-        HorizontalLayout section3 = createSection3();
+        section3 = createSection3();
 
         // Notification if user doesn't logged
         Notification notification = new Notification(
