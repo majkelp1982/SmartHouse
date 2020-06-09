@@ -36,7 +36,6 @@ public class MainLayout extends AppLayout {
 
     private void pollBackend() {
         //FIXME quickfix of periodic refresh of UI
-        UI.getCurrent().getPage().reload();
     }
 
     private void createHeader() {

@@ -3,6 +3,7 @@ package pl.pomazanka.SmartHouse.ui.views;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -23,36 +24,33 @@ import java.util.stream.Stream;
 @Route(value = "Ogrzewanie", layout = MainLayout.class)
 public class HeatingView extends ViewComponents {
 
-    private String temp;
+    private FeederThread thread;
 
     @Autowired
     Module_Heating module_heating;
 
     //Create header
-    HorizontalLayout header;
+    private HorizontalLayout header;
     // Section 1 - Buffers
-    HorizontalLayout section1;
-
+    private HorizontalLayout section1;
     // Section 2 - Status
-    HorizontalLayout section2;
-
+    private HorizontalLayout section2;
     // Section 3 - Settings
-    HorizontalLayout section3;
+    private HorizontalLayout section3;
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        System.out.println("Attached");
-            //System.out.println(header.getChildren().count());
-        //Last telegram updates info
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        temp = "Update : "+simpleDateFormat.format(module_heating.getFrameLastUpdate());
-       header.getElement().getChild(2).getChild(1).setText(temp);
-        System.out.println(temp);
+        //Start thread when view active
+        thread = new FeederThread(attachEvent.getUI(), this);
+        thread.start();
     }
 
     @Override
     protected void onDetach(DetachEvent attachEvent) {
-        System.out.println("Detached");
+        //Stop thread when view not active
+        //FIXME exception by interruption during thread sleep
+        thread.interrupt();
+        thread = null;
     }
 
     public HeatingView(Module_Heating module_heating) {
@@ -255,5 +253,33 @@ public class HeatingView extends ViewComponents {
         section.add(sectionTile0);
 
         return section;
+    }
+
+    private void ComponentsUpdate() {
+        System.out.println("access");
+        header.getElement().getChild(2).getChild(1).setText(module_heating.getFrameLastUpdate().toString());
+    }
+
+    private static class FeederThread extends Thread {
+        private final UI ui;
+        private final HeatingView view;
+
+        public FeederThread(UI ui, HeatingView view) {
+            this.ui = ui;
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+
+                try {
+                    ui.access(() -> view.ComponentsUpdate());
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
