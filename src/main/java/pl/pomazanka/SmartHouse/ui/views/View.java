@@ -76,7 +76,7 @@ public class View extends VerticalLayout{
 
     public class Section {
         private HorizontalLayout section;
-        private HorizontalLayout[] tile = new HorizontalLayout[10];
+        private Tile[] tile = new Tile[10];
 
         public Section() {
             section = new HorizontalLayout();
@@ -87,28 +87,43 @@ public class View extends VerticalLayout{
             while (tile[tileNo] != null) {
                 tileNo++;
             }
-            tile[tileNo] = new HorizontalLayout();
-            tile[tileNo].setAlignItems(FlexComponent.Alignment.CENTER);
-            tile[tileNo].addClassName("module");
+            tile[tileNo] = new Tile(imageSrc, tittle);
 
-            Image image = new Image(imageSrc, imageSrc);
-            image.setHeight("50px");
-
-            Label tittleLabel = new Label(tittle);
-
-            VerticalLayout detailsContainer = new VerticalLayout();
-
-            tile[tileNo].add(tittleLabel, image, detailsContainer);
-
-            section.add(tile[tileNo]);
+            section.add(tile[tileNo].getTile());
         }
 
-        public Component getTileDetailsContainer(int tileNo) {
-            return tile[tileNo].getElemen
+        public VerticalLayout getTileDetailsContainer(int tileNo) {
+            return tile[tileNo].getTileDetailsContainer();
         }
 
         public HorizontalLayout getSection() {
             return section;
+        }
+
+    }
+
+    private class Tile {
+        HorizontalLayout tile;
+        VerticalLayout detailsContainer;
+
+        public Tile(String imageSrc, String tittle) {
+            tile = new HorizontalLayout();
+            tile.setAlignItems(FlexComponent.Alignment.CENTER);
+            tile.addClassName("module");
+
+            Image image = new Image(imageSrc, imageSrc);
+            image.setHeight("50px");
+            Label tittleLabel = new Label(tittle);
+            detailsContainer = new VerticalLayout();
+            tile.add(tittleLabel, image, detailsContainer);
+        }
+
+        private HorizontalLayout getTile() {
+            return tile;
+        }
+
+        public VerticalLayout getTileDetailsContainer() {
+            return detailsContainer;
         }
 
     }
@@ -120,35 +135,61 @@ public class View extends VerticalLayout{
         private String unit;
         private boolean colorEnabled;
         private boolean exceedAlarm;
-        private Number isValue;
         private Number expectedValue;
         private Number warningLimit;
         private Number alarmLimit;
 
-        public  Info (String name, String unit, boolean colorEnabled, boolean exceedAlarm, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
+        public Info(String name, String unit, boolean colorEnabled, boolean exceedAlarm, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {
             this.unit = unit;
             this.colorEnabled = colorEnabled;
             this.exceedAlarm = exceedAlarm;
-            this.isValue = isValue;
             this.expectedValue = expectedValue;
             this.warningLimit = warningLimit;
             this.alarmLimit = alarmLimit;
 
             info = new HorizontalLayout();
+            nameLabel = new Label("" + name);
+            nameLabel.getStyle().set("color", COLOR_NORMAL);
+            valueLabel = new Label();
+            setValue(isValue);
+            info.add(nameLabel, valueLabel);
+        }
+
+        public Info(String name, String value) {
+            info = new HorizontalLayout();
             nameLabel = new Label(""+name);
             nameLabel.getStyle().set("color",COLOR_NORMAL);
             valueLabel = new Label();
+            nameLabel.getStyle().set("color",COLOR_NORMAL);
+            setValue(value);
             info.add(nameLabel,valueLabel);
         }
 
-        public void setValue(Number isValue) {
-            this.isValue = isValue;
-            valueLabel = new Label(" "+isValue+"["+unit+"]");
-            setComponentColor(valueLabel,colorEnabled,exceedAlarm,isValue,expectedValue,warningLimit,alarmLimit);
+        public Info(String name, boolean colorEnabled, boolean status) {
+            info = new HorizontalLayout();
+            nameLabel = new Label(""+name);
+            setVisible(status);
+            info.add(nameLabel);
         }
+
+        public void setValue(Number isValue) {
+            valueLabel.setText(" " + isValue + "[" + unit + "]");
+            setComponentColor(valueLabel, colorEnabled, exceedAlarm, isValue, expectedValue, warningLimit, alarmLimit);
+        }
+
+        public void setValue(String isValue) {
+            valueLabel.setText(" " + isValue);
+            setComponentColor(nameLabel, colorEnabled, true);
+        }
+
+        public void setValue(boolean status) {
+            setComponentColor(nameLabel, colorEnabled, status);
+        }
+
 
         public HorizontalLayout getInfo() {
             return info;
+        }
     }
 
     private Date getCurrentDate() {
