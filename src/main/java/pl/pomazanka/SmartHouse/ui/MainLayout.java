@@ -17,7 +17,7 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import pl.pomazanka.SmartHouse.ui.views.ComfortView;
-import pl.pomazanka.SmartHouse.ui.views.Heating_View_new;
+import pl.pomazanka.SmartHouse.ui.views.HeatingView;
 import pl.pomazanka.SmartHouse.ui.views.VentView;
 
 @CssImport("styles.css")
@@ -53,7 +53,7 @@ public class MainLayout extends AppLayout {
         //prepare links
         RouterLink ventViewLink = createDrawerElement("recu.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
-        RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewaine", Heating_View_new.class);
+        RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewaine", HeatingView.class);
 
         drawer.add(ventViewLink,comfortViewLink,heatingViewLink);
         drawer.setSizeFull();

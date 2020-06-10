@@ -1,20 +1,24 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.component.textfield.NumberField;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class View extends VerticalLayout{
+public class View extends VerticalLayout {
 
     // static variables
     //***************************************
@@ -23,7 +27,7 @@ public class View extends VerticalLayout{
     public static final String COLOR_OK = "green";
     public static final String COLOR_ON = "green";
     public static final String COLOR_NORMAL = "white";
-    public static final String COLOR_OFF ="grey";
+    public static final String COLOR_OFF = "grey";
     public static final String COLOR_NV = "orange";
 
     //Last telegram updates info
@@ -34,20 +38,20 @@ public class View extends VerticalLayout{
         private Label lastUpdateLabel;
         private Label diagnoseUpdateLabel;
 
-        public  Header(Module module, String imageSrc) {
+        public Header(Module module, String imageSrc) {
             header = new HorizontalLayout();
 
             //About module type
             Image image = new Image(imageSrc, imageSrc);
             image.setHeight("80px");
             Label moduleTyp = new Label(module.getModuleName());
-            moduleTyp.getStyle().set("font-size","30px");
+            moduleTyp.getStyle().set("font-size", "30px");
 
             lastUpdateLabel = new Label();
             diagnoseUpdateLabel = new Label();
             VerticalLayout info = new VerticalLayout();
             info.setAlignItems(FlexComponent.Alignment.CENTER);
-            info.add(lastUpdateLabel,diagnoseUpdateLabel);
+            info.add(lastUpdateLabel, diagnoseUpdateLabel);
             info.setWidth("800px");
             info.setSizeFull();
 
@@ -56,7 +60,7 @@ public class View extends VerticalLayout{
             header.setSizeFull();
             header.setHeight("80px");
             header.setAlignItems(FlexComponent.Alignment.CENTER);
-            header.add(image,moduleTyp,info);
+            header.add(image, moduleTyp, info);
         }
 
         public HorizontalLayout getHeader() {
@@ -64,13 +68,13 @@ public class View extends VerticalLayout{
         }
 
         public void setLastUpdate(Date lastUpdate) {
-            lastUpdateLabel.setText("Update : "+simpleDateFormat.format(lastUpdate));
-            setComponentColor(lastUpdateLabel,true,true,lastUpdate.getTime(),getCurrentDate().getTime(),60000, 120000);
+            lastUpdateLabel.setText("Update : " + simpleDateFormat.format(lastUpdate));
+            setComponentColor(lastUpdateLabel, true, true, lastUpdate.getTime(), getCurrentDate().getTime(), 60000, 120000);
         }
 
         public void setDiagnoseUpdate(Date diagnoseUpdate) {
-            diagnoseUpdateLabel.setText("Diagnose : "+simpleDateFormat.format(diagnoseUpdate));
-            setComponentColor(diagnoseUpdateLabel,true, true, diagnoseUpdate.getTime(),getCurrentDate().getTime(),60000, 120000);
+            diagnoseUpdateLabel.setText("Diagnose : " + simpleDateFormat.format(diagnoseUpdate));
+            setComponentColor(diagnoseUpdateLabel, true, true, diagnoseUpdate.getTime(), getCurrentDate().getTime(), 60000, 120000);
         }
     }
 
@@ -157,18 +161,18 @@ public class View extends VerticalLayout{
 
         public Info(String name, String value) {
             info = new HorizontalLayout();
-            nameLabel = new Label(""+name);
-            nameLabel.getStyle().set("color",COLOR_NORMAL);
+            nameLabel = new Label("" + name);
+            nameLabel.getStyle().set("color", COLOR_NORMAL);
             valueLabel = new Label();
-            nameLabel.getStyle().set("color",COLOR_NORMAL);
+            nameLabel.getStyle().set("color", COLOR_NORMAL);
             setValue(value);
-            info.add(nameLabel,valueLabel);
+            info.add(nameLabel, valueLabel);
         }
 
         public Info(String name, boolean colorEnabled, boolean status) {
             info = new HorizontalLayout();
-            nameLabel = new Label(""+name);
-            setVisible(status);
+            nameLabel = new Label("" + name);
+            setValue(status);
             info.add(nameLabel);
         }
 
@@ -187,8 +191,60 @@ public class View extends VerticalLayout{
         }
 
 
-        public HorizontalLayout getInfo() {
+        public HorizontalLayout getSource() {
             return info;
+        }
+    }
+
+    public class Button {
+        com.vaadin.flow.component.button.Button button;
+
+        public Button(String name, boolean colorEnabled, boolean status) {
+            button = new com.vaadin.flow.component.button.Button();
+            button.setText(name);
+            setButtonColor(status, status);
+        }
+
+        public void setButtonColor(boolean isStatus, boolean expectedStatus) {
+            setActualColor(button, isStatus);
+            if (isStatus == expectedStatus) {
+                setActualColor(button, isStatus);
+            }
+            else {
+                setPendingColor(button);
+            }
+        }
+
+        public com.vaadin.flow.component.button.Button getSource() {
+            return button;
+        }
+    }
+
+    public class NumberField {
+        com.vaadin.flow.component.textfield.NumberField numberField;
+
+        public NumberField(String name, double initValue, double min, double max, double step) {
+            numberField = new com.vaadin.flow.component.textfield.NumberField(name);
+            numberField.setHasControls(true);
+            numberField.setValue(initValue);
+            numberField.setStep(0.5d);
+            numberField.setMin(min);
+            numberField.setMax(max);
+        }
+
+        public void setNumberField(double isValue, double expectedValue) {
+            if (isValue == expectedValue) {
+                setActualColor(numberField, true);
+                numberField.setValue(isValue);
+            }
+            else {
+                setPendingColor(numberField);
+                numberField.setValue(expectedValue);
+            }
+        }
+
+        public com.vaadin.flow.component.textfield.NumberField getSource() {
+            return numberField;
         }
     }
 
@@ -205,28 +261,32 @@ public class View extends VerticalLayout{
             else
                 component.getStyle().set("color", COLOR_OK);
             if (!exceedAlarm) {
-                if ((!component.getStyle().get("color").equals(COLOR_OK)) && (isValue.doubleValue()>expectedValue.doubleValue()))
-                    component.getStyle().set("color",COLOR_OK);
+                if ((!component.getStyle().get("color").equals(COLOR_OK)) && (isValue.doubleValue() > expectedValue.doubleValue()))
+                    component.getStyle().set("color", COLOR_OK);
             }
-        }
-        else component.getStyle().set("color", COLOR_NORMAL);
+        } else component.getStyle().set("color", COLOR_NORMAL);
     }
 
     private void setComponentColor(HtmlContainer component, boolean colorEnabled, boolean status) {
         if (colorEnabled) {
             if (status) component.getStyle().set("color", COLOR_ON);
-            else component.getStyle().set("color",COLOR_OFF);
-        }
-        else component.getStyle().set("color", COLOR_NORMAL);
+            else component.getStyle().set("color", COLOR_OFF);
+        } else component.getStyle().set("color", COLOR_NORMAL);
+    }
+
+    private void setActualColor(HasStyle hasStyle, boolean status) {
+        if (status) hasStyle.getStyle().set("color", COLOR_ON);
+        else hasStyle.getStyle().set("color", COLOR_OFF);
     }
 
     public void setPendingColor(HasStyle hasStyle) {
-        hasStyle.getStyle().set("color",COLOR_NV);
+        hasStyle.getStyle().set("color", COLOR_NV);
     }
 
-    public void setActualColor(HasStyle hasStyle, boolean status) {
-        if (status) hasStyle.getStyle().set("color",COLOR_ON);
-        else hasStyle.getStyle().set("color",COLOR_OFF);
+    public static boolean isUserLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+                && !(authentication instanceof AnonymousAuthenticationToken) //
+                && authentication.isAuthenticated();
     }
-
 }

@@ -1,5 +1,9 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,22 +12,29 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 @PageTitle("Smart House | Ogrzewanie")
 @Route(value = "Ogrzewanie", layout = MainLayout.class)
-public class Heating_View_new extends View {
+public class HeatingView extends View {
 
     @Autowired
     Module_Heating module_heating;
+
+    //Update thread
+    Thread thread;
 
     //Objects
     Header header;
     Section[] section = new Section[3];
     Info[][][] info = new Info[3][4][4];
+    Button cheapTariffOnly;
+    Button heatingActivated;
+    Button waterSuperHeat;
+    NumberField reqTempBufferCO;
+    NumberField reqTempBufferCWU;
 
-
-    public Heating_View_new(Module_Heating module_heating) {
+    public HeatingView(Module_Heating module_heating) {
         this.module_heating = module_heating;
 
         //Header
-        header = new Header(module_heating,"thermometer.svg");
+        header = new Header(module_heating, "thermometer.svg");
         header.setLastUpdate(module_heating.getFrameLastUpdate());
         header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
 
@@ -33,30 +44,45 @@ public class Heating_View_new extends View {
         section[2] = new Section();
 
         //Create tile for sections
+        //Section 0
         section[0].createTile("cross.svg", "Główne");
         section[0].createTile("thermometer.svg", "Bufor CO");
         section[0].createTile("CWU.svg", "Bufor CWU");
         section[0].createTile("water-distribution.svg", "Podłogówka");
-
+        //Section 1
         section[1].createTile("status.svg", "Status");
         section[1].createTile("piston.svg", "Pompy");
         section[1].createTile("heat_circuit.svg", "Strefy");
         section[1].createTile("heat_circuit.svg", "Strefy");
 
+        //Section 2 -> SETTINGS!!! SECURE
+        section[2].createTile("settings.svg", "Tryb");
         section[2].createTile("settings.svg", "Ustawienia");
 
-        //Create sections info
+        //Create sections info/buttons/number fields
         createInfoSection0();
-        //createInfoSection1();
-        //FIXME need to be extended Section settings
-        //createInfoSection2();
+        createInfoSection1();
+        createInfoSection2();
 
-
-        for (int i=0; i<3; i++)
-            for (int j=0; j<4; j++)
-                for (int k=0; k<4; k++)
+        //Add components to details containers
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 4; j++)
+                for (int k = 0; k < 4; k++)
                     if (info[i][j][k] != null)
-                        section[i].getTileDetailsContainer(j).add(info[i][j][k].getInfo());
+                        section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
+        section[2].getTileDetailsContainer(0).add(cheapTariffOnly.getSource(),heatingActivated.getSource(),waterSuperHeat.getSource());
+        section[2].getTileDetailsContainer(1).add(reqTempBufferCO.getSource(), reqTempBufferCWU.getSource());
+
+        //  <--!!!settings disabled when user not sign in !!!-->
+        section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+        section[2].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
+
+        // Notification if user doesn't logged
+        Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+        section[2].getSection().addClickListener(event -> {
+            if (!isUserLoggedIn())
+                notification.open();
+        });
 
         add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
     }
@@ -133,6 +159,93 @@ public class Heating_View_new extends View {
         info[1][3][1] = new Info("Natalia", true, zone[4]);
         info[1][3][2] = new Info("Karolina", true, zone[5]);
         info[1][3][3] = new Info("łaź.góra", true, zone[6]);
+
     }
 
+    private void createInfoSection2 () {
+        //Click Listeners
+        cheapTariffOnly = new Button("II taryfa",true,module_heating.isCheapTariffOnly());
+        heatingActivated = new Button("ogrzewanie",true,module_heating.isHeatingActivated());
+        waterSuperHeat = new Button("gorąca woda",true,module_heating.isWaterSuperheat());
+
+        cheapTariffOnly.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
+            setPendingColor(cheapTariffOnly.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        heatingActivated.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVHeatingActivated(!module_heating.isHeatingActivated());
+            setPendingColor(heatingActivated.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        waterSuperHeat.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVWaterSuperheat(!module_heating.isWaterSuperheat());
+            setPendingColor(waterSuperHeat.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+
+        //Section Tile 1 required temperatures
+        reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
+        reqTempBufferCWU = new NumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
+
+        //Click Listeners
+        reqTempBufferCO.getSource().addValueChangeListener(valueChangeEvent -> {
+            module_heating.setNVReqTempBufferCO(valueChangeEvent.getValue());
+            setPendingColor(reqTempBufferCO.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        reqTempBufferCWU.getSource().addValueChangeListener(valueChangeEvent -> {
+            module_heating.setNVReqTempBufferCWU(valueChangeEvent.getValue());
+            setPendingColor(reqTempBufferCWU.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+    }
+
+    private void update() {
+        header.setLastUpdate(module_heating.getFrameLastUpdate());
+        header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
+        cheapTariffOnly.setButtonColor(module_heating.isCheapTariffOnly(),module_heating.isNVCheapTariffOnly());
+        heatingActivated.setButtonColor(module_heating.isHeatingActivated(),module_heating.isNVHeatingActivated());
+        waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(),module_heating.isNVWaterSuperheat());
+        reqTempBufferCO.setNumberField(module_heating.getReqTempBufferCO(), module_heating.getNVReqTempBufferCO());
+        reqTempBufferCWU.setNumberField(module_heating.getReqTempBufferCWU(), module_heating.getNVReqTempBufferCWU());
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        //Start thread when view active
+        thread = new FeederThread(attachEvent.getUI(), this);
+        thread.start();       //On Attach update all components
+    }
+
+    @Override
+    protected void onDetach(DetachEvent attachEvent) {
+        thread.interrupt();
+        thread = null;
+    }
+
+    private static class FeederThread extends Thread {
+        private final UI ui;
+        private final HeatingView view;
+
+        public FeederThread(UI ui, HeatingView view ) {
+            this.ui = ui;
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+
+                try {
+                    ui.access(view::update);
+
+                    //FIXME instead sleep add newData in all modules structure to respons immediately
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
