@@ -1,10 +1,9 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,90 +12,104 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 @PageTitle("Smart House | Ogrzewanie")
 @Route(value = "Ogrzewanie", layout = MainLayout.class)
-public class HeatingView extends ViewComponents {
+public class HeatingView extends View {
 
     @Autowired
     Module_Heating module_heating;
 
+    //Update thread
+    Thread thread;
+
+    //Objects
+    Header header;
+    Section[] section = new Section[3];
+    Info[][][] info = new Info[3][4][4];
+    Button cheapTariffOnly;
+    Button heatingActivated;
+    Button waterSuperHeat;
+    NumberField reqTempBufferCO;
+    NumberField reqTempBufferCWU;
+
     public HeatingView(Module_Heating module_heating) {
         this.module_heating = module_heating;
-        //Create header
-        HorizontalLayout header = createHeader(module_heating, "thermometer.svg");
-        // Section 1 - Buffers
-        HorizontalLayout section1 = createSection1();
 
-        // Section 2 - Status
-        HorizontalLayout section2 = createSection2();
+        //Header
+        header = new Header(module_heating, "thermometer.svg");
+        header.setLastUpdate(module_heating.getFrameLastUpdate());
+        header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
 
-        // Section 3 - Settings
-        HorizontalLayout section3 = createSection3();
+        //Sections
+        section[0] = new Section();
+        section[1] = new Section();
+        section[2] = new Section();
+
+        //Create tile for sections
+        //Section 0
+        section[0].createTile("cross.svg", "Główne");
+        section[0].createTile("thermometer.svg", "Bufor CO");
+        section[0].createTile("CWU.svg", "Bufor CWU");
+        section[0].createTile("water-distribution.svg", "Podłogówka");
+        //Section 1
+        section[1].createTile("status.svg", "Status");
+        section[1].createTile("piston.svg", "Pompy");
+        section[1].createTile("heat_circuit.svg", "Strefy");
+        section[1].createTile("heat_circuit.svg", "Strefy");
+
+        //Section 2 -> SETTINGS!!! SECURE
+        section[2].createTile("settings.svg", "Tryb");
+        section[2].createTile("settings.svg", "Ustawienia");
+
+        //Create sections info/buttons/number fields
+        createInfoSection0();
+        createInfoSection1();
+        createInfoSection2();
+
+        //Add components to details containers
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 4; j++)
+                for (int k = 0; k < 4; k++)
+                    if (info[i][j][k] != null)
+                        section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
+        section[2].getTileDetailsContainer(0).add(cheapTariffOnly.getSource(),heatingActivated.getSource(),waterSuperHeat.getSource());
+        section[2].getTileDetailsContainer(1).add(reqTempBufferCO.getSource(), reqTempBufferCWU.getSource());
+
+        //  <--!!!settings disabled when user not sign in !!!-->
+        section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+        section[2].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
 
         // Notification if user doesn't logged
-        Notification notification = new Notification(
-                "Brak możliwości zmian ustawień. Zaloguj się.", 3000);
-        section3.addClickListener(event -> {
+        Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+        section[2].getSection().addClickListener(event -> {
             if (!isUserLoggedIn())
                 notification.open();
         });
 
-        // Add all created elements
-        header.setMinWidth(section1.getWidth());
-        add(header, section1, section2, section3);
-
+        add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
     }
 
-    private HorizontalLayout createSection1() {
-        //Create tiles
-        HorizontalLayout section = new HorizontalLayout();
-        HorizontalLayout sectionTile0 = createTile("cross.svg", "Główne");
-        HorizontalLayout sectionTile1 = createTile("thermometer.svg", "Bufor CO");
-        HorizontalLayout sectionTile2 = createTile("CWU.svg", "Bufor CWU");
-        HorizontalLayout sectionTile3 = createTile("water-distribution.svg", "Podłogówka");
-
-        //Section Tile 0 Main data
-        VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
-        sectionTile0DetailsContainer.add(addInfo("źródła", "°C", false, false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("powrót", "°C", false, false, module_heating.gettReturn(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("kominek", "°C", false, false, module_heating.gettFirePlace(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0DetailsContainer.add(addInfo("kolektor", "°C", false, false, module_heating.gettGroundSource(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile0.add(sectionTile0DetailsContainer);
-
-        //Section Tile 1 Buffer CO
-        VerticalLayout sectionTile1DetailsContainer = createDetailsContainer();
-        sectionTile1DetailsContainer.add(addInfo("góra", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile1DetailsContainer.add(addInfo("środek", "°C", module_heating.isHeatingActivated(), false , module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile1DetailsContainer.add(addInfo("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCODown(), module_heating.getReqTempBufferCO(), 3, 5));
-        sectionTile1.add(sectionTile1DetailsContainer);
-
+    private void createInfoSection0 () {
+        //Create info's for [section][tileNo][intoNo]
+        //Main
+        info[0][0][0] = new Info("źródła", "°C", false, false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][0][1] = new Info("powrót", "°C", false, false, module_heating.gettReturn(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][0][2] = new Info("kominek", "°C", false, false, module_heating.gettFirePlace(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][0][3] = new Info("kolektor", "°C", false, false, module_heating.gettGroundSource(), module_heating.getReqTempBufferCO(), 3, 5);
+        //Buffer CO
+        info[0][1][0] = new Info("góra", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][1][1] = new Info("środek", "°C", module_heating.isHeatingActivated(), false , module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][1][2] = new Info("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCODown(), module_heating.getReqTempBufferCO(), 3, 5);
         //Section Tile 2 Buffer CWU
-        VerticalLayout sectionTile2DetailsContainer = createDetailsContainer();
-        sectionTile2DetailsContainer.add(addInfo("góra", "°C", true, false, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5));
-        sectionTile2DetailsContainer.add(addInfo("środek", "°C", true, false, module_heating.gettBufferCWUMid(), module_heating.getReqTempBufferCWU(), 3, 5));
-        sectionTile2DetailsContainer.add(addInfo("dół", "°C", true, false, module_heating.gettBufferCWUDown(), module_heating.getReqTempBufferCWU(), 3, 5));
-        sectionTile2.add(sectionTile2DetailsContainer);
-
-        //Section Tile 3 Floor heating water distribution
-        VerticalLayout sectionTile3DetailsContainer = createDetailsContainer();
-        sectionTile3DetailsContainer.add(addInfo("rozdzielacz", "°C", module_heating.isHeatingActivated(), false, module_heating.gettManifold(), 34, 3, 5));
-        sectionTile3DetailsContainer.add(addInfo("powrót parter", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnGroundFloor(), 30, 3, 5));
-        sectionTile3DetailsContainer.add(addInfo("powrót piętro", "°C" +
-                "", module_heating.isHeatingActivated(), false, module_heating.gettReturnLoft(), 30, 3, 5));
-        sectionTile3.add(sectionTile3DetailsContainer);
-
-        section.add(sectionTile0, sectionTile1, sectionTile2, sectionTile3);
-        return section;
+        info[0][2][0] = new Info("góra", "°C", true, false, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5);
+        info[0][2][1] = new Info("środek", "°C", true, false, module_heating.gettBufferCWUMid(), module_heating.getReqTempBufferCWU(), 3, 5);
+        info[0][2][2] = new Info("dół", "°C", true, false, module_heating.gettBufferCWUDown(), module_heating.getReqTempBufferCWU(), 3, 5);
+        //Floor heating water distribution
+        info[0][3][0] = new Info("rozdzielacz", "°C", module_heating.isHeatingActivated(), false, module_heating.gettManifold(), 34, 3, 5);
+        info[0][3][1] = new Info("powrót parter", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnGroundFloor(), 30, 3, 5);
+        info[0][3][2] = new Info("powrót piętro", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnLoft(), 30, 3, 5);
     }
 
-    private HorizontalLayout createSection2() {
-        //Create tiles
-        HorizontalLayout section = new HorizontalLayout();
-        HorizontalLayout sectionTile0 = createTile("status.svg", "Status");
-        HorizontalLayout sectionTile1 = createTile("piston.svg", "Pompy");
-        HorizontalLayout sectionTile2 = createTile("heat_circuit.svg", "Strefy");
+    private void createInfoSection1 () {
         String temp;
-
-        //Section Tile 0 Main
-        VerticalLayout sectionTile0DetailsContainer = createDetailsContainer();
         switch (module_heating.getHeatSourceActive()) {
             case 1:
                 temp = "Pompa PC";
@@ -111,11 +124,11 @@ public class HeatingView extends ViewComponents {
                 temp = "Błąd";
                 break;
         }
-        sectionTile0DetailsContainer.add(addInfo("źródło ciepła", temp));
+        info[1][0][0] = new Info("źródło ciepła", temp);
 
         double temp1 = (float) module_heating.getValve_bypass() * 2.5;    // scale from 1-40units to 1-100%
         temp = temp1 + "%";
-        sectionTile0DetailsContainer.add(addInfo("bypass", temp));
+        info[1][0][1] = new Info("bypass", temp);
 
         switch (module_heating.getValve_3way()) {
             case 1:
@@ -128,94 +141,111 @@ public class HeatingView extends ViewComponents {
                 temp = "Błąd";
                 break;
         }
-        sectionTile0DetailsContainer.add(addInfo("kierunek", temp));
-        sectionTile0.add(sectionTile0DetailsContainer);
+        info[1][0][2] = new Info("kierunek", temp);
 
         //Section Tile 1 Pumps
-        VerticalLayout sectionTile1DetailsContainer = createDetailsContainer();
-        sectionTile1DetailsContainer.add(addInfo("obieg dom", true, module_heating.isPump_InHouse()));
-        sectionTile1DetailsContainer.add(addInfo("obieg ziemia", true, module_heating.isPump_UnderGround()));
-        sectionTile1DetailsContainer.add(addInfo("pompa ciepła", true, module_heating.isReqHeatingPumpOn()));
-        sectionTile1.add(sectionTile1DetailsContainer);
+        info[1][1][0] = new Info("obieg dom", true, module_heating.isPump_InHouse());
+        info[1][1][1] = new Info("obieg ziemia", true, module_heating.isPump_UnderGround());
+        info[1][1][2] = new Info("pompa ciepła", true, module_heating.isReqHeatingPumpOn());
 
         //Section Tile 2 Zones
         boolean[] zone = module_heating.getZone();
-        VerticalLayout sectionTile2Details1Container = createDetailsContainer();
-        VerticalLayout sectionTile2Details2Container = createDetailsContainer();
 
-        sectionTile2Details1Container.add(addInfo("salon", true, zone[0]));
-        sectionTile2Details1Container.add(addInfo("pralnia", true, zone[1]));
-        sectionTile2Details1Container.add(addInfo("łaź.dół", true, zone[2]));
+        info[1][2][0] = new Info("salon", true, zone[0]);
+        info[1][2][1] = new Info("pralnia", true, zone[1]);
+        info[1][2][2] = new Info("łaź.dół", true, zone[2]);
 
-        sectionTile2Details2Container.add(addInfo("rodzice", true, zone[3]));
-        sectionTile2Details2Container.add(addInfo("Natalia", true, zone[4]));
-        sectionTile2Details2Container.add(addInfo("Karolina", true, zone[5]));
-        sectionTile2Details2Container.add(addInfo("łaź.góra", true, zone[6]));
+        info[1][3][0] = new Info("rodzice", true, zone[3]);
+        info[1][3][1] = new Info("Natalia", true, zone[4]);
+        info[1][3][2] = new Info("Karolina", true, zone[5]);
+        info[1][3][3] = new Info("łaź.góra", true, zone[6]);
 
-        sectionTile2.add(sectionTile2Details1Container, sectionTile2Details2Container);
-
-        section.add(sectionTile0, sectionTile1, sectionTile2);
-        return section;
     }
 
-    private HorizontalLayout createSection3() {
-        //Create tiles
-        HorizontalLayout section = new HorizontalLayout();
-        HorizontalLayout sectionTile0 = createTile("settings.svg", "Ustawienia");
-
-        //Section Tile 1 Mode
-        VerticalLayout sectionTile1Details1Container = createDetailsContainer();
-        Button cheapTariffOnly = addButton("II taryfa",true,module_heating.isCheapTariffOnly());
-        Button heatingActivated = addButton("ogrzewanie",true,module_heating.isHeatingActivated());
-        Button waterSuperHeat = addButton("gorąca woda",true,module_heating.isWaterSuperheat());
-
+    private void createInfoSection2 () {
         //Click Listeners
-        cheapTariffOnly.addClickListener(buttonClickEvent -> {
-            module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
-            setPendingColor(cheapTariffOnly);
-            module_heating.setReqUpdateValues(true);
-        });
-        heatingActivated.addClickListener(buttonClickEvent -> {
-            module_heating.setNVHeatingActivated(!module_heating.isHeatingActivated());
-            setPendingColor(heatingActivated);
-            module_heating.setReqUpdateValues(true);
-        });
-        waterSuperHeat.addClickListener(buttonClickEvent -> {
-            module_heating.setNVWaterSuperheat(!module_heating.isWaterSuperheat());
-            setPendingColor(waterSuperHeat);
-            module_heating.setReqUpdateValues(true);
-        });
+        cheapTariffOnly = new Button("II taryfa",true,module_heating.isCheapTariffOnly());
+        heatingActivated = new Button("ogrzewanie",true,module_heating.isHeatingActivated());
+        waterSuperHeat = new Button("gorąca woda",true,module_heating.isWaterSuperheat());
 
-        //Add components to container
-        sectionTile1Details1Container.add(cheapTariffOnly,heatingActivated,waterSuperHeat);
+        cheapTariffOnly.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
+            setPendingColor(cheapTariffOnly.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        heatingActivated.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVHeatingActivated(!module_heating.isHeatingActivated());
+            setPendingColor(heatingActivated.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        waterSuperHeat.getSource().addClickListener(buttonClickEvent -> {
+            module_heating.setNVWaterSuperheat(!module_heating.isWaterSuperheat());
+            setPendingColor(waterSuperHeat.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
 
         //Section Tile 1 required temperatures
-        VerticalLayout sectionTile1Details2Container = createDetailsContainer();
-        NumberField reqTempBufferCO = addNumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
-        NumberField reqTempBufferCWU = addNumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
+        reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
+        reqTempBufferCWU = new NumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
 
         //Click Listeners
-        reqTempBufferCO.addValueChangeListener(valueChangeEvent -> {
+        reqTempBufferCO.getSource().addValueChangeListener(valueChangeEvent -> {
             module_heating.setNVReqTempBufferCO(valueChangeEvent.getValue());
-            setPendingColor(reqTempBufferCO);
+            setPendingColor(reqTempBufferCO.getSource());
             module_heating.setReqUpdateValues(true);
         });
-        reqTempBufferCWU.addValueChangeListener(valueChangeEvent -> {
+        reqTempBufferCWU.getSource().addValueChangeListener(valueChangeEvent -> {
             module_heating.setNVReqTempBufferCWU(valueChangeEvent.getValue());
-            setPendingColor(reqTempBufferCWU);
+            setPendingColor(reqTempBufferCWU.getSource());
             module_heating.setReqUpdateValues(true);
         });
+    }
 
-        //Add components to container
-        sectionTile1Details2Container.add(reqTempBufferCO, reqTempBufferCWU);
+    private void update() {
+        header.setLastUpdate(module_heating.getFrameLastUpdate());
+        header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
+        cheapTariffOnly.setButtonColor(module_heating.isCheapTariffOnly(),module_heating.isNVCheapTariffOnly());
+        heatingActivated.setButtonColor(module_heating.isHeatingActivated(),module_heating.isNVHeatingActivated());
+        waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(),module_heating.isNVWaterSuperheat());
+        reqTempBufferCO.setNumberField(module_heating.getReqTempBufferCO(), module_heating.getNVReqTempBufferCO());
+        reqTempBufferCWU.setNumberField(module_heating.getReqTempBufferCWU(), module_heating.getNVReqTempBufferCWU());
+    }
 
-        sectionTile0.add(sectionTile1Details1Container,sectionTile1Details2Container);
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        //Start thread when view active
+        thread = new FeederThread(attachEvent.getUI(), this);
+        thread.start();       //On Attach update all components
+    }
 
-        //  <--!!!settings disabled when user not sign in !!!-->
-        sectionTile0.setEnabled(isUserLoggedIn());
+    @Override
+    protected void onDetach(DetachEvent attachEvent) {
+        thread.interrupt();
+        thread = null;
+    }
 
-        section.add(sectionTile0);
+    private static class FeederThread extends Thread {
+        private final UI ui;
+        private final HeatingView view;
 
-        return section;
+        public FeederThread(UI ui, HeatingView view ) {
+            this.ui = ui;
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+
+                try {
+                    ui.access(view::update);
+
+                    //FIXME instead sleep add newData in all modules structure to respons immediately
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

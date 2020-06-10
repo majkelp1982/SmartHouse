@@ -1,6 +1,7 @@
+// !!!!!!!!!!!!!!!!!!!! TO BE DELETED WHEN CHANGE TO VIEW !!!!!!!!!!!!!!!!!!!1
+
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
