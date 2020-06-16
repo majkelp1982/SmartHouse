@@ -2,14 +2,11 @@ package pl.pomazanka.SmartHouse.ui.views;
 
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HtmlContainer;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -162,6 +159,7 @@ public class View extends VerticalLayout {
         public Info(String name, String value) {
             info = new HorizontalLayout();
             nameLabel = new Label("" + name);
+            this.colorEnabled = false;
             nameLabel.getStyle().set("color", COLOR_NORMAL);
             valueLabel = new Label();
             nameLabel.getStyle().set("color", COLOR_NORMAL);
@@ -171,6 +169,7 @@ public class View extends VerticalLayout {
 
         public Info(String name, boolean colorEnabled, boolean status) {
             info = new HorizontalLayout();
+            this.colorEnabled = colorEnabled;
             nameLabel = new Label("" + name);
             setValue(status);
             info.add(nameLabel);
