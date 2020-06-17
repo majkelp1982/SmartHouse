@@ -68,37 +68,37 @@ public class ComfortView extends View {
 
         //Click Listeners
         numberFields[0].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ0(valueChangeEvent.getValue());
             setPendingColor(numberFields[0].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[1].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ1(valueChangeEvent.getValue());
             setPendingColor(numberFields[1].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[2].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ2(valueChangeEvent.getValue());
             setPendingColor(numberFields[2].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[3].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ3(valueChangeEvent.getValue());
             setPendingColor(numberFields[3].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[4].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ4(valueChangeEvent.getValue());
             setPendingColor(numberFields[4].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[5].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ5(valueChangeEvent.getValue());
             setPendingColor(numberFields[5].getSource());
             module_comfort.setReqUpdateValues(true);
         });
         numberFields[6].getSource().addValueChangeListener(valueChangeEvent -> {
-            module_comfort.setNVReqZ0(valueChangeEvent.getValue().shortValue());
+            module_comfort.setNVReqZ6(valueChangeEvent.getValue());
             setPendingColor(numberFields[6].getSource());
             module_comfort.setReqUpdateValues(true);
         });
@@ -175,7 +175,7 @@ public class ComfortView extends View {
             }
 
         for (int i = 0; i <= 6; i++)
-            numberFields[i].setNumberField(zone[i].isTemp, zone[i].NVReqTemp);
+            numberFields[i].setNumberField(zone[i].reqTemp, zone[i].NVReqTemp);
     }
 
     @Override
