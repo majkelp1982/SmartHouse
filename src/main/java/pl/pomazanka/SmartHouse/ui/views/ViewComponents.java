@@ -123,7 +123,6 @@ public class ViewComponents extends VerticalLayout {
 
         Button button = new Button(name);
         setActualColor(button,status);
-        // FIXME colors,etc
         return button;
     }
 
@@ -134,9 +133,6 @@ public class ViewComponents extends VerticalLayout {
         numberField.setStep(0.5d);
         numberField.setMin(min);
         numberField.setMax(max);
-
-
-        //FIXME need to be extend colors, etc.
         return numberField;
     }
 
