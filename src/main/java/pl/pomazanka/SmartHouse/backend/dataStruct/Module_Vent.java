@@ -9,7 +9,7 @@ public class Module_Vent extends Module implements Cloneable {
 
     private boolean fanON;
     private int[] hour = new int[12];
-    protected int[] NVHour = new int[12];
+    private int[] NVHour = new int[13];
 
     public Module_Vent() {
         super(MODULE_TYPE,"Wentylacja");
@@ -120,7 +120,8 @@ public class Module_Vent extends Module implements Cloneable {
     }
 
     private void assignNV() {
-            NVHour = hour;
+        for (int i=0; i<12; i++)
+          NVHour[i] = hour[i];
     }
 
     public boolean compare(Module_Vent module_vent) {

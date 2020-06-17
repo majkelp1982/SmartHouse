@@ -250,7 +250,7 @@ public class View extends VerticalLayout {
         }
     }
 
-    private Date getCurrentDate() {
+    public Date getCurrentDate() {
         return new Date();
     }
 
