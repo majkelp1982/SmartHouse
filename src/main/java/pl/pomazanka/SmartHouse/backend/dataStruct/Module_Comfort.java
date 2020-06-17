@@ -19,37 +19,37 @@ public class Module_Comfort extends Module implements Cloneable {
         return zone;
     }
 
-    public void setNVReqZ0(float NVReqTempZ0) {
+    public void setNVReqZ0(double NVReqTempZ0) {
         zone[0].NVReqTemp = NVReqTempZ0;
         setUpToDate(false);
     }
 
-    public void setNVReqZ1(float NVReqTempZ1) {
+    public void setNVReqZ1(double NVReqTempZ1) {
         zone[1].NVReqTemp = NVReqTempZ1;
         setUpToDate(false);
     }
 
-    public void setNVReqZ2(float NVReqTempZ2) {
+    public void setNVReqZ2(double NVReqTempZ2) {
         zone[2].NVReqTemp = NVReqTempZ2;
         setUpToDate(false);
     }
 
-    public void setNVReqZ3(float NVReqTempZ3) {
+    public void setNVReqZ3(double NVReqTempZ3) {
         zone[3].NVReqTemp = NVReqTempZ3;
         setUpToDate(false);
     }
 
-    public void setNVReqZ4(float NVReqTempZ4) {
+    public void setNVReqZ4(double NVReqTempZ4) {
         zone[4].NVReqTemp = NVReqTempZ4;
         setUpToDate(false);
     }
 
-    public void setNVReqZ5(float NVReqTempZ5) {
+    public void setNVReqZ5(double NVReqTempZ5) {
         zone[5].NVReqTemp = NVReqTempZ5;
         setUpToDate(false);
     }
 
-    public void setNVReqZ6(float NVReqTempZ6) {
+    public void setNVReqZ6(double NVReqTempZ6) {
         zone[6].NVReqTemp = NVReqTempZ6;
         setUpToDate(false);
     }
@@ -71,7 +71,7 @@ public class Module_Comfort extends Module implements Cloneable {
             case 0: // standard frame 0
                 for (int i=0; i<7; i++) {
                     zone[i].isTemp = (float) (packetData[i * 4 + 3] * 10 + packetData[i * 4 + 4]) / 10;
-                    zone[i].reqTemp = (float) (packetData[i * 4 + 5] / 2.00);
+                    zone[i].reqTemp = (packetData[i * 4 + 5] / 2.00);
                     zone[i].isHumidity = (int) (packetData[i * 4 + 6]);
                     setFrameLastUpdate(getCurrentDate());
                 }
@@ -103,8 +103,8 @@ public class Module_Comfort extends Module implements Cloneable {
 
     public class Zone implements Cloneable {
         public float isTemp=0;
-        public float reqTemp=0;
-        public float NVReqTemp = 0;
+        public double reqTemp=0;
+        public double NVReqTemp = 0;
         public int isHumidity=0;
 
         @Override

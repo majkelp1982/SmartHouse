@@ -172,13 +172,13 @@ public class UDPController {
     //send Comfort Module NV
     private void sendComfortNV() {
         Module_Comfort.Zone[] zone = module_comfort.getZone();
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 5, (int)zone[0].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 9, (int)zone[1].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 13, (int)zone[2].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 17, (int)zone[3].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 21, (int)zone[4].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 25, (int)zone[5].NVReqTemp*2);
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 29, (int)zone[6].NVReqTemp*2);
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 5, (int)(zone[0].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 9, (int)(zone[1].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 13, (int)(zone[2].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 17, (int)(zone[3].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 21, (int)(zone[4].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 25, (int)(zone[5].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 29, (int)(zone[6].NVReqTemp*2));
     }
 
     //send Vent Module NV
