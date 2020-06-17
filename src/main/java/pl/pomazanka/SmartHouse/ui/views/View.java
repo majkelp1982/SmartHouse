@@ -170,7 +170,7 @@ public class View extends VerticalLayout {
         public Info(String name, boolean colorEnabled, boolean status) {
             info = new HorizontalLayout();
             this.colorEnabled = colorEnabled;
-            nameLabel = new Label("" + name);
+            nameLabel = new Label(name);
             setValue(status);
             info.add(nameLabel);
         }
@@ -192,6 +192,9 @@ public class View extends VerticalLayout {
 
         public HorizontalLayout getSource() {
             return info;
+        }
+        public Label getNameLabel() {
+            return nameLabel;
         }
     }
 
