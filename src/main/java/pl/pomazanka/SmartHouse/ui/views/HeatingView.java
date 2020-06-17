@@ -202,13 +202,86 @@ public class HeatingView extends View {
     }
 
     private void update() {
+        //Header
         header.setLastUpdate(module_heating.getFrameLastUpdate());
         header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
+
+        //Settings
         cheapTariffOnly.setButtonColor(module_heating.isCheapTariffOnly(),module_heating.isNVCheapTariffOnly());
         heatingActivated.setButtonColor(module_heating.isHeatingActivated(),module_heating.isNVHeatingActivated());
         waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(),module_heating.isNVWaterSuperheat());
         reqTempBufferCO.setNumberField(module_heating.getReqTempBufferCO(), module_heating.getNVReqTempBufferCO());
         reqTempBufferCWU.setNumberField(module_heating.getReqTempBufferCWU(), module_heating.getNVReqTempBufferCWU());
+
+        //Info's
+        info[0][0][0].setValue(module_heating.gettSupply());
+        info[0][0][1].setValue(module_heating.gettReturn());
+        info[0][0][2].setValue(module_heating.gettFirePlace());
+        info[0][0][3].setValue(module_heating.gettGroundSource());
+        //Buffer CO
+        info[0][1][0].setValue(module_heating.gettBufferCOHigh());
+        info[0][1][1].setValue(module_heating.gettBufferCOMid());
+        info[0][1][2].setValue(module_heating.gettBufferCODown());
+        //Section Tile 2 Buffer CWU
+        info[0][2][0].setValue(module_heating.gettBufferCWUHigh());
+        info[0][2][1].setValue(module_heating.gettBufferCWUMid());
+        info[0][2][2].setValue(module_heating.gettBufferCWUDown());
+        //Floor heating water distribution
+        info[0][3][0].setValue(module_heating.gettManifold());
+        info[0][3][1].setValue(module_heating.gettReturnGroundFloor());
+        info[0][3][2].setValue(module_heating.gettReturnLoft());
+
+        String temp;
+        switch (module_heating.getHeatSourceActive()) {
+            case 1:
+                temp = "Pompa PC";
+                break;
+            case 2:
+                temp = "Bufor CO";
+                break;
+            case 3:
+                temp = "Kominek";
+                break;
+            default:
+                temp = "Błąd";
+                break;
+        }
+        info[1][0][0].setValue(temp);
+
+        double temp1 = (float) module_heating.getValve_bypass() * 2.5;    // scale from 1-40units to 1-100%
+        temp = temp1 + "%";
+        info[1][0][1].setValue(temp);
+
+        switch (module_heating.getValve_3way()) {
+            case 1:
+                temp = "CO";
+                break;
+            case 2:
+                temp = "CWU";
+                break;
+            default:
+                temp = "Błąd";
+                break;
+        }
+        info[1][0][2].setValue(temp);
+
+        //Section Tile 1 Pumps
+        info[1][1][0].setValue(module_heating.isPump_InHouse());
+        info[1][1][1].setValue(module_heating.isPump_UnderGround());
+        info[1][1][2].setValue(module_heating.isReqHeatingPumpOn());
+
+        //Section Tile 2 Zones
+        boolean[] zone = module_heating.getZone();
+
+        info[1][2][0].setValue(zone[0]);
+        info[1][2][1].setValue(zone[1]);
+        info[1][2][2].setValue(zone[2]);
+
+        info[1][3][0].setValue(zone[3]);
+        info[1][3][1].setValue(zone[4]);
+        info[1][3][2].setValue(zone[5]);
+        info[1][3][3].setValue(zone[6]);
+
     }
 
     @Override
