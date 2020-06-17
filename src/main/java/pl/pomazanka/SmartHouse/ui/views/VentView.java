@@ -201,7 +201,7 @@ public class VentView extends ViewComponents {
 
     private void gridListener(int hour, int quarter) {
         if (!isUserLoggedIn()) return;
-        //TODO
+        //TODO need to be programed
         System.out.println("Clicked Hour:"+hour+" quarter:"+quarter);
     }
 }
