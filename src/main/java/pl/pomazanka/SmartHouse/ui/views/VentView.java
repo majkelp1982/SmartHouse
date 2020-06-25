@@ -93,7 +93,8 @@ public class VentView extends View {
                  info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-             return info.getSource();
+            else info.setValue(result);
+            return info.getSource();
         })).setHeader("0-14");
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
@@ -106,6 +107,7 @@ public class VentView extends View {
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
+            else info.setValue(result);
             return info.getSource();
         })).setHeader("15-29");
 
@@ -119,6 +121,7 @@ public class VentView extends View {
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
+            else info.setValue(result);
             return info.getSource();
         })).setHeader("30-44");
 
@@ -132,6 +135,7 @@ public class VentView extends View {
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
+            else info.setValue(result);
             return info.getSource();
         })).setHeader("45-59");
 
@@ -230,6 +234,14 @@ public class VentView extends View {
             actualDiagram.add(ventByHour[i*2+1]);
         }
 
+        if (module_vent.isAllUpToDate()) {
+            for (int i=0; i<12; i++)
+                for (int j=0; j<4; j++) {
+                    ventByHour[i * 2].setQuarterPending(j, false);
+                    ventByHour[i * 2 + 1].setQuarterPending(j, false);
+                }
+        }
+
         Date currentDate = getCurrentDate();
         int quarterActive;
         if (currentDate.getMinutes()<15) quarterActive=0;
@@ -257,7 +269,6 @@ public class VentView extends View {
 
     private void gridListener(int hour, int quarter) {
         if (!isUserLoggedIn()) return;
-        //TODO is [orange color stay permanent] must[after value overwritten should change color
         actualDiagram.get(hour).setQuarterPending(quarter,true);
         int[] hours = module_vent.getNVHour();
         if ((hour % 2)>0) quarter += 4;
