@@ -34,11 +34,11 @@ public class UDPController {
     private static int[] packetData;
     int localPort = 6000;
     private static final int PACKET_SIZE_MODULE_3 = 16;					    // length of UDP data from module 3 "wentylacja"
-    private static final int PACKET_SIZE_MODULE_3_DIAG = 99;				// length of UDP diagnose from module 3 "wentylacja"
+    private static final int PACKET_SIZE_MODULE_3_DIAG = 7;				    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_14 = 21;					// length of UDP data from module 14 "Ogrzewanie2"
-    private static final int PACKET_SIZE_MODULE_14_DIAG = 8;				// length of UDP diagnose from module 14 "Ogrzewanie2"
+    private static final int PACKET_SIZE_MODULE_14 = 21;					// length of UDP data from module 14 "Ogrzewanie"
+    private static final int PACKET_SIZE_MODULE_14_DIAG = 8;				// length of UDP diagnose from module 14 "Ogrzewanie"
 
     public UDPController() {
         try {
@@ -71,7 +71,10 @@ public class UDPController {
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
             }
         }
-        if (!packetCorrect) mongoDBController.saveNotice("UDP", "Niekompletny pakiet. Modul ["+packetData[0]+"] odebrano ["+packetLength+"]");
+        if (!packetCorrect) {
+            mongoDBController.saveNotice("UDP", "Niekompletny pakiet. Modul ["+packetData[0]+"] odebrano ["+packetLength+"]");
+            System.out.println("UDP : Niekompletny pakiet. Modul ["+packetData[0]+"] odebrano ["+packetLength+"]");
+        }
         return packetCorrect;
     }
 

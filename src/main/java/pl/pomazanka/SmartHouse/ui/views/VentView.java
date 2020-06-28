@@ -31,7 +31,7 @@ public class VentView extends View {
     Section[] section = new Section[2];
     Info[][][] info = new Info[2][1][1];
     Grid<VentByHour> grid = new Grid<>();
-    List<VentByHour> actualDiagram = new ArrayList<>();;
+    List<VentByHour> actualDiagram = new ArrayList<>();
     VentByHour[] ventByHour = new VentByHour[24];
 
     public VentView(Module_Vent module_vent) {
@@ -89,11 +89,11 @@ public class VentView extends View {
             String text = result ? "❶" : "⓿";
             Info info = new Info(text,true, result);
             info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                  info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-            else info.setValue(result);
             return info.getSource();
         })).setHeader("0-14");
 
@@ -103,12 +103,12 @@ public class VentView extends View {
             String text = result ? "❶" : "⓿";
             Info info = new Info(text,true, result);
             info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-            else info.setValue(result);
-            return info.getSource();
+             return info.getSource();
         })).setHeader("15-29");
 
         grid.addColumn(new ComponentRenderer<>(VentActive-> {
@@ -117,11 +117,11 @@ public class VentView extends View {
             String text = result ? "❶" : "⓿";
             Info info = new Info(text,true, result);
             info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-            else info.setValue(result);
             return info.getSource();
         })).setHeader("30-44");
 
@@ -131,11 +131,11 @@ public class VentView extends View {
             String text = result ? "❶" : "⓿";
             Info info = new Info(text,true, result);
             info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-            else info.setValue(result);
             return info.getSource();
         })).setHeader("45-59");
 
@@ -143,7 +143,7 @@ public class VentView extends View {
         grid.setItems(actualDiagram);
     }
 
-    private class Quarter {
+    private static class  Quarter {
         private boolean quarter;
         private boolean pending;
         private boolean active;
@@ -173,7 +173,7 @@ public class VentView extends View {
         }
     }
 
-    private class VentByHour {
+    private static class VentByHour {
         private int hour;
         private Quarter[] quarter = new Quarter[4];
 
@@ -216,6 +216,7 @@ public class VentView extends View {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private List<VentByHour> getActualDiagram () {
         int[] hours = module_vent.getHour();
         actualDiagram.clear();
@@ -320,7 +321,6 @@ public class VentView extends View {
     private static class FeederThread extends Thread {
         private final UI ui;
         private final VentView view;
-
         public FeederThread(UI ui, VentView view ) {
             this.ui = ui;
             this.view = view;
@@ -331,6 +331,7 @@ public class VentView extends View {
             while (true) {
                 try {
                     ui.access(view::update);
+
                     //FIXME instead sleep add newData in all modules structure to respons immediately
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
