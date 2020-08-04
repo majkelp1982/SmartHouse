@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 
 import java.text.SimpleDateFormat;
@@ -35,6 +36,7 @@ public class View extends VerticalLayout {
         private Label lastUpdateLabel;
         private Label diagnoseUpdateLabel;
 
+        //Header for Modules
         public Header(Module module, String imageSrc) {
             header = new HorizontalLayout();
 
@@ -49,6 +51,31 @@ public class View extends VerticalLayout {
             VerticalLayout info = new VerticalLayout();
             info.setAlignItems(FlexComponent.Alignment.CENTER);
             info.add(lastUpdateLabel, diagnoseUpdateLabel);
+            info.setWidth("800px");
+            info.setSizeFull();
+
+            header.addClassName("module");
+            header.setMinWidth("800px");
+            header.setSizeFull();
+            header.setHeight("80px");
+            header.setAlignItems(FlexComponent.Alignment.CENTER);
+            header.add(image, moduleTyp, info);
+        }
+
+        //Header for diagnostic view
+        public Header(Diagnostic diagnostic, String imageSrc) {
+            header = new HorizontalLayout();
+
+            //About module type
+            Image image = new Image(imageSrc, imageSrc);
+            image.setHeight("80px");
+            Label moduleTyp = new Label(diagnostic.getModuleName());
+            moduleTyp.getStyle().set("font-size", "30px");
+
+            diagnoseUpdateLabel = new Label();
+            VerticalLayout info = new VerticalLayout();
+            info.setAlignItems(FlexComponent.Alignment.CENTER);
+            info.add(diagnoseUpdateLabel);
             info.setWidth("800px");
             info.setSizeFull();
 
