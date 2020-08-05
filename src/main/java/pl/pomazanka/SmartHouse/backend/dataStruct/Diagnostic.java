@@ -14,11 +14,12 @@ public class Diagnostic {
     private Date diagnosticLastUpdate = new Date();
 
     private ArrayList<ModuleDiagInfo> modules;
-    private Fault[] globalFaultList;
+    private ArrayList<ModuleFault> globalFaultsList;
 
     public Diagnostic () {
         headerName = "Diagnostyka";
         modules = new ArrayList<>();
+        globalFaultsList = new ArrayList<>();
     }
 
     public String getModuleName() {
@@ -41,9 +42,39 @@ public class Diagnostic {
                 module.setIP(IP);
     }
 
-    public void updateGlobalFaultList(int moduleTyp, Module.Fault[] fault) {
-        for (Module.Fault tmp : fault) {
-            System.out.println(tmp.getText());
+    public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
+        //Clear global list
+        globalFaultsList.clear();
+
+        //Get proper module type
+        for (ModuleDiagInfo module : modules) {
+            if (module.getModuleType() == moduleTyp) {
+                // Get each fault already present in global list
+                for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+                    // When fault active, but not present
+                    if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
+                        fault.setOutgoing(LocalDate.now());
+                }
+
+                //Get each fault from module list
+                for (int i = 0; i<Module.FAULT_MAX; i++) {
+                    if (moduleFaultList[i] == null) return;
+
+                    if (moduleFaultList[i].isPresent()) {
+                        boolean reqNewInstance = true;
+                        for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+                            if ((fault.getIndex() == i) && (fault.getOutgoing() != null))
+                                reqNewInstance = false;
+                        }
+                        if (reqNewInstance)
+                            module.addFault(i, LocalDate.now(), moduleFaultList[i].getText());
+                    }
+                }
+            }
+            //Update global fault list
+            for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+                globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+            }
         }
     }
 
@@ -51,23 +82,52 @@ public class Diagnostic {
         return modules;
     }
 
+    public ArrayList<ModuleFault> getGlobalFaultsList() {
+        return globalFaultsList;
+    }
+
     public class ModuleDiagInfo {
         private int moduleType;
         private String moduleName;
         private int[] IP = new int[4];
-        private boolean error = false;
-        private ArrayList<FaultList> faultList;
+        private ArrayList<Fault> faultList;
 
         public ModuleDiagInfo(int moduleType, String moduleName) {
             this.moduleType = moduleType;
             this.moduleName = moduleName;
         }
 
-        private class FaultList {
+        private class Fault {
             private LocalDate incoming;
-            private LocalDate outgoing;
+            private LocalDate outgoing = null;
+            private int index;
             private String description;
 
+            public Fault (int index, LocalDate incoming, String description) {
+                this.index = index;
+                this.incoming = incoming;
+                this.description = description;
+            }
+
+            public LocalDate getIncoming() {
+                return incoming;
+            }
+
+            public LocalDate getOutgoing() {
+                return outgoing;
+            }
+
+            public void setOutgoing(LocalDate outgoing) {
+                this.outgoing = outgoing;
+            }
+
+            public int getIndex() {
+                return index;
+            }
+
+            public String getDescription() {
+                return description;
+            }
         }
 
         public int getModuleType() {
@@ -87,31 +147,54 @@ public class Diagnostic {
             setDiagnosticLastUpdate(new Date());
         }
 
-        public boolean isError() {
-            return error;
+        public ArrayList<Fault> getFaultList() {
+            return faultList;
+        }
+
+        public void addFault(int index, LocalDate incoming, String description) {
+            faultList.add(new Fault(index, incoming, description));
         }
     }
 
-    public class Fault {
-        private boolean present;
-        private String text;
-        ;
-        public Fault (String text) {
-            this.text = text;
+    public class ModuleFault {
+        private int moduleType;
+        private String moduleName;
+        private LocalDate incoming;
+        private LocalDate outgoing;
+        private int index;
+        private String description;
+
+        public ModuleFault(int moduleType, String moduleName, LocalDate incoming, LocalDate outgoing, int index, String description) {
+            this.moduleType =moduleType;
+            this.moduleName = moduleName;
+            this.incoming = incoming;
+            this.outgoing = outgoing;
+            this.index = index;
+            this.description = description;
         }
 
-        public boolean isPresent() {
-            return present;
+        public int getModuleType() {
+            return moduleType;
         }
 
-        public void setPresent(boolean present) {
-            this.present = present;
+        public String getModuleName() {
+            return moduleName;
         }
 
-        public String getText() {
-            return text;
+        public LocalDate getIncoming() {
+            return incoming;
         }
 
+        public LocalDate getOutgoing() {
+            return outgoing;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
-
 }

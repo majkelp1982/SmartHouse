@@ -5,8 +5,7 @@ import javax.annotation.PostConstruct;
 import java.util.Date;
 
 public class Module {
-
-    public final int FAULT_MAX = 100;
+    public static final int FAULT_MAX = 100;
 
     private int moduleType;
     private String moduleName;
@@ -56,7 +55,6 @@ public class Module {
         else {
             throw new Exception("Double declaration of fault number "+faultNo);
         }
-
     }
 
     public void resetFaultPresent() {
@@ -66,7 +64,7 @@ public class Module {
     }
 
     public void updateGlobalFaultList() {
-        diagnostic.updateGlobalFaultList(getModuleType(), fault);
+        diagnostic.updateModuleFaultList(getModuleType(), fault);
     }
 
     public Date getFrameLastUpdate() {
