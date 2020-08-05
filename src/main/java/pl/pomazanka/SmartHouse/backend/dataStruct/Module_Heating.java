@@ -1,10 +1,10 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class Module_Heating extends Module implements Cloneable {
-
     //Module heating type
     private static byte MODULE_TYPE = 14;
 

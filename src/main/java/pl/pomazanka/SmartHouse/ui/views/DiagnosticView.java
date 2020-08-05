@@ -26,8 +26,8 @@ public class DiagnosticView extends View {
     //Objects
     Header header;
     Section[] section = new Section[2];
-    Grid<IPAddress> ipAddressGrid = new Grid<>();
-    List<IPAddress> ipAddressList = new ArrayList<>();
+    Grid<Diagnostic.ModuleDiagInfo> ipAddressGrid = new Grid<>();
+    List<Diagnostic.ModuleDiagInfo> ipAddressList = new ArrayList<>();
 
     public DiagnosticView(Diagnostic diagnostic) {
         this.diagnostic = diagnostic;
@@ -50,62 +50,13 @@ public class DiagnosticView extends View {
         add(header.getHeader(),section[0].getSection());
     }
     private void createInfoSection0() {
-        ipAddressList = getActualIPAddressList();
-
-        ipAddressGrid.addColumn(IPAddress::getModuleType).setHeader("Typ");
-        ipAddressGrid.addColumn(IPAddress::getModuleName).setHeader("Nazwa modułu");
-        ipAddressGrid.addColumn(IPAddress::getIP).setHeader("Adres IP");
+        ipAddressList = diagnostic.getModules();
+        ipAddressGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ");
+        ipAddressGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
+        ipAddressGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Adres IP");
 
         ipAddressGrid.setItems(ipAddressList);
         ipAddressGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
-
-    }
-
-    private static class IPAddress {
-        private int moduleType;
-        private String moduleName;
-        private int[] IP = new int[4];
-        private boolean error = false;
-
-        public IPAddress() {
-        }
-
-        public int getModuleType() {
-            return moduleType;
-        }
-
-        public void setModuleType(int moduleType) {
-            this.moduleType = moduleType;
-        }
-
-        public String getModuleName() {
-            return moduleName;
-        }
-
-        public void setModuleName(String moduleName) {
-            this.moduleName = moduleName;
-        }
-
-        public String getIP() {
-            String ipAddress = IP[0]+"."+IP[1]+"."+IP[2]+"."+IP[3];
-            return ipAddress;
-        }
-
-        public void setIP(int[] IP) {
-            this.IP = IP;
-        }
-
-        public boolean isError() {
-            return error;
-        }
-
-        public void setError(boolean error) {
-            this.error = error;
-        }
-    }
-
-    private List<IPAddress> getActualIPAddressList () {
-        //FIXME get module List from backend diagnostic list
     }
 
     private void update() {

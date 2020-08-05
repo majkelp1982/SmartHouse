@@ -1,5 +1,9 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
+
+import javax.annotation.PostConstruct;
 import java.util.Date;
 
 public class Module {
@@ -12,9 +16,17 @@ public class Module {
     private Date diagnosticLastUpdate = new Date();
     private boolean reqUpdateValues = false;
 
+    @Autowired
+    Diagnostic diagnostic;
+
     public Module(int moduleType,String moduleName) {
         this.moduleType = moduleType;
         this.moduleName = moduleName;
+    }
+
+    @PostConstruct
+    public void postConstructor() {
+        diagnostic.addModule(moduleType, moduleName);
     }
 
     public int getModuleType() {
@@ -31,6 +43,7 @@ public class Module {
 
     public void setIP(int[] IP) {
         this.IP = IP;
+        diagnostic.updateIP(getModuleType(), IP);
     }
 
     public boolean isError() {

@@ -8,6 +8,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
@@ -29,7 +30,6 @@ public class MongoDBController {
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
         int moduleType = packetData[0];             // Get basic data from UDP frame
-
 
         switch (moduleType) {
             case 3 : {
