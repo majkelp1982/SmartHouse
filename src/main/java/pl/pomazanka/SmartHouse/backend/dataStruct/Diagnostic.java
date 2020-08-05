@@ -35,10 +35,9 @@ public class Diagnostic {
     }
 
     public void updateIP (int moduleTyp, int[] IP) {
-        for (ModuleDiagInfo module: modules) {
+        for (ModuleDiagInfo module: modules)
             if (module.getModuleType() == moduleTyp)
                 module.setIP(IP);
-        }
     }
 
     public ArrayList<ModuleDiagInfo> getModules() {
@@ -59,7 +58,9 @@ public class Diagnostic {
 
         private class FaultList {
             private LocalDate incoming;
+            private LocalDate outgoing;
             private String description;
+
         }
 
         public int getModuleType() {
@@ -81,10 +82,6 @@ public class Diagnostic {
 
         public boolean isError() {
             return error;
-        }
-
-        public ArrayList<FaultList> getFaultList() {
-            return faultList;
         }
     }
 }

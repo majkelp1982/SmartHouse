@@ -10,7 +10,7 @@ public class Module {
     private int moduleType;
     private String moduleName;
     private int[] IP = new int[4];
-    private boolean error = false;
+    private Fault[] fault = new Fault[100];
     private boolean upToDate = false;
     private Date frameLastUpdate = new Date();
     private Date diagnosticLastUpdate = new Date();
@@ -46,12 +46,12 @@ public class Module {
         diagnostic.updateIP(getModuleType(), IP);
     }
 
-    public boolean isError() {
-        return error;
+    public void setFaultPresent(int faultNo, boolean present) {
+        fault[faultNo].setPresent(present);
     }
 
-    public void setError(boolean error) {
-        this.error = error;
+    public void setFaultText(int faultNo, String text) {
+        fault[faultNo].setText(text);
     }
 
     public Date getFrameLastUpdate() {
@@ -109,5 +109,26 @@ public class Module {
     protected Date getCurrentDate() {
         Date nowDate = new Date();
         return nowDate;
+    }
+
+    private class Fault {
+        private boolean present;
+        private String text;
+
+        public boolean isPresent() {
+            return present;
+        }
+
+        public void setPresent(boolean present) {
+            this.present = present;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
     }
 }
