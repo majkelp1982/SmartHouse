@@ -14,6 +14,7 @@ public class Diagnostic {
     private Date diagnosticLastUpdate = new Date();
 
     private ArrayList<ModuleDiagInfo> modules;
+    private Fault[] globalFaultList;
 
     public Diagnostic () {
         headerName = "Diagnostyka";
@@ -40,7 +41,11 @@ public class Diagnostic {
                 module.setIP(IP);
     }
 
-    public void updateFaultList(int moduleTyp, )
+    public void updateGlobalFaultList(int moduleTyp, Module.Fault[] fault) {
+        for (Module.Fault tmp : fault) {
+            System.out.println(tmp.getText());
+        }
+    }
 
     public ArrayList<ModuleDiagInfo> getModules() {
         return modules;
@@ -108,4 +113,5 @@ public class Diagnostic {
         }
 
     }
+
 }

@@ -122,7 +122,7 @@ public class Module_Comfort extends Module implements Cloneable {
         for (int i=0; i<7; i++)
             if (zone[i].isTemp <11) setFaultPresent(i, true);
         //TODO fault list to extend
-        diagnostic.updateFaultList(MODULE_TYPE);
+        updateGlobalFaultList();
     }
 
     public class Zone implements Cloneable {

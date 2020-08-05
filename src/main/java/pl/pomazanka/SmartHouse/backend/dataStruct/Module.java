@@ -11,7 +11,7 @@ public class Module {
     private int moduleType;
     private String moduleName;
     private int[] IP = new int[4];
-    private Diagnostic.Fault[] fault = new Diagnostic.Fault[FAULT_MAX];
+    private Fault[] fault = new Fault[FAULT_MAX];
     private boolean upToDate = false;
     private Date frameLastUpdate = new Date();
     private Date diagnosticLastUpdate = new Date();
@@ -52,7 +52,7 @@ public class Module {
     }
 
     public void setFaultText(int faultNo, String text) throws Exception {
-        if (fault[faultNo] == null) fault[faultNo] = new Diagnostic.Fault(text);
+        if (fault[faultNo] == null) fault[faultNo] = new Fault(text);
         else {
             throw new Exception("Double declaration of fault number "+faultNo);
         }
@@ -63,6 +63,10 @@ public class Module {
         //Clear old fault present status
         for (int i=0; i<FAULT_MAX; i++)
             if (fault[i] != null) setFaultPresent(i,false);
+    }
+
+    public void updateGlobalFaultList() {
+        diagnostic.updateGlobalFaultList(getModuleType(), fault);
     }
 
     public Date getFrameLastUpdate() {
@@ -120,5 +124,27 @@ public class Module {
     protected Date getCurrentDate() {
         Date nowDate = new Date();
         return nowDate;
+    }
+
+    public class Fault {
+        private boolean present;
+        private String text;
+        ;
+        public Fault (String text) {
+            this.text = text;
+        }
+
+        public boolean isPresent() {
+            return present;
+        }
+
+        public void setPresent(boolean present) {
+            this.present = present;
+        }
+
+        public String getText() {
+            return text;
+        }
+
     }
 }
