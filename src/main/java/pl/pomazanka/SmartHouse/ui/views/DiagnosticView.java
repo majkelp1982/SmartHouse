@@ -51,8 +51,8 @@ public class DiagnosticView extends View {
         //Section 1
         section[1].createTile("support.svg","Błędy");
         section[1].getTileDetailsContainer(0).add(faultGrid);
-        section[1].getTileDetailsContainer(0).setWidth("1000px");
-        section[1].getTileDetailsContainer(0).setHeight("300px");
+        section[1].getTileDetailsContainer(0).setWidth("1500px");
+        section[1].getTileDetailsContainer(0).setHeight("1000px");
         //Create sections info/buttons/number fields
         createInfoSection0();
         createInfoSection1();
@@ -67,6 +67,7 @@ public class DiagnosticView extends View {
 
         moduleGrid.setItems(moduleList);
         moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+        section[0].getTileDetailsContainer(0).setHeight((moduleList.size()*20+300)+"px");
     }
 
     private void createInfoSection1() {
@@ -80,6 +81,7 @@ public class DiagnosticView extends View {
 
         faultGrid.setItems(globalFaultList);
         faultGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+        section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*20+300)+"px");
     }
 
 

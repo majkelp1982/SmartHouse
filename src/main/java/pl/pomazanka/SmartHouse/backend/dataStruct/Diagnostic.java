@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -185,10 +186,14 @@ public class Diagnostic {
         }
 
         public LocalDateTime getIncoming() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            incoming.format(formatter);
             return incoming;
         }
 
         public LocalDateTime getOutgoing() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            outgoing.format(formatter);
             return outgoing;
         }
 
