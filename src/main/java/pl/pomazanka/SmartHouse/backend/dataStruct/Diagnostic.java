@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -53,7 +54,7 @@ public class Diagnostic {
                 for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
                     // When fault active, but not present
                     if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
-                        fault.setOutgoing(LocalDate.now());
+                        fault.setOutgoing(LocalDateTime.now());
                 }
 
                 //Get each fault from module list
@@ -67,7 +68,7 @@ public class Diagnostic {
                                 reqNewInstance = false;
                         }
                         if (reqNewInstance)
-                            module.addFault(i, LocalDate.now(), moduleFaultList[i].getText());
+                            module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
                     }
                 }
             }
@@ -98,26 +99,26 @@ public class Diagnostic {
         }
 
         private class Fault {
-            private LocalDate incoming;
-            private LocalDate outgoing = null;
+            private LocalDateTime incoming;
+            private LocalDateTime outgoing = null;
             private int index;
             private String description;
 
-            public Fault (int index, LocalDate incoming, String description) {
+            public Fault (int index, LocalDateTime incoming, String description) {
                 this.index = index;
                 this.incoming = incoming;
                 this.description = description;
             }
 
-            public LocalDate getIncoming() {
+            public LocalDateTime getIncoming() {
                 return incoming;
             }
 
-            public LocalDate getOutgoing() {
+            public LocalDateTime getOutgoing() {
                 return outgoing;
             }
 
-            public void setOutgoing(LocalDate outgoing) {
+            public void setOutgoing(LocalDateTime outgoing) {
                 this.outgoing = outgoing;
             }
 
@@ -151,7 +152,7 @@ public class Diagnostic {
             return faultList;
         }
 
-        public void addFault(int index, LocalDate incoming, String description) {
+        public void addFault(int index, LocalDateTime incoming, String description) {
             faultList.add(new Fault(index, incoming, description));
         }
     }
@@ -159,12 +160,12 @@ public class Diagnostic {
     public class ModuleFault {
         private int moduleType;
         private String moduleName;
-        private LocalDate incoming;
-        private LocalDate outgoing;
+        private LocalDateTime incoming;
+        private LocalDateTime outgoing;
         private int index;
         private String description;
 
-        public ModuleFault(int moduleType, String moduleName, LocalDate incoming, LocalDate outgoing, int index, String description) {
+        public ModuleFault(int moduleType, String moduleName, LocalDateTime incoming, LocalDateTime outgoing, int index, String description) {
             this.moduleType =moduleType;
             this.moduleName = moduleName;
             this.incoming = incoming;
@@ -181,11 +182,11 @@ public class Diagnostic {
             return moduleName;
         }
 
-        public LocalDate getIncoming() {
+        public LocalDateTime getIncoming() {
             return incoming;
         }
 
-        public LocalDate getOutgoing() {
+        public LocalDateTime getOutgoing() {
             return outgoing;
         }
 
