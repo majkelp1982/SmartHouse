@@ -1,16 +1,17 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
-
 import javax.annotation.PostConstruct;
 import java.util.Date;
 
 public class Module {
+
+    public final int FAULT_MAX = 100;
+
     private int moduleType;
     private String moduleName;
     private int[] IP = new int[4];
-    private Fault[] fault = new Fault[100];
+    private Diagnostic.Fault[] fault = new Diagnostic.Fault[FAULT_MAX];
     private boolean upToDate = false;
     private Date frameLastUpdate = new Date();
     private Date diagnosticLastUpdate = new Date();
@@ -50,8 +51,18 @@ public class Module {
         fault[faultNo].setPresent(present);
     }
 
-    public void setFaultText(int faultNo, String text) {
-        fault[faultNo].setText(text);
+    public void setFaultText(int faultNo, String text) throws Exception {
+        if (fault[faultNo] == null) fault[faultNo] = new Diagnostic.Fault(text);
+        else {
+            throw new Exception("Double declaration of fault number "+faultNo);
+        }
+
+    }
+
+    public void resetFaultPresent() {
+        //Clear old fault present status
+        for (int i=0; i<FAULT_MAX; i++)
+            if (fault[i] != null) setFaultPresent(i,false);
     }
 
     public Date getFrameLastUpdate() {
@@ -109,26 +120,5 @@ public class Module {
     protected Date getCurrentDate() {
         Date nowDate = new Date();
         return nowDate;
-    }
-
-    private class Fault {
-        private boolean present;
-        private String text;
-
-        public boolean isPresent() {
-            return present;
-        }
-
-        public void setPresent(boolean present) {
-            this.present = present;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
     }
 }

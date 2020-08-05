@@ -40,6 +40,8 @@ public class Diagnostic {
                 module.setIP(IP);
     }
 
+    public void updateFaultList(int moduleTyp, )
+
     public ArrayList<ModuleDiagInfo> getModules() {
         return modules;
     }
@@ -83,5 +85,27 @@ public class Diagnostic {
         public boolean isError() {
             return error;
         }
+    }
+
+    public class Fault {
+        private boolean present;
+        private String text;
+        ;
+        public Fault (String text) {
+            this.text = text;
+        }
+
+        public boolean isPresent() {
+            return present;
+        }
+
+        public void setPresent(boolean present) {
+            this.present = present;
+        }
+
+        public String getText() {
+            return text;
+        }
+
     }
 }

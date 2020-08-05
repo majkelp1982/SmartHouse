@@ -9,10 +9,12 @@ public class Module_Comfort extends Module implements Cloneable {
 
     private Zone[] zone = new Zone[7];
 
-    public Module_Comfort() {
+    public Module_Comfort() throws Exception {
         super(MODULE_TYPE, "Komfort");
         for (int i=0; i<7;i++)
             zone[i] = new Zone();
+
+        faultListInit();
     }
 
     public Zone[] getZone() {
@@ -82,6 +84,7 @@ public class Module_Comfort extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        faultCheck();
         if (!isReqUpdateValues()) assignNV();
     }
 
@@ -99,6 +102,27 @@ public class Module_Comfort extends Module implements Cloneable {
             if (result) result = cmp(module_comfort.zone[i].isHumidity,zone[i].isHumidity,5);
         }
         return result;
+    }
+
+    private void faultListInit () throws Exception {
+        setFaultText(0,"Termometr[Strefa 0] błąd odczytu temperatury");
+        setFaultText(1,"Termometr[Strefa 1] błąd odczytu temperatury");
+        setFaultText(2,"Termometr[Strefa 2] błąd odczytu temperatury");
+        setFaultText(3,"Termometr[Strefa 3] błąd odczytu temperatury");
+        setFaultText(4,"Termometr[Strefa 4] błąd odczytu temperatury");
+        setFaultText(5,"Termometr[Strefa 5] błąd odczytu temperatury");
+        setFaultText(6,"Termometr[Strefa 6] błąd odczytu temperatury");
+    }
+
+    private void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        for (int i=0; i<7; i++)
+            if (zone[i].isTemp <11) setFaultPresent(i, true);
+        //TODO fault list to extend
+        diagnostic.updateFaultList(MODULE_TYPE);
     }
 
     public class Zone implements Cloneable {
