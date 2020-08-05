@@ -58,12 +58,12 @@ public class Diagnostic {
 
                 //Get each fault from module list
                 for (int i = 0; i<Module.FAULT_MAX; i++) {
-                    if (moduleFaultList[i] == null) return;
+                    if (moduleFaultList[i] == null) break;
 
                     if (moduleFaultList[i].isPresent()) {
                         boolean reqNewInstance = true;
                         for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                            if ((fault.getIndex() == i) && (fault.getOutgoing() != null))
+                            if ((fault.getIndex() == i) && (fault.getOutgoing() == null))
                                 reqNewInstance = false;
                         }
                         if (reqNewInstance)
@@ -73,6 +73,7 @@ public class Diagnostic {
             }
             //Update global fault list
             for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+                if (fault == null) return;
                 globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
             }
         }
@@ -95,6 +96,7 @@ public class Diagnostic {
         public ModuleDiagInfo(int moduleType, String moduleName) {
             this.moduleType = moduleType;
             this.moduleName = moduleName;
+            faultList = new ArrayList<>();
         }
 
         private class Fault {
