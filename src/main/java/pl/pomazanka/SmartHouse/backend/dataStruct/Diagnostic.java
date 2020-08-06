@@ -19,7 +19,6 @@ public class Diagnostic {
     private ArrayList<ModuleFault> globalFaultsList;
 
     public Diagnostic () {
-        headerName = "Diagnostyka";
         modules = new ArrayList<>();
         globalFaultsList = new ArrayList<>();
     }
@@ -65,9 +64,10 @@ public class Diagnostic {
                     if (moduleFaultList[i].isPresent()) {
                         boolean reqNewInstance = true;
                         for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                            if ((fault.getIndex() == i) && (fault.getOutgoing() == null))
+                            if ((fault.getIndex() == i) && (fault.getOutgoing() == null)) {
                                 reqNewInstance = false;
-                            continue;
+                                continue;
+                            }
                         }
                         if (reqNewInstance)
                             module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
