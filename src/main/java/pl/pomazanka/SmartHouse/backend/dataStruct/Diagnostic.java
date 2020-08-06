@@ -67,6 +67,7 @@ public class Diagnostic {
                         for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
                             if ((fault.getIndex() == i) && (fault.getOutgoing() == null))
                                 reqNewInstance = false;
+                            continue;
                         }
                         if (reqNewInstance)
                             module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
@@ -186,15 +187,23 @@ public class Diagnostic {
         }
 
         public LocalDateTime getIncoming() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            incoming.format(formatter);
             return incoming;
         }
 
+        public String getIncomingToString() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if (incoming != null) return incoming.format(formatter);
+            else return null;
+        }
+
         public LocalDateTime getOutgoing() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            outgoing.format(formatter);
             return outgoing;
+        }
+
+        public String getOutgoingToString() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if (outgoing != null) return outgoing.format(formatter);
+            else return null;
         }
 
         public int getIndex() {

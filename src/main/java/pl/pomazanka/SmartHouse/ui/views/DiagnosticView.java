@@ -76,8 +76,8 @@ public class DiagnosticView extends View {
         faultGrid.addColumn(Diagnostic.ModuleFault::getModuleName).setHeader("Nazwa modułu");
         faultGrid.addColumn(Diagnostic.ModuleFault::getIndex).setHeader("Index");
         faultGrid.addColumn(Diagnostic.ModuleFault::getDescription).setHeader("Opis");
-        faultGrid.addColumn(Diagnostic.ModuleFault::getIncoming).setHeader("Początek");
-        faultGrid.addColumn(Diagnostic.ModuleFault::getOutgoing).setHeader("Koniec");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getIncomingToString).setHeader("Początek");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getOutgoingToString).setHeader("Koniec");
 
         faultGrid.setItems(globalFaultList);
         faultGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
