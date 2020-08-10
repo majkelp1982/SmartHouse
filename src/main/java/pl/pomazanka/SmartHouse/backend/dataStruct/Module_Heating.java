@@ -320,7 +320,19 @@ public class Module_Heating extends Module implements Cloneable {
     private void faultListInit () throws Exception {
         setFaultText(0,"Pompa ciepła przestała grzać");
         setFaultText(1, "Pompa ciepla osiągnęła graniczną temperaturę 56stC");
-
+        setFaultText(2,"T[tBufferCODown] błąd odczytu");
+        setFaultText(3,"T[tBufferCOMid] błąd odczytu");
+        setFaultText(4,"T[tBufferCOHigh] błąd odczytu");
+        setFaultText(5,"T[tBufferCWUDown] błąd odczytu");
+        setFaultText(6,"T[tBufferCWUMid] błąd odczytu");
+        setFaultText(7,"T[tBufferCWUHigh] błąd odczytu");
+        setFaultText(8,"T[tSupply] błąd odczytu");
+        setFaultText(9,"T[tReturn] błąd odczytu");
+        setFaultText(10,"T[tGroundSource] błąd odczytu");
+        setFaultText(11,"T[tFirePlace] błąd odczytu");
+        setFaultText(12,"T[tManifold] błąd odczytu");
+        setFaultText(13,"T[tReturnGroundFloor] błąd odczytu");
+        setFaultText(14,"T[tReturnLoft] błąd odczytu");
     }
 
     private void faultCheck() {
@@ -333,10 +345,21 @@ public class Module_Heating extends Module implements Cloneable {
             if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>10)  && (tSupply<(tReturn+2)))
                 setFaultPresent(0,true);
         }
-
         if (tSupply>=56) setFaultPresent(1, true);
+        if (tBufferCODown == 100) setFaultPresent(2,true);
+        if (tBufferCOMid == 100) setFaultPresent(3,true);
+        if (tBufferCOHigh == 100) setFaultPresent(4,true);
+        if (tBufferCWUDown == 100) setFaultPresent(5,true);
+        if (tBufferCWUMid == 100) setFaultPresent(6,true);
+        if (tBufferCWUHigh == 100) setFaultPresent(7,true);
+        if (tSupply == 100) setFaultPresent(8,true);
+        if (tReturn == 100) setFaultPresent(9,true);
+        if (tGroundSource == 100) setFaultPresent(10,true);
+        if (tFirePlace == 100) setFaultPresent(11,true);
+        if (tManifold == 100) setFaultPresent(12,true);
+        if (tReturnGroundFloor == 100) setFaultPresent(13,true);
+        if (tReturnLoft == 100) setFaultPresent(14,true);
 
-        //TODO fault list to extend
         updateGlobalFaultList();
     }
     @Override

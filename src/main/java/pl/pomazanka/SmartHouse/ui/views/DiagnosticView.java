@@ -71,7 +71,8 @@ public class DiagnosticView extends View {
 
         moduleGrid.setItems(moduleList);
         moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
-        section[0].getTileDetailsContainer(0).setHeight((moduleList.size()*20+300)+"px");
+        section[0].getTileDetailsContainer(0).setHeight((moduleList.size()*30+120)+"px");
+
     }
 
     private void createInfoSection1() {
@@ -82,10 +83,11 @@ public class DiagnosticView extends View {
         faultGrid.addColumn(Diagnostic.ModuleFault::getDescription).setHeader("Opis");
         faultGrid.addColumn(Diagnostic.ModuleFault::getIncomingToString).setHeader("Początek");
         faultGrid.addColumn(Diagnostic.ModuleFault::getOutgoingToString).setHeader("Koniec");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getActiveTime).setHeader("czas trwania[s]");
 
         faultGrid.setItems(globalFaultList);
         faultGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
-        section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*30+100)+"px");
+        section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*35+120)+"px");
         section[1].getTileDetailsContainer(0).setWidth(faultGrid.getColumns().size()+"px");
 
     }

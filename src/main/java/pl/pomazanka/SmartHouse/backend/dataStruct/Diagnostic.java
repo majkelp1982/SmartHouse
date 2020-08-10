@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -46,14 +47,7 @@ public class Diagnostic {
 
     public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
         //Clear global list
-        Iterator<ModuleFault> iterator = globalFaultsList.iterator();
-        while (iterator.hasNext()) {
-            ModuleFault element = iterator.next();
-            if (element.getModuleType() == moduleTyp) {
-                iterator.remove();
-            }
-        }
-
+        globalFaultsList.clear();
         //Get proper module type
         for (ModuleDiagInfo module : modules) {
             if (module.getModuleType() == moduleTyp) {
@@ -63,7 +57,6 @@ public class Diagnostic {
                     if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
                         fault.setOutgoing(LocalDateTime.now());
                 }
-
                 //Get each fault from module list
                 for (int i = 0; i<Module.FAULT_MAX; i++) {
                     if (moduleFaultList[i] == null) break;
@@ -173,6 +166,7 @@ public class Diagnostic {
         private String moduleName;
         private LocalDateTime incoming;
         private LocalDateTime outgoing;
+        private long activeTime;
         private int index;
         private String description;
 
@@ -211,6 +205,12 @@ public class Diagnostic {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             if (outgoing != null) return outgoing.format(formatter);
             else return null;
+        }
+
+        public long getActiveTime() {
+            if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
+            else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
+            return activeTime;
         }
 
         public int getIndex() {
