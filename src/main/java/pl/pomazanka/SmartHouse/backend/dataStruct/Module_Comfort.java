@@ -105,13 +105,13 @@ public class Module_Comfort extends Module implements Cloneable {
     }
 
     private void faultListInit () throws Exception {
-        setFaultText(0,"Termometr[Strefa 0] błąd odczytu temperatury");
-        setFaultText(1,"Termometr[Strefa 1] błąd odczytu temperatury");
-        setFaultText(2,"Termometr[Strefa 2] błąd odczytu temperatury");
-        setFaultText(3,"Termometr[Strefa 3] błąd odczytu temperatury");
-        setFaultText(4,"Termometr[Strefa 4] błąd odczytu temperatury");
-        setFaultText(5,"Termometr[Strefa 5] błąd odczytu temperatury");
-        setFaultText(6,"Termometr[Strefa 6] błąd odczytu temperatury");
+        setFaultText(0,"Termometr[salon] błąd odczytu temperatury");
+        setFaultText(1,"Termometr[pralnia] błąd odczytu temperatury");
+        setFaultText(2,"Termometr[laź.dół] błąd odczytu temperatury");
+        setFaultText(3,"Termometr[rodzic] błąd odczytu temperatury");
+        setFaultText(4,"Termometr[Natalia] błąd odczytu temperatury");
+        setFaultText(5,"Termometr[Karolina] błąd odczytu temperatury");
+        setFaultText(6,"Termometr[łaź.góra] błąd odczytu temperatury");
     }
 
     private void faultCheck() {

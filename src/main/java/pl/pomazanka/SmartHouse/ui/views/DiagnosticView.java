@@ -8,9 +8,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @PageTitle("Smart House | Diagnostyka")
@@ -51,8 +53,10 @@ public class DiagnosticView extends View {
         //Section 1
         section[1].createTile("support.svg","Błędy");
         section[1].getTileDetailsContainer(0).add(faultGrid);
-        section[1].getTileDetailsContainer(0).setWidth("1500px");
-        section[1].getTileDetailsContainer(0).setHeight("1000px");
+        section[1].getTileDetailsContainer(0).setMinHeight("100px");
+        section[1].getTileDetailsContainer(0).setWidth(faultGrid.getWidth()+"px");
+        section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+        section[1].getTileDetailsContainer(0).setHeight(faultGrid.getHeight()+"px");
         //Create sections info/buttons/number fields
         createInfoSection0();
         createInfoSection1();
@@ -72,8 +76,8 @@ public class DiagnosticView extends View {
 
     private void createInfoSection1() {
         globalFaultList = diagnostic.getGlobalFaultsList();
-        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleType).setHeader("Typ");
-        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleName).setHeader("Nazwa modułu");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleType).setHeader("Typ").setAutoWidth(true);
+        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleName).setHeader("Nazwa modułu").setAutoWidth(true);
         faultGrid.addColumn(Diagnostic.ModuleFault::getIndex).setHeader("Index");
         faultGrid.addColumn(Diagnostic.ModuleFault::getDescription).setHeader("Opis");
         faultGrid.addColumn(Diagnostic.ModuleFault::getIncomingToString).setHeader("Początek");
@@ -81,7 +85,9 @@ public class DiagnosticView extends View {
 
         faultGrid.setItems(globalFaultList);
         faultGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
-        section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*20+300)+"px");
+        section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*30+100)+"px");
+        section[1].getTileDetailsContainer(0).setWidth(faultGrid.getColumns().size()+"px");
+
     }
 
 

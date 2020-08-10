@@ -3,10 +3,14 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 @Controller
 public class Module_Heating extends Module implements Cloneable {
     //Module heating type
     private static byte MODULE_TYPE = 14;
+    private LocalDateTime reqPCStartTime = null;
 
     // Values only to read
     private int heatSourceActive;
@@ -42,8 +46,9 @@ public class Module_Heating extends Module implements Cloneable {
     private double NVReqTempBufferCO;
     private double NVReqTempBufferCWU;
 
-    public Module_Heating() {
+    public Module_Heating() throws Exception {
         super(MODULE_TYPE, "Ogrzewanie");
+        faultListInit();
     }
 
     public int getHeatSourceActive() {
@@ -258,6 +263,7 @@ public class Module_Heating extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        faultCheck();
         if (!isReqUpdateValues()) assignNV();
     }
 
@@ -275,7 +281,12 @@ public class Module_Heating extends Module implements Cloneable {
         if (result) result = cmp(module_Heating.heatSourceActive, heatSourceActive);
         if (result) result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
         if (result) result = cmp(module_Heating.pump_UnderGround, pump_UnderGround);
-        if (result) result = cmp(module_Heating.reqHeatingPumpOn, reqHeatingPumpOn);
+        if (result) {
+            result = cmp(module_Heating.reqHeatingPumpOn, reqHeatingPumpOn);
+            // Save time when heating pump requested
+            if ((!module_Heating.reqHeatingPumpOn) && (reqHeatingPumpOn)) reqPCStartTime = LocalDateTime.now();
+            if (!reqHeatingPumpOn) reqPCStartTime = null;
+        }
         if (result) result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
         if (result) result = cmp(module_Heating.heatingActivated, heatingActivated);
         if (result) result = cmp(module_Heating.waterSuperheat, waterSuperheat);
@@ -306,6 +317,28 @@ public class Module_Heating extends Module implements Cloneable {
         return result;
     }
 
+    private void faultListInit () throws Exception {
+        setFaultText(0,"Pompa ciepła przestała grzać");
+        setFaultText(1, "Pompa ciepla osiągnęła graniczną temperaturę 56stC");
+
+    }
+
+    private void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        // check if after 60s heating request PC is working continuously till no request
+        if (reqPCStartTime != null) {
+            if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>10)  && (tSupply<(tReturn+2)))
+                setFaultPresent(0,true);
+        }
+
+        if (tSupply>=56) setFaultPresent(1, true);
+
+        //TODO fault list to extend
+        updateGlobalFaultList();
+    }
     @Override
     public Module_Heating clone() throws CloneNotSupportedException {
         Module_Heating module_heating = (Module_Heating) super.clone();

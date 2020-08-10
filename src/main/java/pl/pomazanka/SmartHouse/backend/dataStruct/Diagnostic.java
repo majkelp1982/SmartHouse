@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 @Service
 @Configurable
@@ -45,7 +46,13 @@ public class Diagnostic {
 
     public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
         //Clear global list
-        globalFaultsList.clear();
+        Iterator<ModuleFault> iterator = globalFaultsList.iterator();
+        while (iterator.hasNext()) {
+            ModuleFault element = iterator.next();
+            if (element.getModuleType() == moduleTyp) {
+                iterator.remove();
+            }
+        }
 
         //Get proper module type
         for (ModuleDiagInfo module : modules) {
@@ -76,7 +83,7 @@ public class Diagnostic {
             }
             //Update global fault list
             for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                if (fault == null) return;
+                if (fault == null) break;
                 globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
             }
         }
