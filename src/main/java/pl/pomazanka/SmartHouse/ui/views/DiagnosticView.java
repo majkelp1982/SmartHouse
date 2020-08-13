@@ -61,9 +61,9 @@ public class DiagnosticView extends View {
         section[1].createTile("support.svg","Błędy");
         section[1].getTileDetailsContainer(0).add(new HorizontalLayout(globalResetButton.getSource(), groupButton.getSource()), faultGrid);
         section[1].getTileDetailsContainer(0).setMinHeight("100px");
-        section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+        if (diagnostic.isGlobalFaultsListGroupByFault()) section[1].getTileDetailsContainer(0).setMinWidth("1600px");
+        else section[1].getTileDetailsContainer(0).setMinWidth("1200px");
         section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size()*35+180)+"px");
-        section[1].getTileDetailsContainer(0).setWidth(faultGrid.getColumns().size()+"px");
 
         add(header.getHeader(),section[0].getSection(),section[1].getSection());
     }
@@ -116,6 +116,8 @@ public class DiagnosticView extends View {
     private void update() {
         header.setDiagnoseUpdate(diagnostic.getDiagnosticLastUpdate());
         groupButton.setButtonColor(diagnostic.isGlobalFaultsListGroupByFault(),diagnostic.isGlobalFaultsListGroupByFault());
+        diagnostic.refreshGlobalFaultList();
+        faultGrid.setItems(diagnostic.getGlobalFaultsList());
     }
 
     @Override

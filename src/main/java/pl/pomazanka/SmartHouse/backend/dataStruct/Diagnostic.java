@@ -55,8 +55,6 @@ public class Diagnostic {
     }
 
     public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
-        //Clear global list
-        globalFaultsList.clear();
         //Get proper module type
         for (ModuleDiagInfo module : modules) {
             if (module.getModuleType() == moduleTyp) {
@@ -83,6 +81,13 @@ public class Diagnostic {
                     }
                 }
             }
+        }
+    }
+
+    public void refreshGlobalFaultList() {
+        //Clear global list
+        globalFaultsList.clear();
+        for (ModuleDiagInfo module : modules) {
             //Update global fault list
             for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
                 if (fault == null) break;
@@ -90,10 +95,11 @@ public class Diagnostic {
                 else {
                     boolean exist = false;
                     for (ModuleFault tmp : globalFaultsList) {
-                        if ((tmp.getModuleType() == module.getModuleType()) && (tmp.index == fault.getIndex()) && (tmp.outgoing != null)) {
+                        if ((tmp.getModuleType() == module.getModuleType()) && (tmp.index == fault.index) && (tmp.outgoing != null) && (fault.outgoing != null)) {
                             exist = true;
-                            tmp.setActiveTime(tmp.getActiveTime()+(ChronoUnit.SECONDS.between(tmp.incoming, tmp.outgoing)));
+                            tmp.setActiveTime(tmp.getActiveTime()+(ChronoUnit.SECONDS.between(fault.incoming, fault.outgoing)));
                             tmp.increaseErrorNumber();
+                            tmp.outgoing = fault.outgoing;
                         }
                     }
                     if (!exist) globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
@@ -115,8 +121,9 @@ public class Diagnostic {
             for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
                 //FIXME
                 System.out.println(module.moduleName+"["+fault.index+"]");
-                if (fault.getOutgoing() != null)
-                    fault = null;
+                if (fault.outgoing != null) {
+                    module.faultList.remove(fault);
+                }
             }
         }
         //FIXME
