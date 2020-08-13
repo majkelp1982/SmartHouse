@@ -19,6 +19,7 @@ public class Diagnostic {
 
     private ArrayList<ModuleDiagInfo> modules;
     private ArrayList<ModuleFault> globalFaultsList;
+    private boolean globalFaultsListGroupByFault;
 
     public Diagnostic () {
         modules = new ArrayList<>();
@@ -33,6 +34,14 @@ public class Diagnostic {
     }
     public void setDiagnosticLastUpdate(Date diagnosticLastUpdate) {
         this.diagnosticLastUpdate = diagnosticLastUpdate;
+    }
+
+    public void globalFaultsListGroupByFault() {
+        globalFaultsListGroupByFault = !globalFaultsListGroupByFault;
+    }
+
+    public boolean isGlobalFaultsListGroupByFault() {
+        return globalFaultsListGroupByFault;
     }
 
     public void addModule (int moduleType, String moduleName) {
@@ -77,7 +86,18 @@ public class Diagnostic {
             //Update global fault list
             for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
                 if (fault == null) break;
-                globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+                if (!isGlobalFaultsListGroupByFault()) globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+                else {
+                    boolean exist = false;
+                    for (ModuleFault tmp : globalFaultsList) {
+                        if ((tmp.getModuleType() == module.getModuleType()) && (tmp.index == fault.getIndex()) && (tmp.outgoing != null)) {
+                            exist = true;
+                            tmp.setActiveTime(tmp.getActiveTime()+(ChronoUnit.SECONDS.between(tmp.incoming, tmp.outgoing)));
+                            tmp.increaseErrorNumber();
+                        }
+                    }
+                    if (!exist) globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+                }
             }
         }
     }
@@ -88,6 +108,19 @@ public class Diagnostic {
 
     public ArrayList<ModuleFault> getGlobalFaultsList() {
         return globalFaultsList;
+    }
+
+    public void resetGlobalList() {
+        for (ModuleDiagInfo module : modules) {
+            for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+                //FIXME
+                System.out.println(module.moduleName+"["+fault.index+"]");
+                if (fault.getOutgoing() != null)
+                    fault = null;
+            }
+        }
+        //FIXME
+        System.out.println("Koniec");
     }
 
     public class ModuleDiagInfo {
@@ -169,6 +202,7 @@ public class Diagnostic {
         private long activeTime;
         private int index;
         private String description;
+        private int numberOfErrors;
 
         public ModuleFault(int moduleType, String moduleName, LocalDateTime incoming, LocalDateTime outgoing, int index, String description) {
             this.moduleType =moduleType;
@@ -177,6 +211,10 @@ public class Diagnostic {
             this.outgoing = outgoing;
             this.index = index;
             this.description = description;
+            this.numberOfErrors = 1;
+
+            if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
+            else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
         }
 
         public int getModuleType() {
@@ -208,13 +246,23 @@ public class Diagnostic {
         }
 
         public long getActiveTime() {
-            if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
-            else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
             return activeTime;
+        }
+
+        public void setActiveTime(long activeTime) {
+            this.activeTime = activeTime;
+        }
+
+        public void increaseErrorNumber () {
+            numberOfErrors++;
         }
 
         public int getIndex() {
             return index;
+        }
+
+        public int getNumberOfErrors() {
+            return numberOfErrors;
         }
 
         public String getDescription() {
