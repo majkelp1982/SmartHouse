@@ -342,7 +342,7 @@ public class Module_Heating extends Module implements Cloneable {
         //Fault check list
         // check if after 60s heating request PC is working continuously till no request
         if (reqPCStartTime != null) {
-            if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>10)  && (tSupply<(tReturn+2)))
+            if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>90)  && (tSupply<(tReturn+2)))
                 setFaultPresent(0,true);
         }
         if (tSupply>=56) setFaultPresent(1, true);

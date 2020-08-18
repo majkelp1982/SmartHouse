@@ -117,17 +117,14 @@ public class Diagnostic {
     }
 
     public void resetGlobalList() {
-        for (ModuleDiagInfo module : modules) {
-            for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                //FIXME
-                System.out.println(module.moduleName+"["+fault.index+"]");
-                if (fault.outgoing != null) {
-                    module.faultList.remove(fault);
-                }
+        for (Iterator<ModuleDiagInfo> iterator = modules.iterator(); iterator.hasNext();) {
+            ModuleDiagInfo module = iterator.next();
+            for (Iterator<ModuleDiagInfo.Fault> iterator1 = module.getFaultList().iterator(); iterator1.hasNext();) {
+                ModuleDiagInfo.Fault fault = iterator1.next();
+                if (fault.getOutgoing()!= null)
+                    iterator1.remove();
             }
         }
-        //FIXME
-        System.out.println("Koniec");
     }
 
     public class ModuleDiagInfo {
