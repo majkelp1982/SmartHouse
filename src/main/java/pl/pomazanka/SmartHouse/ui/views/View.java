@@ -87,6 +87,24 @@ public class View extends VerticalLayout {
             header.add(image, moduleTyp, info);
         }
 
+        //Header only pic and title
+        public Header(String title, String imageSrc) {
+            header = new HorizontalLayout();
+
+            //About module type
+            Image image = new Image(imageSrc, imageSrc);
+            image.setHeight("80px");
+            Label moduleTyp = new Label(title);
+            moduleTyp.getStyle().set("font-size", "30px");
+
+             header.addClassName("module");
+            header.setMinWidth("800px");
+            header.setSizeFull();
+            header.setHeight("80px");
+            header.setAlignItems(FlexComponent.Alignment.CENTER);
+            header.add(image, moduleTyp);
+        }
+
         public HorizontalLayout getHeader() {
             return header;
         }

@@ -10,9 +10,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @PageTitle("Smart House | Diagnostyka")

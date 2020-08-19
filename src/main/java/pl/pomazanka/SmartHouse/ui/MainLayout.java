@@ -16,10 +16,7 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import pl.pomazanka.SmartHouse.ui.views.ComfortView;
-import pl.pomazanka.SmartHouse.ui.views.DiagnosticView;
-import pl.pomazanka.SmartHouse.ui.views.HeatingView;
-import pl.pomazanka.SmartHouse.ui.views.VentView;
+import pl.pomazanka.SmartHouse.ui.views.*;
 
 @CssImport("styles.css")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
@@ -55,9 +52,10 @@ public class MainLayout extends AppLayout {
         RouterLink ventViewLink = createDrawerElement("recu.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
         RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewanie", HeatingView.class);
+        RouterLink chartsViewLink = createDrawerElement("graph.svg","Wykresy", ChartsView.class);
         RouterLink errorsViewLink = createDrawerElement("support.svg","Diagnostyka", DiagnosticView.class);
 
-        drawer.add(ventViewLink,comfortViewLink,heatingViewLink,errorsViewLink);
+        drawer.add(ventViewLink,comfortViewLink,heatingViewLink,chartsViewLink, errorsViewLink);
         drawer.setSizeFull();
         drawer.setAlignItems(FlexComponent.Alignment.START);
 
