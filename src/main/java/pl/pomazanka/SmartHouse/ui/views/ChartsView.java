@@ -9,6 +9,8 @@ import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 import java.time.Instant;
@@ -26,8 +28,11 @@ public class ChartsView extends View {
     private Section[] section = new Section[2];
     private ApexCharts apexChart = new ApexCharts();
 
+    @Autowired
+    private Charts charts;
 
-    public ChartsView () {
+
+    public ChartsView () throws Exception {
         header = new Header("Wykresy","graph.svg");
         section[0] = new Section();
         section[0].createTile("graph.svg","Wykresy");
@@ -39,6 +44,10 @@ public class ChartsView extends View {
         createInfoSection0();
         section[0].getTileDetailsContainer(0).add(apexChart);
         add(header.getHeader(),section[0].getSection());
+
+        //FIXME
+        charts = new Charts();
+        charts.getEntry();
     }
 
     private void createInfoSection0() {

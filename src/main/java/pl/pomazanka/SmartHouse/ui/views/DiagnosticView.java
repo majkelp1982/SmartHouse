@@ -77,13 +77,13 @@ public class DiagnosticView extends View {
 
     private void createInfoSection1() {
         globalFaultList = diagnostic.getGlobalFaultsList();
-        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleType).setHeader("Typ").setAutoWidth(true).setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleName).setHeader("Nazwa modułu").setAutoWidth(true).setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getIndex).setHeader("Index").setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getDescription).setHeader("Opis").setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getIncomingToString).setHeader("Początek").setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getOutgoingToString).setHeader("Koniec").setSortable(true);
-        faultGrid.addColumn(Diagnostic.ModuleFault::getActiveTime).setHeader("czas trwania[s]").setKey("czas").setSortable(true);
+        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleType).setHeader("Typ");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getModuleName).setHeader("Nazwa modułu");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getIndex).setHeader("Index");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getDescription).setHeader("Opis");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getIncomingToString).setHeader("Początek");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getOutgoingToString).setHeader("Koniec");
+        faultGrid.addColumn(Diagnostic.ModuleFault::getActiveTime).setHeader("czas trwania[s]").setKey("czas");
         if (diagnostic.isGlobalFaultsListGroupByFault()) {
             faultGrid.addColumn(Diagnostic.ModuleFault::getNumberOfErrors).setHeader("liczba wystąpień").setKey("liczba").setSortable(true);
             faultGrid.getColumnByKey("czas").setHeader("łączny czas trwania[s]");
@@ -91,7 +91,11 @@ public class DiagnosticView extends View {
         }
 
         faultGrid.setItems(globalFaultList);
-        faultGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+        faultGrid.getColumns().forEach(column -> {
+            column.setResizable(true);
+            column.setSortable(true);
+            column.setAutoWidth(true);
+        });
 
         globalResetButton = new Button("Potwierdź",false,false);
         globalResetButton.getSource().addClickListener(event -> diagnostic.resetGlobalList());
