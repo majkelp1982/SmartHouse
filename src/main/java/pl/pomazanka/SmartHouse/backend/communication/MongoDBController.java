@@ -1,7 +1,10 @@
 package pl.pomazanka.SmartHouse.backend.communication;
 
 import com.google.gson.Gson;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -14,6 +17,8 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.backend.security.UserInstance;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Iterator;
 
 @Service
 public class MongoDBController {
@@ -107,8 +112,20 @@ public class MongoDBController {
 
     public Module_Heating getEntry(String collectionName, LocalDateTime from, LocalDateTime to) throws Exception {
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+
         //FIXME for test get only last document. In the future all document between requested time
         Document document = (Document) mongoCollection.find().limit(1).sort(new Document("_id",-1)).first();
+
+        BasicDBObject gtQuery = new BasicDBObject();
+        gtQuery.put("tBufferCODown", new BasicDBObject("$gt", 2)
+                .append("$lt", 0));
+
+        FindIterable iterable =  mongoCollection.find(gtQuery);
+        Iterator iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
         if (document == null) return null;
         String json = document.toJson();
         return new Gson().fromJson(json, Module_Heating.class);

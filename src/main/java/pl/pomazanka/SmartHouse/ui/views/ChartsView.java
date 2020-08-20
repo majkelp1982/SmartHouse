@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,8 +21,6 @@ import java.time.format.DateTimeFormatter;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
-
-
 public class ChartsView extends View {
     //Objects
     private Header header;
@@ -29,8 +28,7 @@ public class ChartsView extends View {
     private ApexCharts apexChart = new ApexCharts();
 
     @Autowired
-    private Charts charts;
-
+    Charts charts;
 
     public ChartsView () throws Exception {
         header = new Header("Wykresy","graph.svg");
@@ -44,9 +42,11 @@ public class ChartsView extends View {
         createInfoSection0();
         section[0].getTileDetailsContainer(0).add(apexChart);
         add(header.getHeader(),section[0].getSection());
+    }
 
+    @PostConstruct
+    public void post() throws Exception {
         //FIXME
-        charts = new Charts();
         charts.getEntry();
     }
 
