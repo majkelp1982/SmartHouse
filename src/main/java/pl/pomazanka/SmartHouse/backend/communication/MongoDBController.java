@@ -2,11 +2,13 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Cursor;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -112,6 +114,29 @@ public class MongoDBController {
 
     public Module_Heating getEntry(String collectionName, LocalDateTime from, LocalDateTime to) throws Exception {
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+        BasicDBObject gtQuery = new BasicDBObject();
+ //       gtQuery.put("heatSourceActive", new BasicDBObject("$gt", 300)
+//                .append("$lt", 0));
+
+//        gtQuery.put("heatSourceActive", new BasicDBObject("$gt", 3));
+
+
+        BasicDBObject doc = new BasicDBObject("heatingActivated","false");
+
+        System.out.println();
+
+        FindIterable iterable =  mongoCollection.find(doc);
+        Iterator iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+
+        Document documentToUpdate = (Document) mongoCollection.find().limit(1).sort(new Document("_id",-1)).first();
+        System.out.println(documentToUpdate);
+
+        return null;
+
+        /*        MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
 
         //FIXME for test get only last document. In the future all document between requested time
         Document document = (Document) mongoCollection.find().limit(1).sort(new Document("_id",-1)).first();
@@ -129,6 +154,9 @@ public class MongoDBController {
         if (document == null) return null;
         String json = document.toJson();
         return new Gson().fromJson(json, Module_Heating.class);
+
+ */
+
     }
 
     public UserDetails getUser ()  {
