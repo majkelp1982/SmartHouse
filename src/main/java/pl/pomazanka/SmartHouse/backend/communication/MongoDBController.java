@@ -115,24 +115,21 @@ public class MongoDBController {
     public Module_Heating getEntry(String collectionName, LocalDateTime from, LocalDateTime to) throws Exception {
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
- //       gtQuery.put("heatSourceActive", new BasicDBObject("$gt", 300)
-//                .append("$lt", 0));
-
-//        gtQuery.put("heatSourceActive", new BasicDBObject("$gt", 3));
-
-
-        BasicDBObject doc = new BasicDBObject("heatingActivated","false");
+        gtQuery.put("frameLastUpdate.time.minute", new BasicDBObject("$gt", 0).append("$lt", 60));
 
         System.out.println();
-
-        FindIterable iterable =  mongoCollection.find(doc);
+        System.out.println();
+        FindIterable iterable =  mongoCollection.find(gtQuery);
         Iterator iterator = iterable.iterator();
+        int i = 0;
         while (iterator.hasNext()) {
+
             System.out.println(iterator.next());
+            i++;
         }
 
-        Document documentToUpdate = (Document) mongoCollection.find().limit(1).sort(new Document("_id",-1)).first();
-        System.out.println(documentToUpdate);
+        System.out.printf("Znaleziono %d dokumentow",i);
+        System.out.println();System.out.println();
 
         return null;
 

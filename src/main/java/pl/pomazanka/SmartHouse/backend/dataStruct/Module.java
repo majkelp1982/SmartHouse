@@ -2,6 +2,7 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Module {
@@ -10,10 +11,10 @@ public class Module {
     private int moduleType;
     private String moduleName;
     private int[] IP = new int[4];
-    private Fault[] fault = new Fault[FAULT_MAX];
+    protected Fault[] fault = new Fault[FAULT_MAX];
     private boolean upToDate = false;
-    private Date frameLastUpdate = new Date();
-    private Date diagnosticLastUpdate = new Date();
+    private LocalDateTime frameLastUpdate = LocalDateTime.now();
+    private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
     private boolean reqUpdateValues = false;
 
     @Autowired
@@ -67,19 +68,19 @@ public class Module {
         diagnostic.updateModuleFaultList(getModuleType(), fault);
     }
 
-    public Date getFrameLastUpdate() {
+    public LocalDateTime getFrameLastUpdate() {
         return frameLastUpdate;
     }
 
-    public void setFrameLastUpdate(Date frameLastUpdate) {
+    public void setFrameLastUpdate(LocalDateTime frameLastUpdate) {
         this.frameLastUpdate = frameLastUpdate;
     }
 
-    public Date getDiagnosticLastUpdate() {
+    public LocalDateTime getDiagnosticLastUpdate() {
         return diagnosticLastUpdate;
     }
 
-    public void setDiagnosticLastUpdate(Date diagnosticLastUpdate) {
+    public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
         this.diagnosticLastUpdate = diagnosticLastUpdate;
     }
 
@@ -110,7 +111,6 @@ public class Module {
 
     public boolean cmp(double value1, double value2, double tolerance) {
         if (Math.abs(value1 - value2) > tolerance) {
-            System.out.println("FLOAT FALSE");
             return false;
         } else return true;
     }
@@ -119,9 +119,8 @@ public class Module {
         return value1 == value2;
     }
 
-    protected Date getCurrentDate() {
-        Date nowDate = new Date();
-        return nowDate;
+    protected LocalDateTime getCurrentDate() {
+        return LocalDateTime.now();
     }
 
     public class Fault {

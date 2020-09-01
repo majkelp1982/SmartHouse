@@ -25,7 +25,6 @@ public class Charts {
         Module_Heating module_heating = new Module_Heating();
         module_heating = mongoDBController.getEntry("module_heating", LocalDateTime.now(), LocalDateTime.now());
 
-        System.out.println(module_heating.toString());
     }
 
     private class Data{

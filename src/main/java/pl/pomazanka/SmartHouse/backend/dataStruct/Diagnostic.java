@@ -15,7 +15,7 @@ import java.util.Iterator;
 @Configurable
 public class Diagnostic {
     private String headerName = "Diagnostyka";
-    private Date diagnosticLastUpdate = new Date();
+    private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
 
     private ArrayList<ModuleDiagInfo> modules;
     private ArrayList<ModuleFault> globalFaultsList;
@@ -29,10 +29,10 @@ public class Diagnostic {
     public String getModuleName() {
         return headerName;
     }
-    public Date getDiagnosticLastUpdate() {
+    public LocalDateTime getDiagnosticLastUpdate() {
         return diagnosticLastUpdate;
     }
-    public void setDiagnosticLastUpdate(Date diagnosticLastUpdate) {
+    public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
         this.diagnosticLastUpdate = diagnosticLastUpdate;
     }
 
@@ -186,7 +186,7 @@ public class Diagnostic {
 
         public void setIP(int[] IP) {
             this.IP = IP;
-            setDiagnosticLastUpdate(new Date());
+            setDiagnosticLastUpdate(LocalDateTime.now());
         }
 
         public ArrayList<Fault> getFaultList() {
