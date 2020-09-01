@@ -13,12 +13,15 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.backend.security.UserInstance;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -112,26 +115,25 @@ public class MongoDBController {
         mongoCollection.insertOne(documentNew);
     }
 
-    public Module_Heating getEntry(String collectionName, LocalDateTime from, LocalDateTime to) throws Exception {
+    public ArrayList<Charts.Data> getEntry(String collectionName, LocalDateTime from, LocalDateTime to) throws Exception {
+        ArrayList<Charts.Data> list = new ArrayList<>();
+
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
-        gtQuery.put("frameLastUpdate.time.minute", new BasicDBObject("$gt", 0).append("$lt", 60));
+        gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gt", 0).append("$lt", 60));
 
-        System.out.println();
-        System.out.println();
         FindIterable iterable =  mongoCollection.find(gtQuery);
         Iterator iterator = iterable.iterator();
-        int i = 0;
-        while (iterator.hasNext()) {
 
-            System.out.println(iterator.next());
-            i++;
+        while (iterator.hasNext()) {
+            Document document = (Document) iterator.next();
+            String json = document.toJson();
+            Module_Heating module_heating = new Gson().fromJson(json, Module_Heating.class);
+
+            list.add(new Charts.Data(module_heating.getFrameLastUpdate(),module_heating.gettBufferCODown()));
         }
 
-        System.out.printf("Znaleziono %d dokumentow",i);
-        System.out.println();System.out.println();
-
-        return null;
+        return list;
 
         /*        MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
 

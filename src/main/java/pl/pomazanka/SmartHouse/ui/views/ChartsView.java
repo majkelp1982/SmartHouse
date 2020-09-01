@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
@@ -31,6 +32,11 @@ public class ChartsView extends View {
     Charts charts;
 
     public ChartsView () throws Exception {
+
+    }
+
+    @PostConstruct
+    public void post() throws Exception {
         header = new Header("Wykresy","graph.svg");
         section[0] = new Section();
         section[0].createTile("graph.svg","Wykresy");
@@ -44,25 +50,17 @@ public class ChartsView extends View {
         add(header.getHeader(),section[0].getSection());
     }
 
-    @PostConstruct
-    public void post() throws Exception {
-        //FIXME
-        charts.getEntry();
-    }
+    private void createInfoSection0() throws Exception {
+        Coordinate[] list = charts.getEntry();
 
-    private void createInfoSection0() {
         //FIXME only temporary series for test
         Series<Coordinate>[] series = new Series[2];
 
-        series[0] = new Series<Coordinate>("Pierwszy",
-                new Coordinate<>(getISOString(1537788600000L),3.11),
-                new Coordinate<>(getISOString(1538778600000L),10.81),
-                new Coordinate<>(getISOString(1538788600000L),11.11),
-                new Coordinate<>(getISOString(1538888600000L),9.11),
-                new Coordinate<>(getISOString(1539788600000L),4.14)
-        );
+   //     series[1] = new Series<Coordinate>("pobrane z db", list);
 
-        series[1] = new Series<Coordinate>("drugi",
+        System.out.println(getISOString(1537788800000L));
+
+        series[0] = new Series<Coordinate>("drugi",
                 new Coordinate<>(getISOString(1537788800000L),5.11),
                 new Coordinate<>(getISOString(1538778800000L),7.81),
                 new Coordinate<>(getISOString(1538788900000L),15.11),
@@ -92,6 +90,4 @@ public class ChartsView extends View {
     private String getISOString(long l) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(l), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
-
-
 }
