@@ -22,39 +22,72 @@ public class Charts {
     public Charts () {
     }
 
-    public Coordinate[] getEntry () throws Exception {
+    public Coordinate[] getSerie (String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
         //FIXME
         ArrayList<Data> list;
-        Coordinate[] serie = new Coordinate[100];
+        list = mongoDBController.getEntry(collectionName, variableName, from, to);
+        Coordinate[] serie = new Coordinate[list.size()];
 
-        list = mongoDBController.getEntry("module_heating", LocalDateTime.now(), LocalDateTime.now());
         int i = 0;
         for (Data temp : list) {
 
-            serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),temp.getValue());
+            if (temp.isNumber) serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),temp.getDouble());
+            else serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),temp.getBoolean());
             i++;
-
-            //FIXME
-            System.out.println(temp.getTimeStamp()+" Value:"+temp.getValue());
         }
         return serie;
     }
 
     public static class Data{
         private LocalDateTime timeStamp;
-        private double value;
+        private String value;
+        private boolean isNumber;
 
-        public  Data(LocalDateTime timeStamp, double value) {
+        public  Data(LocalDateTime timeStamp, String value) throws Exception {
             this.timeStamp = timeStamp;
             this.value = value;
+            if (tryParseDouble(value))
+                isNumber = true;
+            else
+                if (tryParseBoolean(value))
+                    isNumber = false;
+                else throw new Exception("Value not a number and not a boolean");
         }
 
         public LocalDateTime getTimeStamp() {
             return timeStamp;
         }
 
-        public double getValue() {
-            return value;
+        public double getDouble() throws Exception {
+            if (isNumber) return Double.parseDouble(value);
+            else throw new Exception("Value not a Double format");
+        }
+
+        public boolean getBoolean() throws Exception {
+            if (!isNumber) return Boolean.parseBoolean(value);
+            else throw new Exception("Value not a Boolean format");
+        }
+
+        public boolean isNumber() {
+            return isNumber;
+        }
+
+        private boolean tryParseDouble(String value) {
+            try {
+                Double.parseDouble(value);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+
+        private boolean tryParseBoolean(String value) {
+            try {
+                Boolean.parseBoolean(value);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
     }
 
