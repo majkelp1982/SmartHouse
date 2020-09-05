@@ -40,11 +40,11 @@ public class Module_Heating extends Module implements Cloneable {
     private float tReturnLoft;
 
     //New values of variables which can be updated
-    protected boolean NVCheapTariffOnly;
-    protected boolean NVHeatingActivated;
-    protected boolean NVWaterSuperheat;
-    protected double NVReqTempBufferCO;
-    protected double NVReqTempBufferCWU;
+    private transient boolean NVCheapTariffOnly;
+    private transient boolean NVHeatingActivated;
+    private transient boolean NVWaterSuperheat;
+    private transient double NVReqTempBufferCO;
+    private transient double NVReqTempBufferCWU;
 
     public Module_Heating() throws Exception {
         super(MODULE_TYPE, "Ogrzewanie");

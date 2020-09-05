@@ -128,7 +128,7 @@ public class Module_Comfort extends Module implements Cloneable {
     public class Zone implements Cloneable {
         public float isTemp=0;
         public double reqTemp=0;
-        public double NVReqTemp = 0;
+        public transient double NVReqTemp = 0;
         public int isHumidity=0;
 
         @Override

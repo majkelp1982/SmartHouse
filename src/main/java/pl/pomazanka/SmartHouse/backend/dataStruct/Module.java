@@ -3,22 +3,21 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Module {
     public static final int FAULT_MAX = 100;
 
     private int moduleType;
     private String moduleName;
-    private int[] IP = new int[4];
-    protected Fault[] fault = new Fault[FAULT_MAX];
-    private boolean upToDate = false;
+    private transient int[] IP = new int[4];
+    private transient Fault[] fault = new Fault[FAULT_MAX];
+    private transient boolean upToDate = false;
     private LocalDateTime frameLastUpdate = LocalDateTime.now();
-    private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
-    private boolean reqUpdateValues = false;
+    private transient LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
+    private transient boolean reqUpdateValues = false;
 
     @Autowired
-    Diagnostic diagnostic;
+    transient Diagnostic diagnostic;
 
     public Module(int moduleType,String moduleName) {
         this.moduleType = moduleType;
