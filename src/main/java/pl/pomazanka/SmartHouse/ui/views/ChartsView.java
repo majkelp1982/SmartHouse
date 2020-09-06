@@ -26,7 +26,6 @@ public class ChartsView extends View {
     private Header header;
     private Section[] section = new Section[2];
     private ApexCharts apexChart = new ApexCharts();
-    Series<Coordinate>[] series = new Series[3];
 
     @Autowired
     Charts charts;
@@ -47,42 +46,29 @@ public class ChartsView extends View {
 
     @PostConstruct
     public void post() throws Exception {
+        Series<Coordinate>[] series = new Series[3];
+
         String collectionName = "module_heating";
-        String variableName = "tBufferCWUMid";
-
+        String variableName = "tBufferCWUDown";
         Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
+        series[0] = new Series<Coordinate>(variableName, list);
 
-        System.out.println(getISOString(1537788600000L));
+        variableName = "tBufferCWUMid";
+        list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
+        series[1] = new Series<Coordinate>(variableName, list);
 
+        variableName = "tBufferCWUHigh";
+        list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
         series[2] = new Series<Coordinate>(variableName, list);
+
         apexChart.setSeries(series);
     }
 
     private void createInfoSection0() {
-        //FIXME only temporary series for test
-
-
-        series[0] = new Series<Coordinate>("Pierwszy",
-                new Coordinate<>(getISOString(1537788600000L),3.11),
-                new Coordinate<>(getISOString(1538778600000L),10.81),
-                new Coordinate<>(getISOString(1538788600000L),11.11),
-                new Coordinate<>(getISOString(1538888600000L),9.11),
-                new Coordinate<>(getISOString(1539788600000L),4.14)
-        );
-
-        series[1] = new Series<Coordinate>("drugi",
-                new Coordinate<>(getISOString(1537788800000L),5.11),
-                new Coordinate<>(getISOString(1538778800000L),7.81),
-                new Coordinate<>(getISOString(1538788900000L),15.11),
-                new Coordinate<>(getISOString(1538888700000L),4.11),
-                new Coordinate<>(getISOString(1539788900000L),13.14)
-        );
-
         apexChart = ApexChartsBuilder.get()
                 .withChart(ChartBuilder.get()
                         .withType(Type.line).
                                 build())
-                .withSeries(series)
                 .withXaxis(XAxisBuilder.get()
                         .withType(XAxisType.datetime)
                         .build())
