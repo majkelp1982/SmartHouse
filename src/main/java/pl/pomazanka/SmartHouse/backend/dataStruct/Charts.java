@@ -30,12 +30,15 @@ public class Charts {
 
         int i = 0;
         for (Data temp : list) {
-
-            if (temp.isNumber) serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),temp.getDouble());
-            else serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),temp.getBoolean());
+            if (temp.isNumber) serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
+            else serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getBoolean());
             i++;
         }
         return serie;
+    }
+
+    public ArrayList<String> getVariables (String collectionName) {
+        return mongoDBController.getVariables(collectionName);
     }
 
     public static class Data{

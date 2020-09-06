@@ -135,7 +135,22 @@ public class MongoDBController {
         return list;
     }
 
-    public UserDetails getUser ()  {
+    public ArrayList<String> getVariables(String collectionName) {
+        ArrayList<String> list = new ArrayList<>();
+        MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+        FindIterable iterable =  mongoCollection.find().limit(1).sort(new Document("_id",-1));
+        Iterator iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+
+            //FIXME
+            System.out.println(iterator.next().toString());
+            return list;
+        }
+        else return null;
+    }
+
+
+        public UserDetails getUser ()  {
         MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
         Document doc = (Document) mongoCollection.find().first();
         UserInstance userInstance = new Gson().fromJson(doc.toJson(), UserInstance.class);

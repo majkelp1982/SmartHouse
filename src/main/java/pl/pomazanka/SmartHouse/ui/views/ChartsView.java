@@ -7,31 +7,38 @@ import com.github.appreciated.apexcharts.config.chart.Type;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
-
 import javax.annotation.PostConstruct;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
 public class ChartsView extends View {
     //Objects
+    private Dialog chartDialog = new Dialog();
+    Select<String> select = new Select<>();
     private Header header;
     private Section[] section = new Section[2];
     private ApexCharts apexChart = new ApexCharts();
 
     @Autowired
     Charts charts;
+    @Autowired
+    Diagnostic diagnostic;
 
     public ChartsView () {
         header = new Header("Wykresy","graph.svg");
+        header.getHeader().add(select);
+
         section[0] = new Section();
         section[0].createTile("graph.svg","Wykresy");
 
@@ -46,6 +53,19 @@ public class ChartsView extends View {
 
     @PostConstruct
     public void post() throws Exception {
+
+        ArrayList<Diagnostic.ModuleDiagInfo> modulesList =  diagnostic.getModules();
+        select.setLabel("Zarządzaj");
+        ArrayList<String> modulesName = new ArrayList<>();
+        for (Diagnostic.ModuleDiagInfo module : modulesList) {
+            modulesName.add(module.getModuleName());
+        }
+        select.setItems(modulesName);
+        select.addValueChangeListener(event -> {
+            createDialog(event.getValue());
+            chartDialog.open();
+        });
+
         Series<Coordinate>[] series = new Series[3];
 
         String collectionName = "module_heating";
@@ -83,7 +103,18 @@ public class ChartsView extends View {
         apexChart.setHeight("1000px");
     }
 
-    private String getISOString(long l) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(l), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    private void createDialog(String selectedValue) {
+
+        System.out.println(selectedValue);
+        charts.getVariables("module_heating");
+
+        MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
+        listBox.setItems("Option one", "Option two", "Option three",
+                "Option four");
+        chartDialog.removeAll();
+        chartDialog.add(listBox);
+        chartDialog.setWidth("400px");
+        chartDialog.setHeight("150px");
+        select.clear();
     }
 }
