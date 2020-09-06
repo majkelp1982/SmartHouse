@@ -144,34 +144,50 @@ public class MongoDBController {
     }
 
     private LocalDateTime getDateTimeFromJson (String jsonDoc) {
+
         //Get Date
         int startIndex = jsonDoc.indexOf("frameLastUpdate=Document{{date=Document{{");
-
         int yearIndex = jsonDoc.indexOf("year=", startIndex);
-        int comaIndex = jsonDoc.indexOf(",",yearIndex);
-        int year = Integer.valueOf(jsonDoc.substring(yearIndex+5,comaIndex));
+        int comaIndex = jsonDoc.indexOf(",", yearIndex);
+        String yearSubstring = jsonDoc.substring(yearIndex + 5, comaIndex);
 
         int monthIndex = jsonDoc.indexOf("month=", startIndex);
-        comaIndex = jsonDoc.indexOf(",",monthIndex);
-        int month = Integer.valueOf(jsonDoc.substring(monthIndex+6,comaIndex));
+        comaIndex = jsonDoc.indexOf(",", monthIndex);
+        String monthSubstring = jsonDoc.substring(monthIndex + 6, comaIndex);
 
         int dayIndex = jsonDoc.indexOf("day=", startIndex);
-        comaIndex = jsonDoc.indexOf("}",dayIndex);
-        int day = Integer.valueOf(jsonDoc.substring(dayIndex+4,comaIndex));
+        comaIndex = jsonDoc.indexOf("}", dayIndex);
+        String daySubstring = jsonDoc.substring(dayIndex + 4, comaIndex);
 
         int hourIndex = jsonDoc.indexOf("hour=", startIndex);
-        comaIndex = jsonDoc.indexOf(",",hourIndex);
-        int hour = Integer.valueOf(jsonDoc.substring(hourIndex+6,comaIndex));
+        comaIndex = jsonDoc.indexOf(",", hourIndex);
+        String hourSubstring = jsonDoc.substring(hourIndex + 5, comaIndex);
 
         int minuteIndex = jsonDoc.indexOf("minute=", startIndex);
-        comaIndex = jsonDoc.indexOf(",",minuteIndex);
-        int minute = Integer.valueOf(jsonDoc.substring(minuteIndex+7,comaIndex));
+        comaIndex = jsonDoc.indexOf(",", minuteIndex);
+        String minuteSubstring = jsonDoc.substring(minuteIndex + 7, comaIndex);
 
         int secondIndex = jsonDoc.indexOf("second=", startIndex);
-        comaIndex = jsonDoc.indexOf(",",secondIndex);
-        int second = Integer.valueOf(jsonDoc.substring(secondIndex+7,comaIndex));
+        comaIndex = jsonDoc.indexOf(",", secondIndex);
+        String secondSubstring = jsonDoc.substring(secondIndex + 7, comaIndex);
 
-        return LocalDateTime.of(year,month,day,hour,minute,second);
+        try {
+            int year = Integer.valueOf(yearSubstring);
+            int month = Integer.valueOf(monthSubstring);
+            int day = Integer.valueOf(daySubstring);
+            int hour = Integer.valueOf(hourSubstring);
+            int minute = Integer.valueOf(minuteSubstring);
+            int second = Integer.valueOf(secondSubstring);
+            return LocalDateTime.of(year, month, day, hour, minute, second);
+        }
+        catch (NumberFormatException e) {
+            System.out.print(jsonDoc.substring(jsonDoc.indexOf("frameLastUpdate=Document{{date=Document{{")));
+            System.out.printf("year[%s] month[%s] day[%s] hour[%s] minute[%s] second[%s]\n",
+                    yearSubstring,monthSubstring,daySubstring,hourSubstring,minuteSubstring,secondSubstring);
+            new Exception(e);
+            return null;
+        }
+
     }
 
     private String getValue (String jsonDoc, String variableName) {
