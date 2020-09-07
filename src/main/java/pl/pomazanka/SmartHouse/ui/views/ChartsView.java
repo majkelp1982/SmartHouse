@@ -109,12 +109,10 @@ public class ChartsView extends View {
         charts.getVariables("module_heating");
 
         MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
-        listBox.setItems("Option one", "Option two", "Option three",
-                "Option four");
+        listBox.setItems(charts.getVariables("module_heating"));
         chartDialog.removeAll();
         chartDialog.add(listBox);
         chartDialog.setWidth("400px");
         chartDialog.setHeight("150px");
-        select.clear();
     }
 }

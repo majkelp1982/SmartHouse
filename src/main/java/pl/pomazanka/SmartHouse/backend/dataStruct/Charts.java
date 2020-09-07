@@ -25,7 +25,7 @@ public class Charts {
     public Coordinate[] getSerie (String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
         //FIXME
         ArrayList<Data> list;
-        list = mongoDBController.getEntry(collectionName, variableName, from, to);
+        list = mongoDBController.getValues(collectionName, variableName, from, to);
         Coordinate[] serie = new Coordinate[list.size()];
 
         int i = 0;
@@ -75,7 +75,7 @@ public class Charts {
             return isNumber;
         }
 
-        private boolean tryParseDouble(String value) {
+        public static boolean tryParseDouble(String value) {
             try {
                 Double.parseDouble(value);
                 return true;
@@ -84,13 +84,11 @@ public class Charts {
             }
         }
 
-        private boolean tryParseBoolean(String value) {
-            try {
-                Boolean.parseBoolean(value);
+        public static boolean tryParseBoolean(String value) {
+            if (value.equals("true") ||
+                    (value.equals("false")))
                 return true;
-            } catch (NumberFormatException e) {
-                return false;
-            }
+            else return false;
         }
     }
 

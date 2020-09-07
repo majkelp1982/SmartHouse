@@ -10,7 +10,7 @@ public class Module_Comfort extends Module implements Cloneable {
     private Zone[] zone = new Zone[7];
 
     public Module_Comfort() throws Exception {
-        super(MODULE_TYPE, "Komfort");
+        super(MODULE_TYPE, "Komfort", "module_comfort");
         for (int i=0; i<7;i++)
             zone[i] = new Zone();
 

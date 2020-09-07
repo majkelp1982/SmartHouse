@@ -47,7 +47,7 @@ public class Module_Heating extends Module implements Cloneable {
     private transient double NVReqTempBufferCWU;
 
     public Module_Heating() throws Exception {
-        super(MODULE_TYPE, "Ogrzewanie");
+        super(MODULE_TYPE, "Ogrzewanie", "module_heating");
         faultListInit();
     }
 

@@ -115,7 +115,7 @@ public class MongoDBController {
         mongoCollection.insertOne(documentNew);
     }
 
-    public ArrayList<Charts.Data> getEntry(String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
+    public ArrayList<Charts.Data> getValues(String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
         ArrayList<Charts.Data> list = new ArrayList<>();
 
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
@@ -141,16 +141,84 @@ public class MongoDBController {
         FindIterable iterable =  mongoCollection.find().limit(1).sort(new Document("_id",-1));
         Iterator iterator = iterable.iterator();
         if (iterator.hasNext()) {
-
+            String jsonDoc = iterator.next().toString();
             //FIXME
-            System.out.println(iterator.next().toString());
+            System.out.println(jsonDoc);
+
+            list = jsonDocAnalyse(jsonDoc);
+
+            list.forEach(e-> {
+                System.out.println(e.toString());
+            });
+
             return list;
         }
         else return null;
     }
 
+    private ArrayList<String> jsonDocAnalyse(String jsonDoc) {
+        ArrayList<String> list = new ArrayList<>();
+        int cursor = 0;
+        int tempIndex = 0;
+        String variableName;
+        String subString;
+        int variableArrayNo=0;
+        //skip 'Document{{'
+        cursor += 10;
+        int length = jsonDoc.length();
 
-        public UserDetails getUser ()  {
+ //       while ((cursor<length) && (cursor != 1)){
+        while ((cursor<length) && (cursor != 1)){
+                subString = "";
+            variableArrayNo = 0;
+            //find cursor index variable end
+            tempIndex = jsonDoc.indexOf("=", cursor);
+            subString = jsonDoc.substring(tempIndex + 1, tempIndex + 2);
+            if (subString.equals("[")) {
+                variableName = jsonDoc.substring(cursor, tempIndex);
+                cursor = tempIndex + 1;
+                subString = jsonDoc.substring(cursor+1, cursor + 11);
+
+                if (subString.equals("Document{{")) {
+                    int endIndex = jsonDoc.indexOf("]",cursor);
+                    while (cursor < endIndex) {
+                        ArrayList<String> subList = new ArrayList<>();
+                        tempIndex = jsonDoc.indexOf("}}", cursor);
+                        subString = jsonDoc.substring(cursor + 1, tempIndex);
+                        subList = jsonDocAnalyse(subString);
+                        cursor = tempIndex+2;
+                        final String prefixName = variableName + "[" + variableArrayNo + "].";
+
+                        subList.forEach(action -> {
+                            list.add(prefixName + action.toString());
+                        });
+                        variableArrayNo++;
+                        cursor +=1;
+                    }
+                    cursor++;
+                } else {
+                    int endIndexInnerArray = jsonDoc.indexOf("]", cursor);
+                    cursor++;
+                    while (cursor < endIndexInnerArray) {
+                        list.add(variableName + "[" + variableArrayNo + "]");
+                        variableArrayNo++;
+                        cursor = jsonDoc.indexOf(",", cursor+1);
+                    }
+                    cursor ++;
+                }
+            } else {
+                subString = jsonDoc.substring(cursor, tempIndex);
+
+                if (!subString.equals("_id")) list.add(subString);
+                cursor = jsonDoc.indexOf(", ",tempIndex)+1;
+            }
+            cursor++;
+        }
+        return list;
+    }
+
+
+    public UserDetails getUser ()  {
         MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
         Document doc = (Document) mongoCollection.find().first();
         UserInstance userInstance = new Gson().fromJson(doc.toJson(), UserInstance.class);

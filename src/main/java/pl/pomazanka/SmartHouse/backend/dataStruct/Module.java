@@ -9,6 +9,7 @@ public class Module {
 
     private int moduleType;
     private String moduleName;
+    private transient String moduleStructureName;
     private transient int[] IP = new int[4];
     private transient Fault[] fault = new Fault[FAULT_MAX];
     private transient boolean upToDate = false;
@@ -19,9 +20,10 @@ public class Module {
     @Autowired
     transient Diagnostic diagnostic;
 
-    public Module(int moduleType,String moduleName) {
+    public Module(int moduleType,String moduleName, String moduleStructureName) {
         this.moduleType = moduleType;
         this.moduleName = moduleName;
+        this.moduleStructureName = moduleStructureName;
     }
 
     @PostConstruct

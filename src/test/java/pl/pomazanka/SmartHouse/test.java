@@ -13,5 +13,6 @@ public class test {
     public static void main(String[] args) throws Exception {
         MongoDBController mongoDBController = new MongoDBController();
         //FIXME
-        mongoDBController.getEntry("module_heating", "valve_bypass", LocalDateTime.now(), LocalDateTime.now());   }
+        mongoDBController.getVariables("module_comfort");
+    }
 }

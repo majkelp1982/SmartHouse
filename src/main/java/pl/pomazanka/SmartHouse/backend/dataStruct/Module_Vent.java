@@ -8,11 +8,11 @@ public class Module_Vent extends Module implements Cloneable {
     private static byte MODULE_TYPE = 3;
 
     private boolean fanON;
-    private int[] hour = new int[12];
-    private int[] NVHour = new int[13];
+    private transient int[] hour = new int[12];
+    private transient int[] NVHour = new int[13];
 
     public Module_Vent() {
-        super(MODULE_TYPE,"Wentylacja");
+        super(MODULE_TYPE,"Wentylacja","module_vent");
     }
 
     public boolean isFanON() {
