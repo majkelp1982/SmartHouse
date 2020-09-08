@@ -12,12 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import java.util.Date;
 
 public class View extends VerticalLayout {
 

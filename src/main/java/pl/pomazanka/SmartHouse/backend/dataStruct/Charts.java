@@ -3,12 +3,8 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
-
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -37,8 +33,8 @@ public class Charts {
         return serie;
     }
 
-    public ArrayList<String> getVariables (String collectionName) {
-        return mongoDBController.getVariables(collectionName);
+    public ArrayList<VariableList> refreshVariables () {
+        return mongoDBController.refreshVariables();
     }
 
     public static class Data{
@@ -89,6 +85,24 @@ public class Charts {
                     (value.equals("false")))
                 return true;
             else return false;
+        }
+    }
+
+    public static class VariableList {
+        private String variableName;
+        private boolean enabled;
+
+        public VariableList (String variableName, boolean enabled) {
+            this.variableName = variableName;
+            this.enabled = enabled;
+        }
+
+        public String getVariableName() {
+            return variableName;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
         }
     }
 

@@ -9,7 +9,6 @@ import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,15 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
 public class ChartsView extends View {
     //Objects
     private Dialog chartDialog = new Dialog();
-    Select<String> select = new Select<>();
     private Header header;
+    private Button buttonManage;
     private Section[] section = new Section[2];
     private ApexCharts apexChart = new ApexCharts();
 
@@ -37,7 +37,8 @@ public class ChartsView extends View {
 
     public ChartsView () {
         header = new Header("Wykresy","graph.svg");
-        header.getHeader().add(select);
+        buttonManage = new Button("Zarządzaj", false, false);
+        header.getHeader().add(buttonManage.getSource());
 
         section[0] = new Section();
         section[0].createTile("graph.svg","Wykresy");
@@ -54,15 +55,8 @@ public class ChartsView extends View {
     @PostConstruct
     public void post() throws Exception {
 
-        ArrayList<Diagnostic.ModuleDiagInfo> modulesList =  diagnostic.getModules();
-        select.setLabel("Zarządzaj");
-        ArrayList<String> modulesName = new ArrayList<>();
-        for (Diagnostic.ModuleDiagInfo module : modulesList) {
-            modulesName.add(module.getModuleName());
-        }
-        select.setItems(modulesName);
-        select.addValueChangeListener(event -> {
-            createDialog(event.getValue());
+        buttonManage.getSource().addClickListener(event -> {
+            createDialog();
             chartDialog.open();
         });
 
@@ -103,16 +97,22 @@ public class ChartsView extends View {
         apexChart.setHeight("1000px");
     }
 
-    private void createDialog(String selectedValue) {
-
-        System.out.println(selectedValue);
-        charts.getVariables("module_heating");
-
+    private void createDialog() {
+        ArrayList<Charts.VariableList> variableList = charts.refreshVariables();
         MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
-        listBox.setItems(charts.getVariables("module_heating"));
+
+        ArrayList<String> tempList = new ArrayList<>();
+        variableList.forEach(item -> {
+            tempList.add(item.getVariableName());
+        });
+        listBox.setItems(tempList);
+        variableList.forEach(item -> {
+            if (item.isEnabled())
+                listBox.select(item.getVariableName());
+        });
         chartDialog.removeAll();
         chartDialog.add(listBox);
-        chartDialog.setWidth("400px");
-        chartDialog.setHeight("150px");
+        chartDialog.setWidth(listBox.getWidth());
+        chartDialog.setHeight("500px");
     }
 }

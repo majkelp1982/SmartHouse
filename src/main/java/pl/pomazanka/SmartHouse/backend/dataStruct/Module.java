@@ -28,7 +28,7 @@ public class Module {
 
     @PostConstruct
     public void postConstructor() {
-        diagnostic.addModule(moduleType, moduleName);
+        diagnostic.addModule(moduleType, moduleName, moduleStructureName);
     }
 
     public int getModuleType() {

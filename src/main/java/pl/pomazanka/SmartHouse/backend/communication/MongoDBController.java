@@ -2,27 +2,19 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
-import com.mongodb.Cursor;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+import pl.pomazanka.SmartHouse.backend.dataStruct.*;
 import pl.pomazanka.SmartHouse.backend.security.UserInstance;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
 @Service
@@ -38,6 +30,8 @@ public class MongoDBController {
     Module_Comfort module_comfort;
     @Autowired
     Module_Vent module_vent;
+    @Autowired
+    Diagnostic diagnostic;
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
         int moduleType = packetData[0];             // Get basic data from UDP frame
@@ -135,28 +129,29 @@ public class MongoDBController {
         return list;
     }
 
-    public ArrayList<String> getVariables(String collectionName) {
-        ArrayList<String> list = new ArrayList<>();
-        MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
-        FindIterable iterable =  mongoCollection.find().limit(1).sort(new Document("_id",-1));
-        Iterator iterator = iterable.iterator();
-        if (iterator.hasNext()) {
-            String jsonDoc = iterator.next().toString();
-            //FIXME
-            System.out.println(jsonDoc);
+    public ArrayList<Charts.VariableList> refreshVariables() {
+        ArrayList<Charts.VariableList> variableLists = new ArrayList<>();
+        ArrayList<String> actualVariablesList = new ArrayList<>();
 
-            list = jsonDocAnalyse(jsonDoc);
+        diagnostic.getModules().forEach(moduleDiagInfo -> {
+            String moduleStructureName = moduleDiagInfo.getModuleStructureName();
+            MongoCollection mongoCollection = mongoDatabase.getCollection(moduleStructureName);
+            FindIterable iterable =  mongoCollection.find().limit(1).sort(new Document("_id",-1));
+            Iterator iterator = iterable.iterator();
+            if (iterator.hasNext()) {
+                String jsonDoc = iterator.next().toString();
+                actualVariablesList.addAll(jsonDocAnalyse(moduleStructureName, jsonDoc));
+            }
+        });
 
-            list.forEach(e-> {
-                System.out.println(e.toString());
-            });
+        actualVariablesList.forEach(item -> {
+            variableLists.add(new Charts.VariableList(item.toString(), false));
+        });
 
-            return list;
-        }
-        else return null;
+        return variableLists;
     }
 
-    private ArrayList<String> jsonDocAnalyse(String jsonDoc) {
+    private ArrayList<String> jsonDocAnalyse(String collectionName, String jsonDoc) {
         ArrayList<String> list = new ArrayList<>();
         int cursor = 0;
         int tempIndex = 0;
@@ -167,7 +162,6 @@ public class MongoDBController {
         cursor += 10;
         int length = jsonDoc.length();
 
- //       while ((cursor<length) && (cursor != 1)){
         while ((cursor<length) && (cursor != 1)){
                 subString = "";
             variableArrayNo = 0;
@@ -185,9 +179,9 @@ public class MongoDBController {
                         ArrayList<String> subList = new ArrayList<>();
                         tempIndex = jsonDoc.indexOf("}}", cursor);
                         subString = jsonDoc.substring(cursor + 1, tempIndex);
-                        subList = jsonDocAnalyse(subString);
+                        subList = jsonDocAnalyse("",subString);
                         cursor = tempIndex+2;
-                        final String prefixName = variableName + "[" + variableArrayNo + "].";
+                        final String prefixName = collectionName+"."+variableName + "[" + variableArrayNo + "]";
 
                         subList.forEach(action -> {
                             list.add(prefixName + action.toString());
@@ -200,7 +194,7 @@ public class MongoDBController {
                     int endIndexInnerArray = jsonDoc.indexOf("]", cursor);
                     cursor++;
                     while (cursor < endIndexInnerArray) {
-                        list.add(variableName + "[" + variableArrayNo + "]");
+                        list.add(collectionName+"."+variableName + "[" + variableArrayNo + "]");
                         variableArrayNo++;
                         cursor = jsonDoc.indexOf(",", cursor+1);
                     }
@@ -208,15 +202,15 @@ public class MongoDBController {
                 }
             } else {
                 subString = jsonDoc.substring(cursor, tempIndex);
+                if (subString.equals("moduleType")) break;
 
-                if (!subString.equals("_id")) list.add(subString);
+                if (!subString.equals("_id")) list.add(collectionName+"."+subString);
                 cursor = jsonDoc.indexOf(", ",tempIndex)+1;
             }
             cursor++;
         }
         return list;
     }
-
 
     public UserDetails getUser ()  {
         MongoCollection mongoCollection = mongoDatabase.getCollection("Users");

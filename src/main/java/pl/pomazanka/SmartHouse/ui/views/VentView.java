@@ -11,10 +11,9 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
 @PageTitle("Smart House | Wentylacja")

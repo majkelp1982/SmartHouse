@@ -2,13 +2,10 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
 @Service
@@ -44,8 +41,8 @@ public class Diagnostic {
         return globalFaultsListGroupByFault;
     }
 
-    public void addModule (int moduleType, String moduleName) {
-        modules.add(new ModuleDiagInfo(moduleType,moduleName));
+    public void addModule (int moduleType, String moduleName, String structureName) {
+        modules.add(new ModuleDiagInfo(moduleType,moduleName, structureName));
     }
 
     public void updateIP (int moduleTyp, int[] IP) {
@@ -130,12 +127,14 @@ public class Diagnostic {
     public class ModuleDiagInfo {
         private int moduleType;
         private String moduleName;
+        private String moduleStructureName;
         private int[] IP = new int[4];
         private ArrayList<Fault> faultList;
 
-        public ModuleDiagInfo(int moduleType, String moduleName) {
+        public ModuleDiagInfo(int moduleType, String moduleName, String moduleStructureName) {
             this.moduleType = moduleType;
             this.moduleName = moduleName;
+            this.moduleStructureName = moduleStructureName;
             faultList = new ArrayList<>();
         }
 
@@ -195,6 +194,10 @@ public class Diagnostic {
 
         public void addFault(int index, LocalDateTime incoming, String description) {
             faultList.add(new Fault(index, incoming, description));
+        }
+
+        public String getModuleStructureName() {
+            return moduleStructureName;
         }
     }
 

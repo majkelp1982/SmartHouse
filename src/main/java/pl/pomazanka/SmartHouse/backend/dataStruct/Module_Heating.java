@@ -1,8 +1,6 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
