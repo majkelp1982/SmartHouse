@@ -29,7 +29,7 @@ public class ChartsView extends View {
     private Button buttonManage;
     private Section[] section = new Section[2];
     private ApexCharts apexChart = new ApexCharts();
-
+    private ArrayList<Charts.VariableList> variableList;
     @Autowired
     Charts charts;
     @Autowired
@@ -54,28 +54,12 @@ public class ChartsView extends View {
 
     @PostConstruct
     public void post() throws Exception {
-
         buttonManage.getSource().addClickListener(event -> {
             createDialog();
             chartDialog.open();
         });
-
-        Series<Coordinate>[] series = new Series[3];
-
-        String collectionName = "module_heating";
-        String variableName = "tBufferCWUDown";
-        Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
-        series[0] = new Series<Coordinate>(variableName, list);
-
-        variableName = "tBufferCWUMid";
-        list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
-        series[1] = new Series<Coordinate>(variableName, list);
-
-        variableName = "tBufferCWUHigh";
-        list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
-        series[2] = new Series<Coordinate>(variableName, list);
-
-        apexChart.setSeries(series);
+        variableList = charts.refreshVariables();
+        refreshCharts();
     }
 
     private void createInfoSection0() {
@@ -98,9 +82,7 @@ public class ChartsView extends View {
     }
 
     private void createDialog() {
-        ArrayList<Charts.VariableList> variableList = charts.refreshVariables();
         MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
-
         ArrayList<String> tempList = new ArrayList<>();
         variableList.forEach(item -> {
             tempList.add(item.getVariableName());
@@ -110,9 +92,43 @@ public class ChartsView extends View {
             if (item.isEnabled())
                 listBox.select(item.getVariableName());
         });
+
+        listBox.addSelectionListener(event -> {
+            for (Charts.VariableList variable : variableList)
+                variable.setEnabled(listBox.isSelected(variable.getVariableName()));
+
+            charts.saveVariablesList(variableList);
+        });
         chartDialog.removeAll();
         chartDialog.add(listBox);
         chartDialog.setWidth(listBox.getWidth());
         chartDialog.setHeight("500px");
+    }
+
+    private void refreshCharts() throws Exception {
+        //FIXME. Auto-refresh list after managing list selection changed.
+        //FIXME. In case array on managing list activated. Variable name will not working. The same for inner document (module_comfort)
+        int chartCount= 0;
+        for (Charts.VariableList variable : variableList)
+            if (variable.isEnabled()) chartCount++;
+        Series<Coordinate>[] series = new Series[chartCount];
+
+        chartCount = 0;
+        for (Charts.VariableList variable : variableList) {
+            if (!variable.isEnabled()) continue;
+
+            String variableStr = variable.getVariableName();
+            int collectionEndIndex = variableStr.indexOf(".");
+            String collectionName = variableStr.substring(0,collectionEndIndex);
+            String variableName = variableStr.substring(collectionEndIndex+1);
+
+            Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
+            series[chartCount] = new Series<Coordinate>(variableName, list);
+
+
+            chartCount++;
+        }
+
+        apexChart.setSeries(series);
     }
 }

@@ -104,6 +104,18 @@ public class Charts {
         public boolean isEnabled() {
             return enabled;
         }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 
-}
+    public void saveVariablesList (ArrayList<Charts.VariableList> list) {
+        mongoDBController.dropCollection("chart_variable_list");
+        list.forEach(item -> {
+            mongoDBController.saveNewEntry("chart_variable_list", item);
+        });
+
+    }
+
+    }

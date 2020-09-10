@@ -2,6 +2,8 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Cursor;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -79,7 +81,7 @@ public class MongoDBController {
         mongoCollection.insertOne(document);
     }
 
-    private void saveNewEntry(String collectionName, Object object) {
+    public void saveNewEntry(String collectionName, Object object) {
         // Help variables
         Gson gson = new Gson();
         String json;
@@ -91,6 +93,11 @@ public class MongoDBController {
         Document documentActual = Document.parse(json);
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         mongoCollection.insertOne(documentActual);
+    }
+
+    public void dropCollection (String collectionName) {
+        MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+        mongoCollection.drop();
     }
 
     private void updateLastEntry(String collectionName, Object object) {
@@ -115,7 +122,7 @@ public class MongoDBController {
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
         //FIXME temporary 0<day<31. Replace with nesesery date in the future
-        gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gt", 0).append("$lt", 31));
+        gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gt", from.getDayOfMonth()-2).append("$lt", to.getDayOfMonth()+1));
 
         FindIterable iterable =  mongoCollection.find(gtQuery);
         Iterator iterator = iterable.iterator();
@@ -130,8 +137,8 @@ public class MongoDBController {
     }
 
     public ArrayList<Charts.VariableList> refreshVariables() {
-        ArrayList<Charts.VariableList> variableLists = new ArrayList<>();
-        ArrayList<String> actualVariablesList = new ArrayList<>();
+        ArrayList<Charts.VariableList> variableList = new ArrayList<>();
+        ArrayList<String> variablesListByModule = new ArrayList<>();
 
         diagnostic.getModules().forEach(moduleDiagInfo -> {
             String moduleStructureName = moduleDiagInfo.getModuleStructureName();
@@ -140,15 +147,36 @@ public class MongoDBController {
             Iterator iterator = iterable.iterator();
             if (iterator.hasNext()) {
                 String jsonDoc = iterator.next().toString();
-                actualVariablesList.addAll(jsonDocAnalyse(moduleStructureName, jsonDoc));
+                variablesListByModule.addAll(jsonDocAnalyse(moduleStructureName, jsonDoc));
             }
         });
 
-        actualVariablesList.forEach(item -> {
-            variableLists.add(new Charts.VariableList(item.toString(), false));
+        variablesListByModule.forEach(item -> {
+            variableList.add(new Charts.VariableList(item.toString(), false));
         });
 
-        return variableLists;
+        //Get last VariableList
+        MongoCollection mongoCollection = mongoDatabase.getCollection("chart_variable_list");
+        FindIterable<Document> iterable = mongoCollection.find();
+        for (Document doc : iterable) {
+            String jsonDoc = doc.toString();
+            int startIndex = jsonDoc.indexOf("variableName=");
+            int endIndex = jsonDoc.indexOf(",",startIndex);
+            String variableName = jsonDoc.substring(startIndex+13,endIndex);
+
+            startIndex = jsonDoc.indexOf("enabled=");
+            endIndex = jsonDoc.indexOf("}",startIndex);
+            String value = jsonDoc.substring(startIndex+8,endIndex);
+
+            Iterator iterator = variableList.iterator();
+            while (iterator.hasNext()) {
+                Charts.VariableList variable = (Charts.VariableList) iterator.next();
+                if (variable.getVariableName().equals(variableName)) {
+                    variable.setEnabled((value.equals("true") ? true : false));
+                }
+            }
+        }
+            return variableList;
     }
 
     private ArrayList<String> jsonDocAnalyse(String collectionName, String jsonDoc) {
