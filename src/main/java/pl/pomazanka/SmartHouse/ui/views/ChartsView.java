@@ -4,6 +4,7 @@ import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.tooltip.Style;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
@@ -65,8 +66,13 @@ public class ChartsView extends View {
     private void createInfoSection0() {
         apexChart = ApexChartsBuilder.get()
                 .withChart(ChartBuilder.get()
-                        .withType(Type.line).
-                                build())
+                        .withType(Type.line)
+                                .build())
+//                .withColors("yellow","green","brown","red","white","orange")
+                .withStroke(StrokeBuilder.get()
+                        .withWidth(1.0)
+//                        .withColors("yellow","green","brown","red")
+                        .build())
                 .withXaxis(XAxisBuilder.get()
                         .withType(XAxisType.datetime)
                         .build())
@@ -96,8 +102,12 @@ public class ChartsView extends View {
         listBox.addSelectionListener(event -> {
             for (Charts.VariableList variable : variableList)
                 variable.setEnabled(listBox.isSelected(variable.getVariableName()));
-
             charts.saveVariablesList(variableList);
+            try {
+                refreshCharts();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         chartDialog.removeAll();
         chartDialog.add(listBox);
@@ -106,7 +116,6 @@ public class ChartsView extends View {
     }
 
     private void refreshCharts() throws Exception {
-        //FIXME. Auto-refresh list after managing list selection changed.
         //FIXME. In case array on managing list activated. Variable name will not working. The same for inner document (module_comfort)
         int chartCount= 0;
         for (Charts.VariableList variable : variableList)
@@ -129,6 +138,6 @@ public class ChartsView extends View {
             chartCount++;
         }
 
-        apexChart.setSeries(series);
+        apexChart.updateSeries(series);
     }
 }
