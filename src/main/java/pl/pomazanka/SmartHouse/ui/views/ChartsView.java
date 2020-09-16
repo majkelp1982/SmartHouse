@@ -4,7 +4,6 @@ import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
-import com.github.appreciated.apexcharts.config.tooltip.Style;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
@@ -19,7 +18,6 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
@@ -116,12 +114,15 @@ public class ChartsView extends View {
     }
 
     private void refreshCharts() throws Exception {
-        //FIXME. In case array on managing list activated. Variable name will not working. The same for inner document (module_comfort)
+        //FIXME. In case arrays style variable on managing list activated. Variable name will not working. The same for inner document (module_comfort)
+
+        // Get number of series
         int chartCount= 0;
         for (Charts.VariableList variable : variableList)
             if (variable.isEnabled()) chartCount++;
         Series<Coordinate>[] series = new Series[chartCount];
 
+        // Get series according to the list
         chartCount = 0;
         for (Charts.VariableList variable : variableList) {
             if (!variable.isEnabled()) continue;
@@ -131,13 +132,11 @@ public class ChartsView extends View {
             String collectionName = variableStr.substring(0,collectionEndIndex);
             String variableName = variableStr.substring(collectionEndIndex+1);
 
-            Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now(), LocalDateTime.now());
+            Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now().minusDays(2), LocalDateTime.now());
             series[chartCount] = new Series<Coordinate>(variableName, list);
-
 
             chartCount++;
         }
-
         apexChart.updateSeries(series);
     }
 }

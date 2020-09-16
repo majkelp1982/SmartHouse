@@ -122,7 +122,7 @@ public class MongoDBController {
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
         //FIXME temporary 0<day<31. Replace with nesesery date in the future
-        gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gt", from.getDayOfMonth()-2).append("$lt", to.getDayOfMonth()+1));
+        gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gte", from.getDayOfMonth()).append("$lte", to.getDayOfMonth()));
 
         FindIterable iterable =  mongoCollection.find(gtQuery);
         Iterator iterator = iterable.iterator();
@@ -283,7 +283,11 @@ public class MongoDBController {
             int hour = Integer.valueOf(hourSubstring);
             int minute = Integer.valueOf(minuteSubstring);
             int second = Integer.valueOf(secondSubstring);
-            return LocalDateTime.of(year, month, day, hour, minute, second);
+            LocalDateTime temp = LocalDateTime.of(year, month, day, hour, minute, second);
+
+            //FIXME offset 2 hours needed
+            LocalDateTime temp1 = temp.plusHours(2);
+            return temp1;
         }
         catch (NumberFormatException e) {
             System.out.print(jsonDoc.substring(jsonDoc.indexOf("frameLastUpdate=Document{{date=Document{{")));
