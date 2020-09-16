@@ -10,10 +10,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
-
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 
 public class View extends VerticalLayout {
 
@@ -35,6 +37,7 @@ public class View extends VerticalLayout {
         private Label lastUpdateLabel;
         private Label diagnoseUpdateLabel;
 
+        //Header for Modules
         public Header(Module module, String imageSrc) {
             header = new HorizontalLayout();
 
@@ -60,18 +63,61 @@ public class View extends VerticalLayout {
             header.add(image, moduleTyp, info);
         }
 
+        //Header for diagnostic view
+        public Header(Diagnostic diagnostic, String imageSrc) {
+            header = new HorizontalLayout();
+
+            //About module type
+            Image image = new Image(imageSrc, imageSrc);
+            image.setHeight("80px");
+            Label moduleTyp = new Label(diagnostic.getModuleName());
+            moduleTyp.getStyle().set("font-size", "30px");
+
+            diagnoseUpdateLabel = new Label();
+            VerticalLayout info = new VerticalLayout();
+            info.setAlignItems(FlexComponent.Alignment.CENTER);
+            info.add(diagnoseUpdateLabel);
+            info.setWidth("800px");
+            info.setSizeFull();
+
+            header.addClassName("module");
+            header.setMinWidth("800px");
+            header.setSizeFull();
+            header.setHeight("80px");
+            header.setAlignItems(FlexComponent.Alignment.CENTER);
+            header.add(image, moduleTyp, info);
+        }
+
+        //Header only pic and title
+        public Header(String title, String imageSrc) {
+            header = new HorizontalLayout();
+
+            //About module type
+            Image image = new Image(imageSrc, imageSrc);
+            image.setHeight("80px");
+            Label moduleTyp = new Label(title);
+            moduleTyp.getStyle().set("font-size", "30px");
+
+             header.addClassName("module");
+            header.setMinWidth("800px");
+            header.setSizeFull();
+            header.setHeight("80px");
+            header.setAlignItems(FlexComponent.Alignment.CENTER);
+            header.add(image, moduleTyp);
+        }
+
         public HorizontalLayout getHeader() {
             return header;
         }
 
-        public void setLastUpdate(Date lastUpdate) {
-            lastUpdateLabel.setText("Update : " + simpleDateFormat.format(lastUpdate));
-            setComponentColor(lastUpdateLabel, true, true, lastUpdate.getTime(), getCurrentDate().getTime(), 60000, 120000);
+        public void setLastUpdate(LocalDateTime lastUpdate) {
+            lastUpdateLabel.setText("Update : " + lastUpdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            setComponentColor(lastUpdateLabel, true, true, lastUpdate.getLong(ChronoField.MILLI_OF_DAY), getCurrentDate().getLong(ChronoField.MILLI_OF_DAY), 60000, 120000);
         }
 
-        public void setDiagnoseUpdate(Date diagnoseUpdate) {
-            diagnoseUpdateLabel.setText("Diagnose : " + simpleDateFormat.format(diagnoseUpdate));
-            setComponentColor(diagnoseUpdateLabel, true, true, diagnoseUpdate.getTime(), getCurrentDate().getTime(), 60000, 120000);
+        public void setDiagnoseUpdate(LocalDateTime diagnoseUpdate) {
+            diagnoseUpdateLabel.setText("Diagnose : " + diagnoseUpdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            setComponentColor(diagnoseUpdateLabel, true, true, diagnoseUpdate.getLong(ChronoField.MILLI_OF_DAY), getCurrentDate().getLong(ChronoField.MILLI_OF_DAY), 60000, 120000);
         }
     }
 
@@ -250,8 +296,9 @@ public class View extends VerticalLayout {
         }
     }
 
-    public Date getCurrentDate() {
-        return new Date();
+    public LocalDateTime getCurrentDate() {
+        LocalDateTime now = LocalDateTime.now();
+        return now;
     }
 
     private void setComponentColor(HtmlContainer component, boolean colorEnabled, boolean exceedAlarm, Number isValue, Number expectedValue, Number warningLimit, Number alarmLimit) {

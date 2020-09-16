@@ -11,9 +11,9 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
 @PageTitle("Smart House | Wentylacja")
@@ -243,13 +243,13 @@ public class VentView extends View {
                 }
         }
 
-        Date currentDate = getCurrentDate();
+        LocalDateTime currentDate = LocalDateTime.now();
         int quarterActive;
-        if (currentDate.getMinutes()<15) quarterActive=0;
-        else if (currentDate.getMinutes()<30) quarterActive=1;
-        else if (currentDate.getMinutes()<45) quarterActive=2;
+        if (currentDate.getMinute()<15) quarterActive=0;
+        else if (currentDate.getMinute()<30) quarterActive=1;
+        else if (currentDate.getMinute()<45) quarterActive=2;
         else    quarterActive = 3;
-        ventByHour[currentDate.getHours()].setQuarterActive(quarterActive,true);
+        ventByHour[currentDate.getHour()].setQuarterActive(quarterActive,true);
         return actualDiagram;
     }
 

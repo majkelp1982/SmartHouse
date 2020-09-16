@@ -1,20 +1,34 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 
 public class Module {
+    public static final int FAULT_MAX = 100;
+
     private int moduleType;
     private String moduleName;
-    private int[] IP = new int[4];
-    private boolean error = false;
-    private boolean upToDate = false;
-    private Date frameLastUpdate = new Date();
-    private Date diagnosticLastUpdate = new Date();
-    private boolean reqUpdateValues = false;
+    private transient String moduleStructureName;
+    private transient int[] IP = new int[4];
+    private transient Fault[] fault = new Fault[FAULT_MAX];
+    private transient boolean upToDate = false;
+    private LocalDateTime frameLastUpdate = LocalDateTime.now();
+    private transient LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
+    private transient boolean reqUpdateValues = false;
 
-    public Module(int moduleType,String moduleName) {
+    @Autowired
+    transient Diagnostic diagnostic;
+
+    public Module(int moduleType,String moduleName, String moduleStructureName) {
         this.moduleType = moduleType;
         this.moduleName = moduleName;
+        this.moduleStructureName = moduleStructureName;
+    }
+
+    @PostConstruct
+    public void postConstructor() {
+        diagnostic.addModule(moduleType, moduleName, moduleStructureName);
     }
 
     public int getModuleType() {
@@ -31,29 +45,43 @@ public class Module {
 
     public void setIP(int[] IP) {
         this.IP = IP;
+        diagnostic.updateIP(getModuleType(), IP);
     }
 
-    public boolean isError() {
-        return error;
+    public void setFaultPresent(int faultNo, boolean present) {
+        fault[faultNo].setPresent(present);
     }
 
-    public void setError(boolean error) {
-        this.error = error;
+    public void setFaultText(int faultNo, String text) throws Exception {
+        if (fault[faultNo] == null) fault[faultNo] = new Fault(text);
+        else {
+            throw new Exception("Double declaration of fault number "+faultNo);
+        }
     }
 
-    public Date getFrameLastUpdate() {
+    public void resetFaultPresent() {
+        //Clear old fault present status
+        for (int i=0; i<FAULT_MAX; i++)
+            if (fault[i] != null) setFaultPresent(i,false);
+    }
+
+    public void updateGlobalFaultList() {
+        diagnostic.updateModuleFaultList(getModuleType(), fault);
+    }
+
+    public LocalDateTime getFrameLastUpdate() {
         return frameLastUpdate;
     }
 
-    public void setFrameLastUpdate(Date frameLastUpdate) {
+    public void setFrameLastUpdate(LocalDateTime frameLastUpdate) {
         this.frameLastUpdate = frameLastUpdate;
     }
 
-    public Date getDiagnosticLastUpdate() {
+    public LocalDateTime getDiagnosticLastUpdate() {
         return diagnosticLastUpdate;
     }
 
-    public void setDiagnosticLastUpdate(Date diagnosticLastUpdate) {
+    public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
         this.diagnosticLastUpdate = diagnosticLastUpdate;
     }
 
@@ -84,7 +112,6 @@ public class Module {
 
     public boolean cmp(double value1, double value2, double tolerance) {
         if (Math.abs(value1 - value2) > tolerance) {
-            System.out.println("FLOAT FALSE");
             return false;
         } else return true;
     }
@@ -93,8 +120,29 @@ public class Module {
         return value1 == value2;
     }
 
-    protected Date getCurrentDate() {
-        Date nowDate = new Date();
-        return nowDate;
+    protected LocalDateTime getCurrentDate() {
+        return LocalDateTime.now();
+    }
+
+    public class Fault {
+        private boolean present;
+        private String text;
+        ;
+        public Fault (String text) {
+            this.text = text;
+        }
+
+        public boolean isPresent() {
+            return present;
+        }
+
+        public void setPresent(boolean present) {
+            this.present = present;
+        }
+
+        public String getText() {
+            return text;
+        }
+
     }
 }

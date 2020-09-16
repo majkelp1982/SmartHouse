@@ -9,10 +9,12 @@ public class Module_Comfort extends Module implements Cloneable {
 
     private Zone[] zone = new Zone[7];
 
-    public Module_Comfort() {
-        super(MODULE_TYPE, "Komfort");
+    public Module_Comfort() throws Exception {
+        super(MODULE_TYPE, "Komfort", "module_comfort");
         for (int i=0; i<7;i++)
             zone[i] = new Zone();
+
+        faultListInit();
     }
 
     public Zone[] getZone() {
@@ -82,6 +84,7 @@ public class Module_Comfort extends Module implements Cloneable {
                 //TODO diagnostic frame
                 break;
         }
+        faultCheck();
         if (!isReqUpdateValues()) assignNV();
     }
 
@@ -101,10 +104,31 @@ public class Module_Comfort extends Module implements Cloneable {
         return result;
     }
 
+    private void faultListInit () throws Exception {
+        setFaultText(0,"Termometr[salon] błąd odczytu temperatury");
+        setFaultText(1,"Termometr[pralnia] błąd odczytu temperatury");
+        setFaultText(2,"Termometr[laź.dół] błąd odczytu temperatury");
+        setFaultText(3,"Termometr[rodzic] błąd odczytu temperatury");
+        setFaultText(4,"Termometr[Natalia] błąd odczytu temperatury");
+        setFaultText(5,"Termometr[Karolina] błąd odczytu temperatury");
+        setFaultText(6,"Termometr[łaź.góra] błąd odczytu temperatury");
+    }
+
+    private void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        for (int i=0; i<7; i++)
+            if (zone[i].isTemp <11) setFaultPresent(i, true);
+        //TODO fault list to extend
+        updateGlobalFaultList();
+    }
+
     public class Zone implements Cloneable {
         public float isTemp=0;
         public double reqTemp=0;
-        public double NVReqTemp = 0;
+        public transient double NVReqTemp = 0;
         public int isHumidity=0;
 
         @Override
