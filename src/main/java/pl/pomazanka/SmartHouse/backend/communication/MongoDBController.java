@@ -121,7 +121,6 @@ public class MongoDBController {
 
         MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
-        //FIXME temporary 0<day<31. Replace with nesesery date in the future
         gtQuery.put("frameLastUpdate.date.day", new BasicDBObject("$gte", from.getDayOfMonth()).append("$lte", to.getDayOfMonth()));
 
         FindIterable iterable =  mongoCollection.find(gtQuery);
@@ -131,7 +130,9 @@ public class MongoDBController {
             String jsonDoc = iterator.next().toString();
             LocalDateTime dateTime = getDateTimeFromJson(jsonDoc);
             String value = getValue(jsonDoc, variableName);
-            list.add(new Charts.Data(dateTime, value));
+
+            if (!value.equals("0.0") && !value.equals("10.0") && (!value.equals("100.0")))
+                list.add(new Charts.Data(dateTime, value));
         }
         return list;
     }

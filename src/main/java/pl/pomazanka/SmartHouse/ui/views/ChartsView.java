@@ -4,11 +4,13 @@ import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.stroke.Curve;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
@@ -62,7 +65,40 @@ public class ChartsView extends View {
     }
 
     private void createInfoSection0() {
+        String[] colors = new String[10];
+        colors[0] = "#ffff00";
+        colors[1] = "#247ba0";
+        colors[2] = "#00ffff";
+        colors[3] = "#ff0000";
+        colors[4] = "#00ff00";
+        colors[5] = "#0000ff";
+        colors[6] = "#FFBD07";
+        colors[7] = "#2EDDFF";
+        colors[8] = "#E821C7";
+        colors[9] = "#733846";
+
         apexChart = ApexChartsBuilder.get()
+                .withColors(colors)
+                .withChart(ChartBuilder.get()
+                        .withType(Type.line)
+                                .build())
+                .withStroke(StrokeBuilder.get()
+                        .withWidth(1.0)
+                        .build())
+                .withXaxis(XAxisBuilder.get()
+                        .withType(XAxisType.datetime)
+                        .withTooltip(TooltipBuilder.get()
+                                .withEnabled(false)
+                                .build())
+                        .build())
+                .withYaxis(YAxisBuilder.get()
+                        .withTooltip(TooltipBuilder.get()
+                                .withEnabled(true)
+                                .build())
+                        .build())
+
+                .build();
+/*        apexChart = ApexChartsBuilder.get()
                 .withChart(ChartBuilder.get()
                         .withType(Type.line)
                                 .build())
@@ -81,6 +117,8 @@ public class ChartsView extends View {
                         .build())
 
                 .build();
+
+ */
         apexChart.setWidth("2000px");
         apexChart.setHeight("1000px");
     }
@@ -132,10 +170,16 @@ public class ChartsView extends View {
             String collectionName = variableStr.substring(0,collectionEndIndex);
             String variableName = variableStr.substring(collectionEndIndex+1);
 
-            Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now().minusDays(2), LocalDateTime.now());
-            series[chartCount] = new Series<Coordinate>(variableName, list);
-
-            chartCount++;
+            try {
+                Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now().minusDays(2), LocalDateTime.now());
+                series[chartCount] = new Series<Coordinate>(variableName, list);
+                chartCount++;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Notification notification = new Notification("Bląd przy dodawaniu [" + variableName + "] z kolekcji [" + collectionName + "]", 10000);
+                notification.open();
+            }
         }
         apexChart.updateSeries(series);
     }
