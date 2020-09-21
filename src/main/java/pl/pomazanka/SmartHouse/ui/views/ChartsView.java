@@ -94,29 +94,7 @@ public class ChartsView extends View {
                                 .withEnabled(true)
                                 .build())
                         .build())
-
                 .build();
-/*        apexChart = ApexChartsBuilder.get()
-                .withChart(ChartBuilder.get()
-                        .withType(Type.line)
-                                .build())
-//                .withColors("yellow","green","brown","red","white","orange")
-                .withStroke(StrokeBuilder.get()
-                        .withWidth(1.0)
-//                        .withColors("yellow","green","brown","red")
-                        .build())
-                .withXaxis(XAxisBuilder.get()
-                        .withType(XAxisType.datetime)
-                        .build())
-                .withYaxis(YAxisBuilder.get()
-                        .withTooltip(TooltipBuilder.get()
-                                .withEnabled(true)
-                                .build())
-                        .build())
-
-                .build();
-
- */
         apexChart.setWidth("2000px");
         apexChart.setHeight("1000px");
     }
@@ -169,7 +147,7 @@ public class ChartsView extends View {
             String variableName = variableStr.substring(collectionEndIndex+1);
 
             try {
-                Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now().minusDays(2), LocalDateTime.now());
+                Coordinate[] list =charts.getSerie(collectionName, variableName, LocalDateTime.now().minusDays(1), LocalDateTime.now());
                 series[chartCount] = new Series<Coordinate>(variableName, list);
                 chartCount++;
             }
