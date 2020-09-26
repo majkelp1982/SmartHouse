@@ -97,11 +97,11 @@ public class HeatingView extends View {
         //Buffer CO
         info[0][1][0] = new Info("góra", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5);
         info[0][1][1] = new Info("środek", "°C", module_heating.isHeatingActivated(), false , module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5);
-        info[0][1][2] = new Info("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCODown(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][1][2] = new Info("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOLow(), module_heating.getReqTempBufferCO(), 3, 5);
         //Section Tile 2 Buffer CWU
         info[0][2][0] = new Info("góra", "°C", true, false, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5);
         info[0][2][1] = new Info("środek", "°C", true, false, module_heating.gettBufferCWUMid(), module_heating.getReqTempBufferCWU(), 3, 5);
-        info[0][2][2] = new Info("dół", "°C", true, false, module_heating.gettBufferCWUDown(), module_heating.getReqTempBufferCWU(), 3, 5);
+        info[0][2][2] = new Info("dół", "°C", true, false, module_heating.gettBufferCWULow(), module_heating.getReqTempBufferCWU(), 3, 5);
         //Floor heating water distribution
         info[0][3][0] = new Info("rozdzielacz", "°C", module_heating.isHeatingActivated(), false, module_heating.gettManifold(), 34, 3, 5);
         info[0][3][1] = new Info("powrót parter", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnGroundFloor(), 30, 3, 5);
@@ -221,11 +221,11 @@ public class HeatingView extends View {
         //Buffer CO
         info[0][1][0].setValue(module_heating.gettBufferCOHigh());
         info[0][1][1].setValue(module_heating.gettBufferCOMid());
-        info[0][1][2].setValue(module_heating.gettBufferCODown());
+        info[0][1][2].setValue(module_heating.gettBufferCOLow());
         //Section Tile 2 Buffer CWU
         info[0][2][0].setValue(module_heating.gettBufferCWUHigh());
         info[0][2][1].setValue(module_heating.gettBufferCWUMid());
-        info[0][2][2].setValue(module_heating.gettBufferCWUDown());
+        info[0][2][2].setValue(module_heating.gettBufferCWULow());
         //Floor heating water distribution
         info[0][3][0].setValue(module_heating.gettManifold());
         info[0][3][1].setValue(module_heating.gettReturnGroundFloor());

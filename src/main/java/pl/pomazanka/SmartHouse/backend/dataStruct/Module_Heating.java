@@ -23,10 +23,10 @@ public class Module_Heating extends Module implements Cloneable {
     private boolean[] zone = new boolean[7];
     private float reqTempBufferCO;
     private float reqTempBufferCWU;
-    private float tBufferCODown;
+    private float tBufferCOLow;
     private float tBufferCOMid;
     private float tBufferCOHigh;
-    private float tBufferCWUDown;
+    private float tBufferCWULow;
     private float tBufferCWUMid;
     private float tBufferCWUHigh;
     private float tSupply;
@@ -97,8 +97,8 @@ public class Module_Heating extends Module implements Cloneable {
         return reqTempBufferCWU;
     }
 
-    public float gettBufferCODown() {
-        return tBufferCODown;
+    public float gettBufferCOLow() {
+        return tBufferCOLow;
     }
 
     public float gettBufferCOMid() {
@@ -109,8 +109,8 @@ public class Module_Heating extends Module implements Cloneable {
         return tBufferCOHigh;
     }
 
-    public float gettBufferCWUDown() {
-        return tBufferCWUDown;
+    public float gettBufferCWULow() {
+        return tBufferCWULow;
     }
 
     public float gettBufferCWUMid() {
@@ -235,10 +235,10 @@ public class Module_Heating extends Module implements Cloneable {
                 reqTempBufferCO = (float) packetData[6] / 2;
                 reqTempBufferCWU = (float) packetData[7] / 2;
 
-                tBufferCODown = (float) packetData[8] / 2;
+                tBufferCOLow = (float) packetData[8] / 2;
                 tBufferCOMid = (float) packetData[9] / 2;
                 tBufferCOHigh = (float) packetData[10] / 2;
-                tBufferCWUDown = (float) packetData[11] / 2;
+                tBufferCWULow = (float) packetData[11] / 2;
                 tBufferCWUMid = (float) packetData[12] / 2;
                 tBufferCWUHigh = (float) packetData[13] / 2;
 
@@ -299,10 +299,10 @@ public class Module_Heating extends Module implements Cloneable {
         if (result) result = cmp(module_Heating.zone[6], zone[6]);
         if (result) result = cmp(module_Heating.reqTempBufferCO, reqTempBufferCO, 0);
         if (result) result = cmp(module_Heating.reqTempBufferCWU, reqTempBufferCWU, 0);
-        if (result) result = cmp(module_Heating.tBufferCODown, tBufferCODown, 2);
+        if (result) result = cmp(module_Heating.tBufferCOLow, tBufferCOLow, 2);
         if (result) result = cmp(module_Heating.tBufferCOMid, tBufferCOMid, 2);
         if (result) result = cmp(module_Heating.tBufferCOHigh, tBufferCOHigh, 2);
-        if (result) result = cmp(module_Heating.tBufferCWUDown, tBufferCWUDown, 2);
+        if (result) result = cmp(module_Heating.tBufferCWULow, tBufferCWULow, 2);
         if (result) result = cmp(module_Heating.tBufferCWUMid, tBufferCWUMid, 2);
         if (result) result = cmp(module_Heating.tBufferCWUHigh, tBufferCWUHigh, 2);
         if (result) result = cmp(module_Heating.tSupply, tSupply, 1);
@@ -318,10 +318,10 @@ public class Module_Heating extends Module implements Cloneable {
     private void faultListInit () throws Exception {
         setFaultText(0,"Pompa ciepła przestała grzać");
         setFaultText(1, "Pompa ciepla osiągnęła graniczną temperaturę 56stC");
-        setFaultText(2,"T[tBufferCODown] błąd odczytu");
+        setFaultText(2,"T[tBufferCOLow] błąd odczytu");
         setFaultText(3,"T[tBufferCOMid] błąd odczytu");
         setFaultText(4,"T[tBufferCOHigh] błąd odczytu");
-        setFaultText(5,"T[tBufferCWUDown] błąd odczytu");
+        setFaultText(5,"T[tBufferCWULow] błąd odczytu");
         setFaultText(6,"T[tBufferCWUMid] błąd odczytu");
         setFaultText(7,"T[tBufferCWUHigh] błąd odczytu");
         setFaultText(8,"T[tSupply] błąd odczytu");
@@ -344,10 +344,10 @@ public class Module_Heating extends Module implements Cloneable {
                 setFaultPresent(0,true);
         }
         if (tSupply>=56) setFaultPresent(1, true);
-        if (tBufferCODown == 100) setFaultPresent(2,true);
+        if (tBufferCOLow == 100) setFaultPresent(2,true);
         if (tBufferCOMid == 100) setFaultPresent(3,true);
         if (tBufferCOHigh == 100) setFaultPresent(4,true);
-        if (tBufferCWUDown == 100) setFaultPresent(5,true);
+        if (tBufferCWULow == 100) setFaultPresent(5,true);
         if (tBufferCWUMid == 100) setFaultPresent(6,true);
         if (tBufferCWUHigh == 100) setFaultPresent(7,true);
         if (tSupply == 100) setFaultPresent(8,true);
