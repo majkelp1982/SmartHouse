@@ -29,6 +29,7 @@ public class HeatingView extends View {
     Button waterSuperHeat;
     NumberField reqTempBufferCO;
     NumberField reqTempBufferCWU;
+    NumberField heatPumpAlarmTemp;
 
     public HeatingView(Module_Heating module_heating) {
         this.module_heating = module_heating;
@@ -71,7 +72,7 @@ public class HeatingView extends View {
                     if (info[i][j][k] != null)
                         section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
         section[2].getTileDetailsContainer(0).add(cheapTariffOnly.getSource(),heatingActivated.getSource(),waterSuperHeat.getSource());
-        section[2].getTileDetailsContainer(1).add(reqTempBufferCO.getSource(), reqTempBufferCWU.getSource());
+        section[2].getTileDetailsContainer(1).add(reqTempBufferCO.getSource(), reqTempBufferCWU.getSource(), heatPumpAlarmTemp.getSource());
 
         //  <--!!!settings disabled when user not sign in !!!-->
         section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
@@ -187,6 +188,7 @@ public class HeatingView extends View {
         //Section Tile 1 required temperatures
         reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
         reqTempBufferCWU = new NumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
+        heatPumpAlarmTemp = new NumberField("Temp. Graniczna [°C]", module_heating.getHeatPumpAlarmTemp(), 52, 60, 1);
 
         //Click Listeners
         reqTempBufferCO.getSource().addValueChangeListener(valueChangeEvent -> {
@@ -197,6 +199,11 @@ public class HeatingView extends View {
         reqTempBufferCWU.getSource().addValueChangeListener(valueChangeEvent -> {
             module_heating.setNVReqTempBufferCWU(valueChangeEvent.getValue());
             setPendingColor(reqTempBufferCWU.getSource());
+            module_heating.setReqUpdateValues(true);
+        });
+        heatPumpAlarmTemp.getSource().addValueChangeListener(valueChangeEvent -> {
+            module_heating.setNVHeatPumpAlarmTemp((int)Math.rint(valueChangeEvent.getValue()));
+            setPendingColor(heatPumpAlarmTemp.getSource());
             module_heating.setReqUpdateValues(true);
         });
     }
@@ -212,6 +219,7 @@ public class HeatingView extends View {
         waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(),module_heating.isNVWaterSuperheat());
         reqTempBufferCO.setNumberField(module_heating.getReqTempBufferCO(), module_heating.getNVReqTempBufferCO());
         reqTempBufferCWU.setNumberField(module_heating.getReqTempBufferCWU(), module_heating.getNVReqTempBufferCWU());
+        heatPumpAlarmTemp.setNumberField(module_heating.getHeatPumpAlarmTemp(), module_heating.getNVHeatPumpAlarmTemp());
 
         //Info's
         info[0][0][0].setValue(module_heating.gettSupply());

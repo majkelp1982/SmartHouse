@@ -36,6 +36,7 @@ public class Module_Heating extends Module implements Cloneable {
     private float tManifold;
     private float tReturnGroundFloor;
     private float tReturnLoft;
+    private int heatPumpAlarmTemp;
 
     //New values of variables which can be updated
     private transient boolean NVCheapTariffOnly;
@@ -43,6 +44,7 @@ public class Module_Heating extends Module implements Cloneable {
     private transient boolean NVWaterSuperheat;
     private transient double NVReqTempBufferCO;
     private transient double NVReqTempBufferCWU;
+    private transient int NVHeatPumpAlarmTemp;
 
     public Module_Heating() throws Exception {
         super(MODULE_TYPE, "Ogrzewanie", "module_heating");
@@ -96,6 +98,12 @@ public class Module_Heating extends Module implements Cloneable {
     public float getReqTempBufferCWU() {
         return reqTempBufferCWU;
     }
+
+    public float getHeatPumpAlarmTemp() {
+        return heatPumpAlarmTemp;
+    }
+
+
 
     public float gettBufferCOLow() {
         return tBufferCOLow;
@@ -169,6 +177,9 @@ public class Module_Heating extends Module implements Cloneable {
         return NVReqTempBufferCWU;
     }
 
+    public double getNVHeatPumpAlarmTemp() {
+        return NVHeatPumpAlarmTemp;
+    }
     public void setNVCheapTariffOnly(boolean NVCheapTariffOnly) {
         this.NVCheapTariffOnly = NVCheapTariffOnly;
         setUpToDate(false);
@@ -194,6 +205,11 @@ public class Module_Heating extends Module implements Cloneable {
         setUpToDate(false);
     }
 
+    public void setNVHeatPumpAlarmTemp(int NVHeatPumpAlarmTemp) {
+        this.NVHeatPumpAlarmTemp = NVHeatPumpAlarmTemp;
+        setUpToDate(false);
+    }
+
     public boolean isAllUpToDate() {
         setUpToDate(true);
         if (isUpToDate()) setUpToDate(NVCheapTariffOnly     == cheapTariffOnly);
@@ -201,6 +217,8 @@ public class Module_Heating extends Module implements Cloneable {
         if (isUpToDate()) setUpToDate(NVWaterSuperheat      == waterSuperheat);
         if (isUpToDate()) setUpToDate(NVReqTempBufferCO     == reqTempBufferCO);
         if (isUpToDate()) setUpToDate(NVReqTempBufferCWU    == reqTempBufferCWU);
+        if (isUpToDate()) setUpToDate(NVHeatPumpAlarmTemp    == heatPumpAlarmTemp);
+
         setReqUpdateValues(!isUpToDate());
 
         return isUpToDate();
@@ -249,10 +267,9 @@ public class Module_Heating extends Module implements Cloneable {
                 tManifold = (float) packetData[18] / 2;
                 tReturnGroundFloor = (float) packetData[19] / 2;
                 tReturnLoft = (float) packetData[20] / 2;
+                heatPumpAlarmTemp = packetData[21];
 
                 setFrameLastUpdate(getCurrentDate());
-
-
                 break;
 
             case 200: //diagnostic frame
@@ -271,6 +288,7 @@ public class Module_Heating extends Module implements Cloneable {
         NVWaterSuperheat = waterSuperheat;
         NVReqTempBufferCO = reqTempBufferCO;
         NVReqTempBufferCWU = reqTempBufferCWU;
+        NVHeatPumpAlarmTemp = heatPumpAlarmTemp;
     }
 
     //compare data : last save status with new set
@@ -312,12 +330,13 @@ public class Module_Heating extends Module implements Cloneable {
         if (result) result = cmp(module_Heating.tManifold, tManifold, 1);
         if (result) result = cmp(module_Heating.tReturnGroundFloor, tReturnGroundFloor, 1);
         if (result) result = cmp(module_Heating.tReturnLoft, tReturnLoft, 1);
+        if (result) result = cmp(module_Heating.heatPumpAlarmTemp, heatPumpAlarmTemp, 0);
         return result;
     }
 
     private void faultListInit () throws Exception {
         setFaultText(0,"Pompa ciepła przestała grzać");
-        setFaultText(1, "Pompa ciepla osiągnęła graniczną temperaturę 56stC");
+        setFaultText(1, "Pompa ciepla osiągnęła nastawioną graniczną temperaturę");
         setFaultText(2,"T[tBufferCOLow] błąd odczytu");
         setFaultText(3,"T[tBufferCOMid] błąd odczytu");
         setFaultText(4,"T[tBufferCOHigh] błąd odczytu");
@@ -343,7 +362,7 @@ public class Module_Heating extends Module implements Cloneable {
             if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>90)  && (tSupply<(tReturn+2)))
                 setFaultPresent(0,true);
         }
-        if (tSupply>=56) setFaultPresent(1, true);
+        if (tSupply>=heatPumpAlarmTemp) setFaultPresent(1, true);
         if (tBufferCOLow == 100) setFaultPresent(2,true);
         if (tBufferCOMid == 100) setFaultPresent(3,true);
         if (tBufferCOHigh == 100) setFaultPresent(4,true);

@@ -296,6 +296,8 @@ public class View extends VerticalLayout {
         }
     }
 
+
+
     public LocalDateTime getCurrentDate() {
         LocalDateTime now = LocalDateTime.now();
         return now;

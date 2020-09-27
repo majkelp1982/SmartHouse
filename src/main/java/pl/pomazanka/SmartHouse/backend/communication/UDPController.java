@@ -37,7 +37,7 @@ public class UDPController {
     private static final int PACKET_SIZE_MODULE_3_DIAG = 7;				    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_14 = 21;					// length of UDP data from module 14 "Ogrzewanie"
+    private static final int PACKET_SIZE_MODULE_14 = 22;					// length of UDP data from module 14 "Ogrzewanie"
     private static final int PACKET_SIZE_MODULE_14_DIAG = 8;				// length of UDP diagnose from module 14 "Ogrzewanie"
 
     public UDPController() {
@@ -170,6 +170,9 @@ public class UDPController {
 
         newValue = (int)(module_heating.getNVReqTempBufferCWU()*2);
         sendData(moduleMain, module_heating.getModuleType(), 0, 7, newValue);
+
+        newValue = (int)(module_heating.getNVHeatPumpAlarmTemp());
+        sendData(moduleMain, module_heating.getModuleType(), 0, 21, newValue);
     }
 
     //send Comfort Module NV
