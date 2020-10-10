@@ -188,7 +188,7 @@ public class HeatingView extends View {
         //Section Tile 1 required temperatures
         reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
         reqTempBufferCWU = new NumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
-        heatPumpAlarmTemp = new NumberField("Temp. Graniczna [°C]", module_heating.getHeatPumpAlarmTemp(), 52, 60, 1);
+        heatPumpAlarmTemp = new NumberField("Temp. max [°C]", module_heating.getHeatPumpAlarmTemp(), 52, 60, 1.0);
 
         //Click Listeners
         reqTempBufferCO.getSource().addValueChangeListener(valueChangeEvent -> {

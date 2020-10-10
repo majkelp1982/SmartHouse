@@ -127,15 +127,15 @@ public class ComfortView extends View {
     private void createInfoSection0 () {
         //Create info's for [section][tileNo][intoNo]
         //Salon
-        info[0][0][0] = new Info("temperatura", "°C", true, false, zone[0].isTemp, zone[0].reqTemp, 1, 2);
+        info[0][0][0] = new Info("temperatura", "°C", true, false, zone[0].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][0][1] = new Info("wilgotność", "%", true, false, zone[0].isHumidity, 50, 10, 20);
         numberFields[0] = new NumberField("nastawa [°C]",zone[0].reqTemp,18,28,0.5);
         //Pralnia
-        info[0][1][0] = new Info("temperatura", "°C", true, false, zone[1].isTemp, zone[0].reqTemp, 1, 2);
+        info[0][1][0] = new Info("temperatura", "°C", true, false, zone[1].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][1][1] = new Info("wilgotność", "%", true, false, zone[1].isHumidity, 50, 10, 20);
         numberFields[1] = new NumberField("nastawa [°C]",zone[1].reqTemp,18,28,0.5);
         //laz.dol
-        info[0][2][0] = new Info("temperatura", "°C", true, false, zone[2].isTemp, zone[0].reqTemp, 1, 2);
+        info[0][2][0] = new Info("temperatura", "°C", true, false, zone[2].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][2][1] = new Info("wilgotność", "%", true, false, zone[2].isHumidity, 50, 10, 20);
         numberFields[2] = new NumberField("nastawa [°C]",zone[2].reqTemp,18,28,0.5);
     }
@@ -143,19 +143,19 @@ public class ComfortView extends View {
     private void createInfoSection1 () {
         //Create info's for [section][tileNo][intoNo]
         //rodzice
-        info[1][0][0] = new Info("temperatura", "°C", true, false, zone[3].isTemp, zone[0].reqTemp, 1, 2);
+        info[1][0][0] = new Info("temperatura", "°C", true, false, zone[3].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][0][1] = new Info("wilgotność", "%", true, false, zone[3].isHumidity, 50, 10, 20);
         numberFields[3] = new NumberField("nastawa [°C]",zone[3].reqTemp,18,28,0.5);
         //Natalia
-        info[1][1][0] = new Info("temperatura", "°C", true, false, zone[4].isTemp, zone[0].reqTemp, 1, 2);
+        info[1][1][0] = new Info("temperatura", "°C", true, false, zone[4].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][1][1] = new Info("wilgotność", "%", true, false, zone[4].isHumidity, 50, 10, 20);
         numberFields[4] = new NumberField("nastawa [°C]",zone[4].reqTemp,18,28,0.5);
         //Karolina
-        info[1][2][0] = new Info("temperatura", "°C", true, false, zone[5].isTemp, zone[0].reqTemp, 1, 2);
+        info[1][2][0] = new Info("temperatura", "°C", true, false, zone[5].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][2][1] = new Info("wilgotność", "%", true, false, zone[5].isHumidity, 50, 10, 20);
         numberFields[5] = new NumberField("nastawa [°C]",zone[5].reqTemp,18,28,0.5);
         //laz.gora
-        info[1][3][0] = new Info("temperatura", "°C", true, false, zone[6].isTemp, zone[0].reqTemp, 1, 2);
+        info[1][3][0] = new Info("temperatura", "°C", true, false, zone[6].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][3][1] = new Info("wilgotność", "%", true, false, zone[6].isHumidity, 50, 10, 20);
         numberFields[6] = new NumberField("nastawa [°C]",zone[6].reqTemp,18,28,0.5);
     }

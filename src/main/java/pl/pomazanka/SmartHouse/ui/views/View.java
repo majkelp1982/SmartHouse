@@ -275,7 +275,7 @@ public class View extends VerticalLayout {
             numberField = new com.vaadin.flow.component.textfield.NumberField(name);
             numberField.setHasControls(true);
             numberField.setValue(initValue);
-            numberField.setStep(0.5d);
+            numberField.setStep(step);
             numberField.setMin(min);
             numberField.setMax(max);
         }
