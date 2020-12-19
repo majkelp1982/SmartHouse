@@ -137,7 +137,7 @@ public class ComfortView extends View {
         //laz.dol
         info[0][2][0] = new Info("temperatura", "°C", true, false, zone[2].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][2][1] = new Info("wilgotność", "%", true, false, zone[2].isHumidity, 50, 10, 20);
-        numberFields[2] = new NumberField("nastawa [°C]",zone[2].reqTemp,18,28,0.5);
+        numberFields[2] = new NumberField("nastawa [°C]",zone[2].reqTemp,9,28,0.5);
     }
 
     private void createInfoSection1 () {

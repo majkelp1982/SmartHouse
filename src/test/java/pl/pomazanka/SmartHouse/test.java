@@ -1,13 +1,10 @@
 package pl.pomazanka.SmartHouse;
 
-import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
-import java.util.ArrayList;
-
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 public class test {
 
-    public static void main(String[] args) throws Exception {
-        MongoDBController mongoDBController = new MongoDBController();
-        //FIXME
-        mongoDBController.refreshVariables();
+    public static void main(String[] args) {
+        System.out.println("Start");
     }
 }

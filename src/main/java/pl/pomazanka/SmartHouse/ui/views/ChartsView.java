@@ -90,6 +90,7 @@ public class ChartsView extends View {
                                 .build())
                         .build())
                 .withYaxis(YAxisBuilder.get()
+                        .withSeriesName("TBufferCOLow")
                         .withTooltip(TooltipBuilder.get()
                                 .withEnabled(true)
                                 .build())
