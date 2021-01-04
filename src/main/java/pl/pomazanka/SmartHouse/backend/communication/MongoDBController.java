@@ -33,6 +33,8 @@ public class MongoDBController {
     @Autowired
     Module_Vent module_vent;
     @Autowired
+    Module_Vent2 module_vent2;
+    @Autowired
     Diagnostic diagnostic;
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
@@ -53,6 +55,14 @@ public class MongoDBController {
                 if (!module_comfort.compare(module_comfortLastStatus))
                     saveNewEntry("module_comfort", module_comfort);             // if data has been changed add new entry in DB
                 else updateLastEntry("module_comfort", module_comfort);         // else update last entry
+
+            } break;
+            case 13 : {
+                Module_Vent2 module_vent2LastStatus = module_vent2.clone();
+                module_vent2.dataParser(packetData);
+                if (!module_vent2.compare(module_vent2LastStatus))
+                    saveNewEntry("module_vent2", module_vent2);                    // if data has been changed add new entry in DB
+                else updateLastEntry("module_vent2", module_vent2);                // else update last entry
 
             } break;
             case 14 : {
