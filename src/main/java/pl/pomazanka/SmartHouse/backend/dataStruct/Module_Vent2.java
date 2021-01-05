@@ -125,6 +125,14 @@ public class Module_Vent2 extends Module implements Cloneable {
         setUpToDate(false);
     }
 
+    public BME280[] getBme280() {
+        return bme280;
+    }
+
+    public Fan[] getFan() {
+        return fan;
+    }
+
     public boolean isAllUpToDate() {
         setUpToDate(true);
         for (int i=0; i<=11; i++)
