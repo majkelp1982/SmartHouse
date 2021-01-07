@@ -52,6 +52,7 @@ public class VentView2 extends View {
         section[0].createTile("fan.svg", "Status");
         section[0].createTile("fan.svg", "Funkcja");
         section[0].createTile("fan.svg", "Wentylatory");
+        section[0].createTile("fan.svg", "Odmrażanie");
 
         //Section 1
         section[1].createTile("thermometer.svg", "Czerpnia");
@@ -72,11 +73,14 @@ public class VentView2 extends View {
         section[0].getTileDetailsContainer(0).add(info[0][0][2].getSource());
 
         section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
-        section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
 
         section[0].getTileDetailsContainer(2).add(info[0][2][0].getSource());
         section[0].getTileDetailsContainer(2).add(info[0][2][1].getSource());
         section[0].getTileDetailsContainer(2).add(info[0][2][2].getSource());
+
+        section[0].getTileDetailsContainer(3).add(info[0][3][0].getSource());
+        section[0].getTileDetailsContainer(3).add(info[0][3][1].getSource());
+        section[0].getTileDetailsContainer(3).add(info[0][3][2].getSource());
 
         for (int i=0; i<4; i++) {
             section[1].getTileDetailsContainer(i).add(info[1][i][0].getSource());
@@ -105,13 +109,20 @@ public class VentView2 extends View {
          info[0][0][2] = new Info("humidityAlert",true, module_vent.isHumidityAlert());
 
          info[0][1][0] = new Info("bypassOpen",true, module_vent.isBypassOpen());
-         info[0][1][1] = new Info("defrost",true, module_vent.isDefrost());
 
          Fan[] fans = module_vent.getFan();
          info[0][2][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(),0,0,0);
          info[0][2][1] = new Info("obroty CZERPNIA", "[min-1]", false, false, fans[0].getRev(),0,0,0);
          info[0][2][2] = new Info("obroty WYRZUTNIA", "[min-1]", false, false, fans[1].getRev(),0,0,0);
-      }
+
+         info[0][3][0] = new Info("odmrażanie",true, module_vent.isDefrost());
+         info[0][3][1] = new Info("czas do końca", "[min]", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
+         info[0][3][2] = new Info("różnica ciśnień", "[hPa]", false, false, module_vent.getPressureDiff(),0,0,0);
+         info[0][3][2].getSource().addClickListener(event -> {
+             //TODO
+             System.out.println("CLICK" + event.getSource().getElement().getText());
+         });
+     }
 
       private void createInfoSection1() {
           BME280[] bme280 = module_vent.getBme280();
@@ -348,8 +359,24 @@ public class VentView2 extends View {
         info[0][0][0].setValue(module_vent.isFanON());
         info[0][0][1].setValue(module_vent.isNormalON());
         info[0][0][2].setValue(module_vent.isHumidityAlert());
+
         info[0][1][0].setValue(module_vent.isBypassOpen());
-        info[0][1][1].setValue(module_vent.isDefrost());
+
+        Fan[] fans = module_vent.getFan();
+        info[0][2][0].setValue(fans[0].getSpeed());
+        info[0][2][1].setValue(fans[0].getRev());
+        info[0][2][2].setValue(fans[1].getRev());
+
+        info[0][3][0].setValue(module_vent.isDefrost());
+        info[0][3][1].setValue(module_vent.getDefrostTimeLeft());
+        info[0][3][2].setValue(module_vent.getPressureDiff());
+
+        BME280[] bme280 = module_vent.getBme280();
+        for (int i=0; i<4; i++) {
+            info[1][i][0].setValue(bme280[i].getTemp());
+            info[1][i][1].setValue(bme280[i].getHumidity());
+            info[1][i][2].setValue(bme280[i].getPressure());
+        }
 
         //Grid
         actualDiagram = getActualDiagram();
