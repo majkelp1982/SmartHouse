@@ -35,6 +35,7 @@ public class VentView2 extends View {
     Grid<VentByHour> grid = new Grid<>();
     List<VentByHour> actualDiagram = new ArrayList<>();
     VentByHour[] ventByHour = new VentByHour[24];
+    NumberField pressureDiff;
 
     public VentView2(Module_Vent2 module_vent) {
         this.module_vent = module_vent;
@@ -50,7 +51,7 @@ public class VentView2 extends View {
 
         //Section 0
         section[0].createTile("fan.svg", "Status");
-        section[0].createTile("fan.svg", "Funkcja");
+        section[0].createTile("fan.svg", "Funkcje");
         section[0].createTile("fan.svg", "Wentylatory");
         section[0].createTile("fan.svg", "Odmrażanie");
 
@@ -70,9 +71,9 @@ public class VentView2 extends View {
 
         section[0].getTileDetailsContainer(0).add(info[0][0][0].getSource());
         section[0].getTileDetailsContainer(0).add(info[0][0][1].getSource());
-        section[0].getTileDetailsContainer(0).add(info[0][0][2].getSource());
 
         section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
+        section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
 
         section[0].getTileDetailsContainer(2).add(info[0][2][0].getSource());
         section[0].getTileDetailsContainer(2).add(info[0][2][1].getSource());
@@ -80,7 +81,7 @@ public class VentView2 extends View {
 
         section[0].getTileDetailsContainer(3).add(info[0][3][0].getSource());
         section[0].getTileDetailsContainer(3).add(info[0][3][1].getSource());
-        section[0].getTileDetailsContainer(3).add(info[0][3][2].getSource());
+        section[0].getTileDetailsContainer(3).add(pressureDiff .getSource());
 
         for (int i=0; i<4; i++) {
             section[1].getTileDetailsContainer(i).add(info[1][i][0].getSource());
@@ -94,21 +95,26 @@ public class VentView2 extends View {
 
         // Notification if user doesn't logged
         Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-        section[1].getSection().addClickListener(event -> {
+        section[0].getSection().addClickListener(event -> {
             if (!isUserLoggedIn())
                 notification.open();
-            });
-        section[1].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+        });
+        section[2].getSection().addClickListener(event -> {
+            if (!isUserLoggedIn())
+                notification.open();
+        });
+        section[0].getTileDetailsContainer(3).setEnabled(isUserLoggedIn());
+        section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
         add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
     }
 
      private void createInfoSection0() {
          //Status
-         info[0][0][0] = new Info("Wentylator",true, module_vent.isFanON());
-         info[0][0][1] = new Info("normalON",true, module_vent.isNormalON());
-         info[0][0][2] = new Info("humidityAlert",true, module_vent.isHumidityAlert());
+         info[0][0][0] = new Info("normalON",true, module_vent.isNormalON());
+         info[0][0][1] = new Info("humidityAlert",true, module_vent.isHumidityAlert());
 
-         info[0][1][0] = new Info("bypassOpen",true, module_vent.isBypassOpen());
+         info[0][1][0] = new Info("Wentylator",true, module_vent.isFanON());
+         info[0][1][1] = new Info("bypassOpen",true, module_vent.isBypassOpen());
 
          Fan[] fans = module_vent.getFan();
          info[0][2][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(),0,0,0);
@@ -117,10 +123,11 @@ public class VentView2 extends View {
 
          info[0][3][0] = new Info("odmrażanie",true, module_vent.isDefrost());
          info[0][3][1] = new Info("czas do końca", "[min]", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
-         info[0][3][2] = new Info("różnica ciśnień", "[hPa]", false, false, module_vent.getPressureDiff(),0,0,0);
-         info[0][3][2].getSource().addClickListener(event -> {
-             //TODO
-             System.out.println("CLICK" + event.getSource().getElement().getText());
+         pressureDiff = new NumberField("różnica ciśnień [hPa]",module_vent.getPressureDiff(),50,500,10);
+         pressureDiff.getSource().addValueChangeListener(valueChangeEvent -> {
+             module_vent.setNVpressureDiff((int) Math.round(valueChangeEvent.getValue()));
+             setPendingColor(pressureDiff.getSource());
+             module_vent.setReqUpdateValues(true);
          });
      }
 
@@ -356,11 +363,11 @@ public class VentView2 extends View {
         header.setDiagnoseUpdate(module_vent.getDiagnosticLastUpdate());
 
         //Section 0 Status
-        info[0][0][0].setValue(module_vent.isFanON());
-        info[0][0][1].setValue(module_vent.isNormalON());
-        info[0][0][2].setValue(module_vent.isHumidityAlert());
+        info[0][0][0].setValue(module_vent.isNormalON());
+        info[0][0][1].setValue(module_vent.isHumidityAlert());
 
-        info[0][1][0].setValue(module_vent.isBypassOpen());
+        info[0][1][0].setValue(module_vent.isFanON());
+        info[0][1][1].setValue(module_vent.isBypassOpen());
 
         Fan[] fans = module_vent.getFan();
         info[0][2][0].setValue(fans[0].getSpeed());
@@ -369,7 +376,7 @@ public class VentView2 extends View {
 
         info[0][3][0].setValue(module_vent.isDefrost());
         info[0][3][1].setValue(module_vent.getDefrostTimeLeft());
-        info[0][3][2].setValue(module_vent.getPressureDiff());
+        pressureDiff.setNumberField(module_vent.getPressureDiff(), module_vent.getNVpressureDiff());
 
         BME280[] bme280 = module_vent.getBme280();
         for (int i=0; i<4; i++) {

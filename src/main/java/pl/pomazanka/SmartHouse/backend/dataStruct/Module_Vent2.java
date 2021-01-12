@@ -8,10 +8,10 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Vent.Fan;
 public class Module_Vent2 extends Module implements Cloneable {
     //Module ventilation type
     private static byte MODULE_TYPE = 13;
-    private final byte ID_CZERPNIA = 1;
-    private final byte ID_WYRZUTNIA = 2;
-    private final byte ID_NAWIEW = 3;
-    private final byte ID_WYWIEW = 4;
+    private final byte ID_CZERPNIA = 0;
+    private final byte ID_WYRZUTNIA = 1;
+    private final byte ID_NAWIEW = 2;
+    private final byte ID_WYWIEW = 3;
 
     private boolean fanON;
     private boolean normalON;
@@ -22,12 +22,20 @@ public class Module_Vent2 extends Module implements Cloneable {
     private transient int[] hour = new int[12];
     private transient int[] NVHour = new int[12];
 
-    private BME280 bme280[] = new BME280[4];
-    private Fan fan[] = new Fan[2];
+    private BME280[] bme280 = new BME280[4];
+    private Fan[] fan = new Fan[2];
 
     private int defrostTimeLeft;
     private int pressureDiff;
     private int NVpressureDiff;
+
+    public int getDefrostTimeLeft() {
+        return defrostTimeLeft;
+    }
+
+    public int getPressureDiff() {
+        return pressureDiff;
+    }
 
     public Module_Vent2() {
         super(MODULE_TYPE,"Wentylacja","module_vent");
@@ -125,6 +133,15 @@ public class Module_Vent2 extends Module implements Cloneable {
         setUpToDate(false);
     }
 
+    public void  setNVpressureDiff(int NVpressureDiff){
+        this.NVpressureDiff = NVpressureDiff;
+        setUpToDate(false);
+    }
+
+    public int getNVpressureDiff() {
+        return NVpressureDiff;
+    }
+
     public BME280[] getBme280() {
         return bme280;
     }
@@ -135,8 +152,10 @@ public class Module_Vent2 extends Module implements Cloneable {
 
     public boolean isAllUpToDate() {
         setUpToDate(true);
-        for (int i=0; i<=11; i++)
+        for (int i=0; i<=11; i++) {
             if (isUpToDate()) setUpToDate(hour[i] == NVHour[i]);
+        }
+        if (isUpToDate()) setUpToDate(pressureDiff == NVpressureDiff);
 
         setReqUpdateValues(!isUpToDate());
         return isUpToDate();
@@ -158,19 +177,19 @@ public class Module_Vent2 extends Module implements Cloneable {
                 for (int i=0; i<12; i++)
                     hour[i] = packetData[4+i];
                 for (int i=0; i<4; i++) {
-                    double tValue = packetData[16+i*4] + packetData[16+i*4+1]/10;
+                    double tValue = packetData[16+i*4] + packetData[16+i*4+1]/10.0;
                     bme280[i].setTemp(tValue);
                     bme280[i].setHumidity(packetData[16+i*4+2]);
-                    bme280[i].setPressure(packetData[16+i*4+3]);
+                    bme280[i].setPressure(packetData[16+i*4+3]*10);
                 }
 
                 fan[ID_CZERPNIA].setSpeed(packetData[32]);
-                fan[ID_CZERPNIA].setRev(packetData[33]);
+                fan[ID_CZERPNIA].setRev(packetData[33]*100);
                 fan[ID_WYRZUTNIA].setSpeed(packetData[32]);
-                fan[ID_WYRZUTNIA].setRev(packetData[34]);
+                fan[ID_WYRZUTNIA].setRev(packetData[34]*100);
 
                 defrostTimeLeft = packetData[35];
-                pressureDiff = packetData[36];
+                pressureDiff = packetData[36]*10;
                 setFrameLastUpdate(getCurrentDate());
                 break;
 
@@ -184,8 +203,7 @@ public class Module_Vent2 extends Module implements Cloneable {
     }
 
     private void assignNV() {
-        for (int i=0; i<12; i++)
-          NVHour[i] = hour[i];
+        NVHour = hour.clone();
         NVpressureDiff = pressureDiff;
     }
 
@@ -204,7 +222,7 @@ public class Module_Vent2 extends Module implements Cloneable {
             if (result) result = cmp(module_vent.bme280[i].getPressure(),bme280[i].getPressure(),5);
             if (result) result = cmp(module_vent.bme280[i].getHumidity(),bme280[i].getHumidity(),3);
         }
-        for (int i=0; i<4; i++) {
+        for (int i=0; i<2; i++) {
             if (result) result = cmp(module_vent.fan[i].getSpeed(),fan[i].getSpeed(),10);
             if (result) result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(),100);
         }

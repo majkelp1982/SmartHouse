@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent2;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class UDPController {
 
-    private static int moduleMain = 1;
+    private final int moduleMain = 1;
 
     //Wired classes
     @Autowired
@@ -25,6 +26,8 @@ public class UDPController {
     Module_Comfort module_comfort;
     @Autowired
     Module_Vent module_vent;
+    @Autowired
+    Module_Vent2 module_vent2;
 
     // UDP variables
     private int timeSynchroLast = 100;
@@ -37,6 +40,8 @@ public class UDPController {
     private static final int PACKET_SIZE_MODULE_3_DIAG = 7;				    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
+    private static final int PACKET_SIZE_MODULE_13 = 37;					// length of UDP data from module 3 "wentylacja2"
+    private static final int PACKET_SIZE_MODULE_13_DIAG = 7;			    // length of UDP diagnose from module 3 "wentylacja2"
     private static final int PACKET_SIZE_MODULE_14 = 22;					// length of UDP data from module 14 "Ogrzewanie"
     private static final int PACKET_SIZE_MODULE_14_DIAG = 8;				// length of UDP diagnose from module 14 "Ogrzewanie"
 
@@ -58,6 +63,7 @@ public class UDPController {
             switch (packetData[0]) {
                 case 3  :if (packetLength == PACKET_SIZE_MODULE_3_DIAG)     packetCorrect = true; break;
                 case 10 :if (packetLength == PACKET_SIZE_MODULE_10_DIAG)    packetCorrect = true; break;
+                case 13 :if (packetLength == PACKET_SIZE_MODULE_13_DIAG)    packetCorrect = true; break;
                 case 14 :if (packetLength == PACKET_SIZE_MODULE_14_DIAG)    packetCorrect = true; break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
             }
@@ -67,6 +73,7 @@ public class UDPController {
                 case 1: packetCorrect = true; break;
                 case 3: if (packetLength == PACKET_SIZE_MODULE_3) packetCorrect = true; break;
                 case 10:if (packetLength == PACKET_SIZE_MODULE_10) packetCorrect = true;break;
+                case 13:if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;break;
                 case 14:if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
             }
@@ -205,8 +212,27 @@ public class UDPController {
         sendData(moduleMain, module_vent.getModuleType(), 0, 15, hours[11]);
     }
 
+    //send Vent Module NV
+    private void sendVent2NV() {
+        int[] hours = module_vent2.getNVHour();
 
-        public class EventRunBackground implements Runnable {
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 1, hours[0]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 2, hours[1]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 3, hours[2]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 4, hours[3]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 5, hours[4]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 6, hours[5]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 7, hours[6]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 8, hours[7]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 9, hours[8]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 10, hours[9]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 11, hours[10]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 12, hours[11]);
+        sendData(moduleMain, module_vent2.getModuleType(), 0, 33, (int)module_vent2.getNVpressureDiff()/10);
+     }
+
+
+    public class EventRunBackground implements Runnable {
         @SuppressWarnings("InfiniteLoopStatement")
         @Override
         public void run() {
@@ -221,6 +247,7 @@ public class UDPController {
                 if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
                 if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
                 if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
+                if ((module_vent2.isReqUpdateValues()) && (!module_vent2.isAllUpToDate())) sendVent2NV();
 
 
             } while (true);
