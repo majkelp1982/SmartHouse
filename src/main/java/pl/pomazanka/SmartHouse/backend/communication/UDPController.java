@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent2;
 
 import java.io.IOException;
 import java.net.*;
@@ -26,8 +25,6 @@ public class UDPController {
     Module_Comfort module_comfort;
     @Autowired
     Module_Vent module_vent;
-    @Autowired
-    Module_Vent2 module_vent2;
 
     // UDP variables
     private int timeSynchroLast = 100;
@@ -61,7 +58,6 @@ public class UDPController {
         boolean packetCorrect =false;
         if (packetData[2] == 200) {			        // Only for diagnose frames
             switch (packetData[0]) {
-                case 3  :if (packetLength == PACKET_SIZE_MODULE_3_DIAG)     packetCorrect = true; break;
                 case 10 :if (packetLength == PACKET_SIZE_MODULE_10_DIAG)    packetCorrect = true; break;
                 case 13 :if (packetLength == PACKET_SIZE_MODULE_13_DIAG)    packetCorrect = true; break;
                 case 14 :if (packetLength == PACKET_SIZE_MODULE_14_DIAG)    packetCorrect = true; break;
@@ -71,7 +67,6 @@ public class UDPController {
         else {
             switch (packetData[0]) {		        // Only for standard frames
                 case 1: packetCorrect = true; break;
-                case 3: if (packetLength == PACKET_SIZE_MODULE_3) packetCorrect = true; break;
                 case 10:if (packetLength == PACKET_SIZE_MODULE_10) packetCorrect = true;break;
                 case 13:if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;break;
                 case 14:if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;break;
@@ -195,40 +190,22 @@ public class UDPController {
     }
 
     //send Vent Module NV
-    private void sendVentNV() {
+    private void sendVent2NV() {
         int[] hours = module_vent.getNVHour();
 
-        sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[0]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[1]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[2]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[3]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[4]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[5]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[6]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[7]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[8]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 13, hours[9]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 14, hours[10]);
-        sendData(moduleMain, module_vent.getModuleType(), 0, 15, hours[11]);
-    }
-
-    //send Vent Module NV
-    private void sendVent2NV() {
-        int[] hours = module_vent2.getNVHour();
-
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 1, hours[0]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 2, hours[1]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 3, hours[2]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 4, hours[3]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 5, hours[4]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 6, hours[5]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 7, hours[6]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 8, hours[7]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 9, hours[8]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 10, hours[9]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 11, hours[10]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 12, hours[11]);
-        sendData(moduleMain, module_vent2.getModuleType(), 0, 33, (int)module_vent2.getNVpressureDiff()/10);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 1, hours[0]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 2, hours[1]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 3, hours[2]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[3]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[4]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[5]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[6]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[7]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[8]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[9]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[10]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[11]);
+        sendData(moduleMain, module_vent.getModuleType(), 0, 33, (int)module_vent.getNVpressureDiff()/10);
      }
 
 
@@ -246,10 +223,7 @@ public class UDPController {
                 sendTimeSynchro();
                 if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
                 if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
-                if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
-                if ((module_vent2.isReqUpdateValues()) && (!module_vent2.isAllUpToDate())) sendVent2NV();
-
-
+                if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVent2NV();
             } while (true);
         }
     }

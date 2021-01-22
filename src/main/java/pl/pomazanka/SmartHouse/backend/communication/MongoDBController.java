@@ -33,22 +33,12 @@ public class MongoDBController {
     @Autowired
     Module_Vent module_vent;
     @Autowired
-    Module_Vent2 module_vent2;
-    @Autowired
     Diagnostic diagnostic;
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
         int moduleType = packetData[0];             // Get basic data from UDP frame
 
         switch (moduleType) {
-            case 3 : {
-                Module_Vent module_ventLastStatus = module_vent.clone();
-                module_vent.dataParser(packetData);
-                if (!module_vent.compare(module_ventLastStatus))
-                    saveNewEntry("module_vent", module_vent);                    // if data has been changed add new entry in DB
-                else updateLastEntry("module_vent", module_vent);                // else update last entry
-
-            } break;
             case 10 : {
                 Module_Comfort module_comfortLastStatus = module_comfort.clone();
                 module_comfort.dataParser(packetData);
@@ -58,11 +48,11 @@ public class MongoDBController {
 
             } break;
             case 13 : {
-                Module_Vent2 module_vent2LastStatus = module_vent2.clone();
-                module_vent2.dataParser(packetData);
-                if (!module_vent2.compare(module_vent2LastStatus))
-                    saveNewEntry("module_vent2", module_vent2);                    // if data has been changed add new entry in DB
-                else updateLastEntry("module_vent2", module_vent2);                // else update last entry
+                Module_Vent module_ventLastStatus = module_vent.clone();
+                module_vent.dataParser(packetData);
+                if (!module_vent.compare(module_ventLastStatus))
+                    saveNewEntry("module_vent", module_vent);                    // if data has been changed add new entry in DB
+                else updateLastEntry("module_vent", module_vent);                // else update last entry
 
             } break;
             case 14 : {
