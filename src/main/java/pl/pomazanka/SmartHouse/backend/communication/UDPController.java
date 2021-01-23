@@ -33,9 +33,7 @@ public class UDPController {
     private static byte[] buffer;
     private static int[] packetData;
     int localPort = 6000;
-    private static final int PACKET_SIZE_MODULE_3 = 16;					    // length of UDP data from module 3 "wentylacja"
-    private static final int PACKET_SIZE_MODULE_3_DIAG = 7;				    // length of UDP diagnose from module 3 "wentylacja"
-    private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
+    private static final int PACKET_SIZE_MODULE_10 = 30;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_13 = 37;					// length of UDP data from module 3 "wentylacja2"
     private static final int PACKET_SIZE_MODULE_13_DIAG = 7;			    // length of UDP diagnose from module 3 "wentylacja2"
@@ -180,17 +178,17 @@ public class UDPController {
     //send Comfort Module NV
     private void sendComfortNV() {
         Module_Comfort.Zone[] zone = module_comfort.getZone();
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 5, (int)(zone[0].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 9, (int)(zone[1].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 13, (int)(zone[2].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 17, (int)(zone[3].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 21, (int)(zone[4].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 25, (int)(zone[5].NVReqTemp*2));
-        sendData(moduleMain, module_comfort.getModuleType(), 0, 29, (int)(zone[6].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 2, (int)(zone[0].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 6, (int)(zone[1].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 10, (int)(zone[2].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 14, (int)(zone[3].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 18, (int)(zone[4].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 22, (int)(zone[5].NVReqTemp*2));
+        sendData(moduleMain, module_comfort.getModuleType(), 0, 26, (int)(zone[6].NVReqTemp*2));
     }
 
     //send Vent Module NV
-    private void sendVent2NV() {
+    private void sendVentNV() {
         int[] hours = module_vent.getNVHour();
 
         sendData(moduleMain, module_vent.getModuleType(), 0, 1, hours[0]);
@@ -223,7 +221,7 @@ public class UDPController {
                 sendTimeSynchro();
                 if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
                 if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
-                if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVent2NV();
+                if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
             } while (true);
         }
     }
