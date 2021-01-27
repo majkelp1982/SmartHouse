@@ -31,11 +31,12 @@ public class VentView extends View {
     //Objects
     Header header;
     Section[] section = new Section[3];
-    Info[][][] info = new Info[2][4][3];
+    Info[][][] info = new Info[2][4][4];
     Grid<VentByHour> grid = new Grid<>();
     List<VentByHour> actualDiagram = new ArrayList<>();
     VentByHour[] ventByHour = new VentByHour[24];
-    NumberField pressureDiff;
+    NumberField defrostTrigger;
+    NumberField humidityTrigger;
 
     public VentView(Module_Vent module_vent) {
         this.module_vent = module_vent;
@@ -51,9 +52,9 @@ public class VentView extends View {
 
         //Section 0
         section[0].createTile("fan.svg", "Status");
-        section[0].createTile("fan.svg", "Funkcje");
         section[0].createTile("fan.svg", "Wentylatory");
         section[0].createTile("fan.svg", "Odmrażanie");
+        section[0].createTile("fan.svg", "Wilgoć");
 
         //Section 1
         section[1].createTile("thermometer.svg", "Czerpnia");
@@ -71,17 +72,20 @@ public class VentView extends View {
 
         section[0].getTileDetailsContainer(0).add(info[0][0][0].getSource());
         section[0].getTileDetailsContainer(0).add(info[0][0][1].getSource());
+        section[0].getTileDetailsContainer(0).add(info[0][0][2].getSource());
+        section[0].getTileDetailsContainer(0).add(info[0][0][3].getSource());
 
         section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
         section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
+        section[0].getTileDetailsContainer(1).add(info[0][1][2].getSource());
 
         section[0].getTileDetailsContainer(2).add(info[0][2][0].getSource());
         section[0].getTileDetailsContainer(2).add(info[0][2][1].getSource());
-        section[0].getTileDetailsContainer(2).add(info[0][2][2].getSource());
+        section[0].getTileDetailsContainer(2).add(defrostTrigger.getSource());
 
         section[0].getTileDetailsContainer(3).add(info[0][3][0].getSource());
         section[0].getTileDetailsContainer(3).add(info[0][3][1].getSource());
-        section[0].getTileDetailsContainer(3).add(pressureDiff .getSource());
+        section[0].getTileDetailsContainer(3).add(humidityTrigger.getSource());
 
         for (int i=0; i<4; i++) {
             section[1].getTileDetailsContainer(i).add(info[1][i][0].getSource());
@@ -103,6 +107,7 @@ public class VentView extends View {
             if (!isUserLoggedIn())
                 notification.open();
         });
+        section[0].getTileDetailsContainer(2).setEnabled(isUserLoggedIn());
         section[0].getTileDetailsContainer(3).setEnabled(isUserLoggedIn());
         section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
         add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
@@ -111,22 +116,30 @@ public class VentView extends View {
      private void createInfoSection0() {
          //Status
          info[0][0][0] = new Info("normalON",true, module_vent.isNormalON());
-         info[0][0][1] = new Info("humidityAlert",true, module_vent.isHumidityAlert());
-
-         info[0][1][0] = new Info("Wentylator",true, module_vent.isFanON());
-         info[0][1][1] = new Info("bypassOpen",true, module_vent.isBypassOpen());
+         info[0][0][1] = new Info("Wentylator",true, module_vent.isFanON());
+         info[0][0][2] = new Info("bypassOpen",true, module_vent.isBypassOpen());
+         info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficency(),70,1,3);
 
          Fan[] fans = module_vent.getFan();
-         info[0][2][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(),0,0,0);
-         info[0][2][1] = new Info("obroty CZERPNIA", "[min-1]", false, false, fans[0].getRev(),0,0,0);
-         info[0][2][2] = new Info("obroty WYRZUTNIA", "[min-1]", false, false, fans[1].getRev(),0,0,0);
+         info[0][1][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(),0,0,0);
+         info[0][1][1] = new Info("obroty CZERPNIA", "min-1", false, false, fans[0].getRev(),0,0,0);
+         info[0][1][2] = new Info("obroty WYRZUTNIA", "min-1", false, false, fans[1].getRev(),0,0,0);
 
-         info[0][3][0] = new Info("odmrażanie",true, module_vent.isDefrost());
-         info[0][3][1] = new Info("czas do końca", "[min]", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
-         pressureDiff = new NumberField("różnica ciśnień [hPa]",module_vent.getPressureDiff(),50,500,10);
-         pressureDiff.getSource().addValueChangeListener(valueChangeEvent -> {
-             module_vent.setNVpressureDiff((int) Math.round(valueChangeEvent.getValue()));
-             setPendingColor(pressureDiff.getSource());
+         info[0][2][0] = new Info("odmrażanie",true, module_vent.isDefrost());
+         info[0][2][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
+         defrostTrigger = new NumberField("min. EFF [%]",module_vent.getDefrostTrigger(),20,100,1);
+         defrostTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
+             module_vent.setNVDefrostTrigger((int) Math.round(valueChangeEvent.getValue()));
+             setPendingColor(defrostTrigger.getSource());
+             module_vent.setReqUpdateValues(true);
+         });
+
+         info[0][3][0] = new Info("wilgoć",true, module_vent.isDefrost());
+         info[0][3][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
+         humidityTrigger = new NumberField("próg załączenia [%]",module_vent.getHumidityTrigger(),20,100,1);
+         humidityTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
+             module_vent.setNVHumidityTrigger((int) Math.round(valueChangeEvent.getValue()));
+             setPendingColor(humidityTrigger.getSource());
              module_vent.setReqUpdateValues(true);
          });
      }
@@ -364,19 +377,21 @@ public class VentView extends View {
 
         //Section 0 Status
         info[0][0][0].setValue(module_vent.isNormalON());
-        info[0][0][1].setValue(module_vent.isHumidityAlert());
-
-        info[0][1][0].setValue(module_vent.isFanON());
-        info[0][1][1].setValue(module_vent.isBypassOpen());
+        info[0][0][1].setValue(module_vent.isFanON());
+        info[0][0][2].setValue(module_vent.isBypassOpen());
 
         Fan[] fans = module_vent.getFan();
-        info[0][2][0].setValue(fans[0].getSpeed());
-        info[0][2][1].setValue(fans[0].getRev());
-        info[0][2][2].setValue(fans[1].getRev());
+        info[0][1][0].setValue(fans[0].getSpeed());
+        info[0][1][1].setValue(fans[0].getRev());
+        info[0][1][2].setValue(fans[1].getRev());
 
-        info[0][3][0].setValue(module_vent.isDefrost());
-        info[0][3][1].setValue(module_vent.getDefrostTimeLeft());
-        pressureDiff.setNumberField(module_vent.getPressureDiff(), module_vent.getNVpressureDiff());
+        info[0][2][0].setValue(module_vent.isDefrost());
+        info[0][2][1].setValue(module_vent.getDefrostTimeLeft());
+        defrostTrigger.setNumberField(module_vent.getDefrostTrigger(), module_vent.getNVDefrostTrigger());
+
+        info[0][3][0].setValue(module_vent.isHumidityAlert());
+        info[0][3][1].setValue(module_vent.getHumidityTimeLeft());
+        humidityTrigger.setNumberField(module_vent.getHumidityTrigger(), module_vent.getNVHumidityTrigger());
 
         BME280[] bme280 = module_vent.getBme280();
         for (int i=0; i<4; i++) {
