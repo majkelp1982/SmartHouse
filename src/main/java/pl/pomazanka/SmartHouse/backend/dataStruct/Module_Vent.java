@@ -234,7 +234,6 @@ public class Module_Vent extends Module implements Cloneable {
             case 200: //diagnostic frame
                 setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
-                //TODO diagnostic frame
                 break;
         }
         if (!isReqUpdateValues()) assignNV();

@@ -129,8 +129,6 @@ public class ChartsView extends View {
     }
 
     private void refreshCharts() throws Exception {
-        //FIXME. In case arrays style variable on managing list activated. Variable name will not working. The same for inner document (module_comfort)
-
         // Get number of series
         int chartCount= 0;
         for (Charts.VariableList variable : variableList)

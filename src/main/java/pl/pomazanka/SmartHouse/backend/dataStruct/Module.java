@@ -3,6 +3,7 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Module {
     public static final int FAULT_MAX = 100;
@@ -14,6 +15,7 @@ public class Module {
     private transient Fault[] fault = new Fault[FAULT_MAX];
     private transient boolean upToDate = false;
     private LocalDateTime frameLastUpdate = LocalDateTime.now();
+    private long localDateTimeLong;
     private transient LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
     private transient boolean reqUpdateValues = false;
 
@@ -73,8 +75,15 @@ public class Module {
         return frameLastUpdate;
     }
 
+    public long getLocalDateTimeLong() {
+        return localDateTimeLong;
+    }
+
     public void setFrameLastUpdate(LocalDateTime frameLastUpdate) {
         this.frameLastUpdate = frameLastUpdate;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String value = frameLastUpdate.format(formatter);
+        this.localDateTimeLong = Long.valueOf(value);
     }
 
     public LocalDateTime getDiagnosticLastUpdate() {

@@ -81,7 +81,6 @@ public class Module_Comfort extends Module implements Cloneable {
             case 200: // standard frame 0\
                 setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3],packetData[4],packetData[5],packetData[6]});
-                //TODO diagnostic frame
                 break;
         }
         faultCheck();

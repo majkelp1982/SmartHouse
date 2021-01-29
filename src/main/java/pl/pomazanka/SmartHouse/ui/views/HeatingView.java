@@ -71,7 +71,7 @@ public class HeatingView extends View {
                 for (int k = 0; k < 4; k++)
                     if (info[i][j][k] != null)
                         section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
-        section[2].getTileDetailsContainer(0).add(cheapTariffOnly.getSource(),heatingActivated.getSource(),waterSuperHeat.getSource());
+        section[2].getTileDetailsContainer(0).add(cheapTariffOnly.getSource(), heatingActivated.getSource(), waterSuperHeat.getSource());
         section[2].getTileDetailsContainer(1).add(reqTempBufferCO.getSource(), reqTempBufferCWU.getSource(), heatPumpAlarmTemp.getSource());
 
         //  <--!!!settings disabled when user not sign in !!!-->
@@ -85,10 +85,10 @@ public class HeatingView extends View {
                 notification.open();
         });
 
-        add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
+        add(header.getHeader(), section[0].getSection(), section[1].getSection(), section[2].getSection());
     }
 
-    private void createInfoSection0 () {
+    private void createInfoSection0() {
         //Create info's for [section][tileNo][intoNo]
         //Main
         info[0][0][0] = new Info("źródła", "°C", false, false, module_heating.gettSupply(), module_heating.getReqTempBufferCO(), 3, 5);
@@ -97,7 +97,7 @@ public class HeatingView extends View {
         info[0][0][3] = new Info("kolektor", "°C", false, false, module_heating.gettGroundSource(), module_heating.getReqTempBufferCO(), 3, 5);
         //Buffer CO
         info[0][1][0] = new Info("góra", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOHigh(), module_heating.getReqTempBufferCO(), 3, 5);
-        info[0][1][1] = new Info("środek", "°C", module_heating.isHeatingActivated(), false , module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5);
+        info[0][1][1] = new Info("środek", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOMid(), module_heating.getReqTempBufferCO(), 3, 5);
         info[0][1][2] = new Info("dół", "°C", module_heating.isHeatingActivated(), false, module_heating.gettBufferCOLow(), module_heating.getReqTempBufferCO(), 3, 5);
         //Section Tile 2 Buffer CWU
         info[0][2][0] = new Info("góra", "°C", true, false, module_heating.gettBufferCWUHigh(), module_heating.getReqTempBufferCWU(), 3, 5);
@@ -109,7 +109,7 @@ public class HeatingView extends View {
         info[0][3][2] = new Info("powrót piętro", "°C", module_heating.isHeatingActivated(), false, module_heating.gettReturnLoft(), 30, 3, 5);
     }
 
-    private void createInfoSection1 () {
+    private void createInfoSection1() {
         String temp;
         switch (module_heating.getHeatSourceActive()) {
             case 1:
@@ -163,11 +163,11 @@ public class HeatingView extends View {
 
     }
 
-    private void createInfoSection2 () {
+    private void createInfoSection2() {
         //Click Listeners
-        cheapTariffOnly = new Button("II taryfa",true,module_heating.isCheapTariffOnly());
-        heatingActivated = new Button("ogrzewanie",true,module_heating.isHeatingActivated());
-        waterSuperHeat = new Button("gorąca woda",true,module_heating.isWaterSuperheat());
+        cheapTariffOnly = new Button("II taryfa", true, module_heating.isCheapTariffOnly());
+        heatingActivated = new Button("ogrzewanie", true, module_heating.isHeatingActivated());
+        waterSuperHeat = new Button("gorąca woda", true, module_heating.isWaterSuperheat());
 
         cheapTariffOnly.getSource().addClickListener(buttonClickEvent -> {
             module_heating.setNVCheapTariffOnly(!module_heating.isCheapTariffOnly());
@@ -186,8 +186,8 @@ public class HeatingView extends View {
         });
 
         //Section Tile 1 required temperatures
-        reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35,45,0.5);
-        reqTempBufferCWU = new NumberField("CWU [°C]",module_heating.getReqTempBufferCWU(),40,55,0.5);
+        reqTempBufferCO = new NumberField("CO [°C]", module_heating.getReqTempBufferCO(), 35, 45, 0.5);
+        reqTempBufferCWU = new NumberField("CWU [°C]", module_heating.getReqTempBufferCWU(), 40, 55, 0.5);
         heatPumpAlarmTemp = new NumberField("Temp. max [°C]", module_heating.getHeatPumpAlarmTemp(), 52, 60, 1.0);
 
         //Click Listeners
@@ -202,7 +202,7 @@ public class HeatingView extends View {
             module_heating.setReqUpdateValues(true);
         });
         heatPumpAlarmTemp.getSource().addValueChangeListener(valueChangeEvent -> {
-            module_heating.setNVHeatPumpAlarmTemp((int)Math.rint(valueChangeEvent.getValue()));
+            module_heating.setNVHeatPumpAlarmTemp((int) Math.rint(valueChangeEvent.getValue()));
             setPendingColor(heatPumpAlarmTemp.getSource());
             module_heating.setReqUpdateValues(true);
         });
@@ -214,9 +214,9 @@ public class HeatingView extends View {
         header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
 
         //Settings
-        cheapTariffOnly.setButtonColor(module_heating.isCheapTariffOnly(),module_heating.isNVCheapTariffOnly());
-        heatingActivated.setButtonColor(module_heating.isHeatingActivated(),module_heating.isNVHeatingActivated());
-        waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(),module_heating.isNVWaterSuperheat());
+        cheapTariffOnly.setButtonColor(module_heating.isCheapTariffOnly(), module_heating.isNVCheapTariffOnly());
+        heatingActivated.setButtonColor(module_heating.isHeatingActivated(), module_heating.isNVHeatingActivated());
+        waterSuperHeat.setButtonColor(module_heating.isWaterSuperheat(), module_heating.isNVWaterSuperheat());
         reqTempBufferCO.setNumberField(module_heating.getReqTempBufferCO(), module_heating.getNVReqTempBufferCO());
         reqTempBufferCWU.setNumberField(module_heating.getReqTempBufferCWU(), module_heating.getNVReqTempBufferCWU());
         heatPumpAlarmTemp.setNumberField(module_heating.getHeatPumpAlarmTemp(), module_heating.getNVHeatPumpAlarmTemp());
@@ -309,7 +309,7 @@ public class HeatingView extends View {
         private final UI ui;
         private final HeatingView view;
 
-        public FeederThread(UI ui, HeatingView view ) {
+        public FeederThread(UI ui, HeatingView view) {
             this.ui = ui;
             this.view = view;
         }
@@ -317,14 +317,11 @@ public class HeatingView extends View {
         @Override
         public void run() {
             while (true) {
-
+                ui.access(view::update);
                 try {
-                    ui.access(view::update);
-
                     //FIXME instead sleep add newData in all modules structure to respons immediately
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

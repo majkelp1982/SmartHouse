@@ -19,7 +19,6 @@ public class Charts {
     }
 
     public Coordinate[] getSerie (String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
-        //FIXME
         ArrayList<Data> list;
         list = mongoDBController.getValues(collectionName, variableName, from, to);
         Coordinate[] serie = new Coordinate[list.size()];

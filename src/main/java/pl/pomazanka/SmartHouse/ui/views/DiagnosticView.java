@@ -165,7 +165,6 @@ public class DiagnosticView extends View {
                     //FIXME instead sleep add newData in all modules structure to respons immediately
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

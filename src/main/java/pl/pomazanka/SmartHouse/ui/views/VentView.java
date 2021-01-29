@@ -87,7 +87,7 @@ public class VentView extends View {
         section[0].getTileDetailsContainer(3).add(info[0][3][1].getSource());
         section[0].getTileDetailsContainer(3).add(humidityTrigger.getSource());
 
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             section[1].getTileDetailsContainer(i).add(info[1][i][0].getSource());
             section[1].getTileDetailsContainer(i).add(info[1][i][1].getSource());
             section[1].getTileDetailsContainer(i).add(info[1][i][2].getSource());
@@ -110,91 +110,91 @@ public class VentView extends View {
         section[0].getTileDetailsContainer(2).setEnabled(isUserLoggedIn());
         section[0].getTileDetailsContainer(3).setEnabled(isUserLoggedIn());
         section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-        add(header.getHeader(),section[0].getSection(),section[1].getSection(),section[2].getSection());
+        add(header.getHeader(), section[0].getSection(), section[1].getSection(), section[2].getSection());
     }
 
-     private void createInfoSection0() {
-         //Status
-         info[0][0][0] = new Info("normalON",true, module_vent.isNormalON());
-         info[0][0][1] = new Info("Wentylator",true, module_vent.isFanON());
-         info[0][0][2] = new Info("bypassOpen",true, module_vent.isBypassOpen());
-         info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficency(),70,1,3);
+    private void createInfoSection0() {
+        //Status
+        info[0][0][0] = new Info("normalON", true, module_vent.isNormalON());
+        info[0][0][1] = new Info("Wentylator", true, module_vent.isFanON());
+        info[0][0][2] = new Info("bypassOpen", true, module_vent.isBypassOpen());
+        info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficency(), 70, 1, 3);
 
-         Fan[] fans = module_vent.getFan();
-         info[0][1][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(),0,0,0);
-         info[0][1][1] = new Info("obroty CZERPNIA", "min-1", false, false, fans[0].getRev(),0,0,0);
-         info[0][1][2] = new Info("obroty WYRZUTNIA", "min-1", false, false, fans[1].getRev(),0,0,0);
+        Fan[] fans = module_vent.getFan();
+        info[0][1][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(), 0, 0, 0);
+        info[0][1][1] = new Info("obroty CZERPNIA", "min-1", false, false, fans[0].getRev(), 0, 0, 0);
+        info[0][1][2] = new Info("obroty WYRZUTNIA", "min-1", false, false, fans[1].getRev(), 0, 0, 0);
 
-         info[0][2][0] = new Info("odmrażanie",true, module_vent.isDefrost());
-         info[0][2][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
-         defrostTrigger = new NumberField("min. EFF [%]",module_vent.getDefrostTrigger(),20,100,1);
-         defrostTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
-             module_vent.setNVDefrostTrigger((int) Math.round(valueChangeEvent.getValue()));
-             setPendingColor(defrostTrigger.getSource());
-             module_vent.setReqUpdateValues(true);
-         });
+        info[0][2][0] = new Info("odmrażanie", true, module_vent.isDefrost());
+        info[0][2][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(), 0, 0, 0);
+        defrostTrigger = new NumberField("min. EFF [%]", module_vent.getDefrostTrigger(), 20, 100, 1);
+        defrostTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
+            module_vent.setNVDefrostTrigger((int) Math.round(valueChangeEvent.getValue()));
+            setPendingColor(defrostTrigger.getSource());
+            module_vent.setReqUpdateValues(true);
+        });
 
-         info[0][3][0] = new Info("wilgoć",true, module_vent.isDefrost());
-         info[0][3][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(),0,0,0);
-         humidityTrigger = new NumberField("próg załączenia [%]",module_vent.getHumidityTrigger(),20,100,1);
-         humidityTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
-             module_vent.setNVHumidityTrigger((int) Math.round(valueChangeEvent.getValue()));
-             setPendingColor(humidityTrigger.getSource());
-             module_vent.setReqUpdateValues(true);
-         });
-     }
+        info[0][3][0] = new Info("wilgoć", true, module_vent.isDefrost());
+        info[0][3][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(), 0, 0, 0);
+        humidityTrigger = new NumberField("próg załączenia [%]", module_vent.getHumidityTrigger(), 20, 100, 1);
+        humidityTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
+            module_vent.setNVHumidityTrigger((int) Math.round(valueChangeEvent.getValue()));
+            setPendingColor(humidityTrigger.getSource());
+            module_vent.setReqUpdateValues(true);
+        });
+    }
 
-      private void createInfoSection1() {
-          BME280[] bme280 = module_vent.getBme280();
-          for (int i=0; i<4; i++) {
-              info[1][i][0] = new Info("temp", "°C", false, false, bme280[i].getTemp(),0,0,0);
-              info[1][i][1] = new Info("wilgotność", "%", false, false, bme280[i].getHumidity(),0,0,0);
-              info[1][i][2] = new Info("ciśnienie", "hPa", false, false, bme280[i].getPressure(),0,0,0);
-          }
-      }
+    private void createInfoSection1() {
+        BME280[] bme280 = module_vent.getBme280();
+        for (int i = 0; i < 4; i++) {
+            info[1][i][0] = new Info("temp", "°C", false, false, bme280[i].getTemp(), 0, 0, 0);
+            info[1][i][1] = new Info("wilgotność", "%", false, false, bme280[i].getHumidity(), 0, 0, 0);
+            info[1][i][2] = new Info("ciśnienie", "hPa", false, false, bme280[i].getPressure(), 0, 0, 0);
+        }
+    }
 
     private void createInfoSection2() {
         //Ustawienia
-        for (int i=0; i<24; i++)
+        for (int i = 0; i < 24; i++)
             ventByHour[i] = new VentByHour();
 
         actualDiagram = getActualDiagram();
         grid.addColumn(VentByHour::getHour).setHeader("Godzina");
 
-        grid.addColumn(new ComponentRenderer<>(VentActive-> {
+        grid.addColumn(new ComponentRenderer<>(VentActive -> {
             int quarterNo = 0;
             boolean result = VentActive.getQuarterStatus(quarterNo);
             String text = result ? "❶" : "⓿";
-            Info info = new Info(text,true, result);
-            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
-            info.setValue(result);
-            if (VentActive.getQuarterActive(quarterNo))
-                 info.getNameLabel().getStyle().set("color", "white");
-            if (VentActive.getQuarterPending(quarterNo))
-                info.getNameLabel().getStyle().set("color", "orange");
-            return info.getSource();
-        })).setHeader("0-14");
-
-        grid.addColumn(new ComponentRenderer<>(VentActive-> {
-            int quarterNo = 1;
-            boolean result = VentActive.getQuarterStatus(quarterNo);
-            String text = result ? "❶" : "⓿";
-            Info info = new Info(text,true, result);
-            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            Info info = new Info(text, true, result);
+            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
             info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
             if (VentActive.getQuarterPending(quarterNo))
                 info.getNameLabel().getStyle().set("color", "orange");
-             return info.getSource();
+            return info.getSource();
+        })).setHeader("0-14");
+
+        grid.addColumn(new ComponentRenderer<>(VentActive -> {
+            int quarterNo = 1;
+            boolean result = VentActive.getQuarterStatus(quarterNo);
+            String text = result ? "❶" : "⓿";
+            Info info = new Info(text, true, result);
+            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
+            info.setValue(result);
+            if (VentActive.getQuarterActive(quarterNo))
+                info.getNameLabel().getStyle().set("color", "white");
+            if (VentActive.getQuarterPending(quarterNo))
+                info.getNameLabel().getStyle().set("color", "orange");
+            return info.getSource();
         })).setHeader("15-29");
 
-        grid.addColumn(new ComponentRenderer<>(VentActive-> {
+        grid.addColumn(new ComponentRenderer<>(VentActive -> {
             int quarterNo = 2;
             boolean result = VentActive.getQuarterStatus(quarterNo);
             String text = result ? "❶" : "⓿";
-            Info info = new Info(text,true, result);
-            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            Info info = new Info(text, true, result);
+            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
             info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
@@ -203,12 +203,12 @@ public class VentView extends View {
             return info.getSource();
         })).setHeader("30-44");
 
-        grid.addColumn(new ComponentRenderer<>(VentActive-> {
+        grid.addColumn(new ComponentRenderer<>(VentActive -> {
             int quarterNo = 3;
             boolean result = VentActive.getQuarterStatus(quarterNo);
             String text = result ? "❶" : "⓿";
-            Info info = new Info(text,true, result);
-            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(),quarterNo));
+            Info info = new Info(text, true, result);
+            info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
             info.setValue(result);
             if (VentActive.getQuarterActive(quarterNo))
                 info.getNameLabel().getStyle().set("color", "white");
@@ -221,7 +221,7 @@ public class VentView extends View {
         grid.setItems(actualDiagram);
     }
 
-    private static class  Quarter {
+    private static class Quarter {
         private boolean quarter;
         private boolean pending;
         private boolean active;
@@ -256,7 +256,7 @@ public class VentView extends View {
         private Quarter[] quarter = new Quarter[4];
 
         public VentByHour() {
-            for (int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
                 quarter[i] = new Quarter();
         }
 
@@ -295,27 +295,27 @@ public class VentView extends View {
     }
 
     @SuppressWarnings("deprecation")
-    private List<VentByHour> getActualDiagram () {
+    private List<VentByHour> getActualDiagram() {
         int[] hours = module_vent.getHour();
         actualDiagram.clear();
-        for (int i =0; i<12; i++) {
-            ventByHour[i*2].setHour(i*2);
-            ventByHour[i*2].setQuarterStatus(0,bitStatus(hours[i],7));
-            ventByHour[i*2].setQuarterStatus(1,bitStatus(hours[i],6));
-            ventByHour[i*2].setQuarterStatus(2,bitStatus(hours[i],5));
-            ventByHour[i*2].setQuarterStatus(3,bitStatus(hours[i],4));
-            actualDiagram.add(ventByHour[i*2]);
-            ventByHour[i*2+1].setHour(i*2+1);
-            ventByHour[i*2+1].setQuarterStatus(0,bitStatus(hours[i],3));
-            ventByHour[i*2+1].setQuarterStatus(1,bitStatus(hours[i],2));
-            ventByHour[i*2+1].setQuarterStatus(2,bitStatus(hours[i],1));
-            ventByHour[i*2+1].setQuarterStatus(3,bitStatus(hours[i],0));
-            actualDiagram.add(ventByHour[i*2+1]);
+        for (int i = 0; i < 12; i++) {
+            ventByHour[i * 2].setHour(i * 2);
+            ventByHour[i * 2].setQuarterStatus(0, bitStatus(hours[i], 7));
+            ventByHour[i * 2].setQuarterStatus(1, bitStatus(hours[i], 6));
+            ventByHour[i * 2].setQuarterStatus(2, bitStatus(hours[i], 5));
+            ventByHour[i * 2].setQuarterStatus(3, bitStatus(hours[i], 4));
+            actualDiagram.add(ventByHour[i * 2]);
+            ventByHour[i * 2 + 1].setHour(i * 2 + 1);
+            ventByHour[i * 2 + 1].setQuarterStatus(0, bitStatus(hours[i], 3));
+            ventByHour[i * 2 + 1].setQuarterStatus(1, bitStatus(hours[i], 2));
+            ventByHour[i * 2 + 1].setQuarterStatus(2, bitStatus(hours[i], 1));
+            ventByHour[i * 2 + 1].setQuarterStatus(3, bitStatus(hours[i], 0));
+            actualDiagram.add(ventByHour[i * 2 + 1]);
         }
 
         if (module_vent.isAllUpToDate()) {
-            for (int i=0; i<12; i++)
-                for (int j=0; j<4; j++) {
+            for (int i = 0; i < 12; i++)
+                for (int j = 0; j < 4; j++) {
                     ventByHour[i * 2].setQuarterPending(j, false);
                     ventByHour[i * 2 + 1].setQuarterPending(j, false);
                 }
@@ -323,17 +323,17 @@ public class VentView extends View {
 
         LocalDateTime currentDate = LocalDateTime.now();
         int quarterActive;
-        if (currentDate.getMinute()<15) quarterActive=0;
-        else if (currentDate.getMinute()<30) quarterActive=1;
-        else if (currentDate.getMinute()<45) quarterActive=2;
-        else    quarterActive = 3;
-        ventByHour[currentDate.getHour()].setQuarterActive(quarterActive,true);
+        if (currentDate.getMinute() < 15) quarterActive = 0;
+        else if (currentDate.getMinute() < 30) quarterActive = 1;
+        else if (currentDate.getMinute() < 45) quarterActive = 2;
+        else quarterActive = 3;
+        ventByHour[currentDate.getHour()].setQuarterActive(quarterActive, true);
         return actualDiagram;
     }
 
     private int changeBitStatus(int data, int bitPos) {
         int value = 1;
-        for (int i = 0; i<bitPos; i++)
+        for (int i = 0; i < bitPos; i++)
             value = value << 1;
         if (((data >> bitPos) & 1) == 1)
             data -= value;
@@ -348,24 +348,48 @@ public class VentView extends View {
 
     private void gridListener(int hour, int quarter) {
         if (!isUserLoggedIn()) return;
-        actualDiagram.get(hour).setQuarterPending(quarter,true);
+        actualDiagram.get(hour).setQuarterPending(quarter, true);
         int[] hours = module_vent.getNVHour();
-        if ((hour % 2)>0) quarter += 4;
-        quarter = 7-quarter;
-        hour = (int)(hour/2);
+        if ((hour % 2) > 0) quarter += 4;
+        quarter = 7 - quarter;
+        hour = (int) (hour / 2);
         switch (hour) {
-            case 0 : module_vent.setNVHour01(changeBitStatus(hours[hour],quarter)); break;
-            case 1 : module_vent.setNVHour23(changeBitStatus(hours[hour],quarter)); break;
-            case 2 : module_vent.setNVHour45(changeBitStatus(hours[hour],quarter)); break;
-            case 3 : module_vent.setNVHour67(changeBitStatus(hours[hour],quarter)); break;
-            case 4 : module_vent.setNVHour89(changeBitStatus(hours[hour],quarter)); break;
-            case 5 : module_vent.setNVHour1011(changeBitStatus(hours[hour],quarter)); break;
-            case 6 : module_vent.setNVHour1213(changeBitStatus(hours[hour],quarter)); break;
-            case 7 : module_vent.setNVHour1415(changeBitStatus(hours[hour],quarter)); break;
-            case 8 : module_vent.setNVHour1617(changeBitStatus(hours[hour],quarter)); break;
-            case 9 : module_vent.setNVHour1819(changeBitStatus(hours[hour],quarter)); break;
-            case 10 : module_vent.setNVHour2021(changeBitStatus(hours[hour],quarter)); break;
-            case 11 : module_vent.setNVHour2223(changeBitStatus(hours[hour],quarter)); break;
+            case 0:
+                module_vent.setNVHour01(changeBitStatus(hours[hour], quarter));
+                break;
+            case 1:
+                module_vent.setNVHour23(changeBitStatus(hours[hour], quarter));
+                break;
+            case 2:
+                module_vent.setNVHour45(changeBitStatus(hours[hour], quarter));
+                break;
+            case 3:
+                module_vent.setNVHour67(changeBitStatus(hours[hour], quarter));
+                break;
+            case 4:
+                module_vent.setNVHour89(changeBitStatus(hours[hour], quarter));
+                break;
+            case 5:
+                module_vent.setNVHour1011(changeBitStatus(hours[hour], quarter));
+                break;
+            case 6:
+                module_vent.setNVHour1213(changeBitStatus(hours[hour], quarter));
+                break;
+            case 7:
+                module_vent.setNVHour1415(changeBitStatus(hours[hour], quarter));
+                break;
+            case 8:
+                module_vent.setNVHour1617(changeBitStatus(hours[hour], quarter));
+                break;
+            case 9:
+                module_vent.setNVHour1819(changeBitStatus(hours[hour], quarter));
+                break;
+            case 10:
+                module_vent.setNVHour2021(changeBitStatus(hours[hour], quarter));
+                break;
+            case 11:
+                module_vent.setNVHour2223(changeBitStatus(hours[hour], quarter));
+                break;
         }
         module_vent.setReqUpdateValues(true);
     }
@@ -394,7 +418,7 @@ public class VentView extends View {
         humidityTrigger.setNumberField(module_vent.getHumidityTrigger(), module_vent.getNVHumidityTrigger());
 
         BME280[] bme280 = module_vent.getBme280();
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             info[1][i][0].setValue(bme280[i].getTemp());
             info[1][i][1].setValue(bme280[i].getHumidity());
             info[1][i][2].setValue(bme280[i].getPressure());
@@ -421,7 +445,8 @@ public class VentView extends View {
     private static class FeederThread extends Thread {
         private final UI ui;
         private final VentView view;
-        public FeederThread(UI ui, VentView view ) {
+
+        public FeederThread(UI ui, VentView view) {
             this.ui = ui;
             this.view = view;
         }
@@ -429,13 +454,10 @@ public class VentView extends View {
         @Override
         public void run() {
             while (true) {
+                ui.access(view::update);
                 try {
-                    ui.access(view::update);
-
-                    //FIXME instead sleep add newData in all modules structure to respons immediately
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

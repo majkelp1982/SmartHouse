@@ -61,10 +61,10 @@ public class ComfortView extends View {
                 for (int k = 0; k < 2; k++)
                     if (info[i][j][k] != null)
                         section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
-         for (int i=0; i<=2; i++)
+        for (int i = 0; i <= 2; i++)
             section[0].getTileDetailsContainer(i).add(numberFields[i].getSource());
-        for (int i=0; i<=3; i++)
-            section[1].getTileDetailsContainer(i).add(numberFields[i+3].getSource());
+        for (int i = 0; i <= 3; i++)
+            section[1].getTileDetailsContainer(i).add(numberFields[i + 3].getSource());
 
         //Click Listeners
         numberFields[0].getSource().addValueChangeListener(valueChangeEvent -> {
@@ -105,59 +105,59 @@ public class ComfortView extends View {
 
         // Notification if user doesn't logged
         Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-        for (int i=0; i<=2; i++) {
+        for (int i = 0; i <= 2; i++) {
             section[0].getSection().addClickListener(event -> {
                 if (!isUserLoggedIn())
                     notification.open();
             });
             section[0].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
         }
-         for (int i=0; i<=3; i++) {
-             section[1].getSection().addClickListener(event -> {
-                 if (!isUserLoggedIn())
-                     notification.open();
-             });
-             section[1].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
+        for (int i = 0; i <= 3; i++) {
+            section[1].getSection().addClickListener(event -> {
+                if (!isUserLoggedIn())
+                    notification.open();
+            });
+            section[1].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
 
-         }
+        }
 
-        add(header.getHeader(),section[0].getSection(),section[1].getSection());
+        add(header.getHeader(), section[0].getSection(), section[1].getSection());
     }
 
-    private void createInfoSection0 () {
+    private void createInfoSection0() {
         //Create info's for [section][tileNo][intoNo]
         //Salon
         info[0][0][0] = new Info("temperatura", "°C", true, false, zone[0].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][0][1] = new Info("wilgotność", "%", true, false, zone[0].isHumidity, 50, 10, 20);
-        numberFields[0] = new NumberField("nastawa [°C]",zone[0].reqTemp,9,99,0.5);
+        numberFields[0] = new NumberField("nastawa [°C]", zone[0].reqTemp, 9, 99, 0.5);
         //Pralnia
         info[0][1][0] = new Info("temperatura", "°C", true, false, zone[1].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][1][1] = new Info("wilgotność", "%", true, false, zone[1].isHumidity, 50, 10, 20);
-        numberFields[1] = new NumberField("nastawa [°C]",zone[1].reqTemp,9,99,0.5);
+        numberFields[1] = new NumberField("nastawa [°C]", zone[1].reqTemp, 9, 99, 0.5);
         //laz.dol
         info[0][2][0] = new Info("temperatura", "°C", true, false, zone[2].isTemp, zone[0].reqTemp, 0.5, 1);
         info[0][2][1] = new Info("wilgotność", "%", true, false, zone[2].isHumidity, 50, 10, 20);
-        numberFields[2] = new NumberField("nastawa [°C]",zone[2].reqTemp,9,99,0.5);
+        numberFields[2] = new NumberField("nastawa [°C]", zone[2].reqTemp, 9, 99, 0.5);
     }
 
-    private void createInfoSection1 () {
+    private void createInfoSection1() {
         //Create info's for [section][tileNo][intoNo]
         //rodzice
         info[1][0][0] = new Info("temperatura", "°C", true, false, zone[3].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][0][1] = new Info("wilgotność", "%", true, false, zone[3].isHumidity, 50, 10, 20);
-        numberFields[3] = new NumberField("nastawa [°C]",zone[3].reqTemp,9,99,0.5);
+        numberFields[3] = new NumberField("nastawa [°C]", zone[3].reqTemp, 9, 99, 0.5);
         //Natalia
         info[1][1][0] = new Info("temperatura", "°C", true, false, zone[4].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][1][1] = new Info("wilgotność", "%", true, false, zone[4].isHumidity, 50, 10, 20);
-        numberFields[4] = new NumberField("nastawa [°C]",zone[4].reqTemp,9,99,0.5);
+        numberFields[4] = new NumberField("nastawa [°C]", zone[4].reqTemp, 9, 99, 0.5);
         //Karolina
         info[1][2][0] = new Info("temperatura", "°C", true, false, zone[5].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][2][1] = new Info("wilgotność", "%", true, false, zone[5].isHumidity, 50, 10, 20);
-        numberFields[5] = new NumberField("nastawa [°C]",zone[5].reqTemp,9,99,0.5);
+        numberFields[5] = new NumberField("nastawa [°C]", zone[5].reqTemp, 9, 99, 0.5);
         //laz.gora
         info[1][3][0] = new Info("temperatura", "°C", true, false, zone[6].isTemp, zone[0].reqTemp, 0.5, 1);
         info[1][3][1] = new Info("wilgotność", "%", true, false, zone[6].isHumidity, 50, 10, 20);
-        numberFields[6] = new NumberField("nastawa [°C]",zone[6].reqTemp,9,99,0.5);
+        numberFields[6] = new NumberField("nastawa [°C]", zone[6].reqTemp, 9, 99, 0.5);
     }
 
     private void update() {
@@ -195,7 +195,7 @@ public class ComfortView extends View {
         private final UI ui;
         private final ComfortView view;
 
-        public FeederThread(UI ui, ComfortView view ) {
+        public FeederThread(UI ui, ComfortView view) {
             this.ui = ui;
             this.view = view;
         }
@@ -203,12 +203,10 @@ public class ComfortView extends View {
         @Override
         public void run() {
             while (true) {
+                ui.access(view::update);
                 try {
-                    ui.access(view::update);
-                    //FIXME instead sleep add newData in all modules structure to respons immediately
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }
