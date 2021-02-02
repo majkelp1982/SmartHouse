@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class Module {
     public static final int FAULT_MAX = 100;
@@ -18,6 +19,7 @@ public class Module {
     private long localDateTimeLong;
     private transient LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
     private transient boolean reqUpdateValues = false;
+    private LocalDateTime lastSaveDateTime = LocalDateTime.now();
 
     @Autowired
     transient Diagnostic diagnostic;
@@ -131,6 +133,17 @@ public class Module {
 
     protected LocalDateTime getCurrentDate() {
         return LocalDateTime.now();
+    }
+
+    public boolean isTooLongWithoutSave() {
+        long lastTime = ChronoUnit.MINUTES.between(lastSaveDateTime, getCurrentDate());
+        if (lastTime> 10)
+            return true;
+        return false;
+    }
+
+    public void setLastSaveDateTime(LocalDateTime lastSaveDateTime) {
+        this.lastSaveDateTime = lastSaveDateTime;
     }
 
     public class Fault {

@@ -45,8 +45,10 @@ public class MongoDBController {
             case 10: {
                 Module_Comfort module_comfortLastStatus = module_comfort.clone();
                 module_comfort.dataParser(packetData);
-                if (!module_comfort.compare(module_comfortLastStatus))
+                if (!module_comfort.compare(module_comfortLastStatus)) {
                     saveNewEntry("module_comfort", module_comfort);             // if data has been changed add new entry in DB
+                    module_comfort.setLastSaveDateTime(LocalDateTime.now());
+                }
                 else updateLastEntry("module_comfort", module_comfort);         // else update last entry
 
             }
@@ -54,17 +56,21 @@ public class MongoDBController {
             case 13: {
                 Module_Vent module_ventLastStatus = module_vent.clone();
                 module_vent.dataParser(packetData);
-                if (!module_vent.compare(module_ventLastStatus))
+                if (!module_vent.compare(module_ventLastStatus)) {
                     saveNewEntry("module_vent", module_vent);                    // if data has been changed add new entry in DB
-                else updateLastEntry("module_vent", module_vent);                // else update last entry
+                    module_vent.setLastSaveDateTime(LocalDateTime.now());
+                }
+               else updateLastEntry("module_vent", module_vent);                // else update last entry
 
             }
             break;
             case 14: {
                 Module_Heating module_heatingLastStatus = module_heating.clone();
                 module_heating.dataParser(packetData);
-                if (!module_heating.compare(module_heatingLastStatus))
+                if (!module_heating.compare(module_heatingLastStatus)) {
                     saveNewEntry("module_heating", module_heating);             // if data has been changed add new entry in DB
+                    module_heating.setLastSaveDateTime(LocalDateTime.now());
+                }
                 else updateLastEntry("module_heating", module_heating);         // else update last entry
             }
             break;

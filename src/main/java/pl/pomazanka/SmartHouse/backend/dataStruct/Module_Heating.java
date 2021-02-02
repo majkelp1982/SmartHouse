@@ -330,6 +330,8 @@ public class Module_Heating extends Module implements Cloneable {
         if (result) result = cmp(module_Heating.tReturnGroundFloor, tReturnGroundFloor, 1);
         if (result) result = cmp(module_Heating.tReturnLoft, tReturnLoft, 1);
         if (result) result = cmp(module_Heating.heatPumpAlarmTemp, heatPumpAlarmTemp, 0);
+        if (isTooLongWithoutSave())
+            result = false;
         return result;
     }
 

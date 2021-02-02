@@ -2,6 +2,8 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.stereotype.Controller;
 
+import java.time.temporal.ChronoUnit;
+
 @Controller
 public class Module_Comfort extends Module implements Cloneable {
     //Module comfort type
@@ -96,10 +98,12 @@ public class Module_Comfort extends Module implements Cloneable {
         //return FALSE if compare data are different
         boolean result = true;
         for (int i=0; i<7; i++) {
-            if (result) result = cmp(module_comfort.zone[i].isTemp,zone[i].isTemp,0.5);
+            if (result) result = cmp(module_comfort.zone[i].isTemp,zone[i].isTemp,0.2);
             if (result) result = cmp(module_comfort.zone[i].reqTemp,zone[i].reqTemp,0);
-            if (result) result = cmp(module_comfort.zone[i].isHumidity,zone[i].isHumidity,5);
+            if (result) result = cmp(module_comfort.zone[i].isHumidity,zone[i].isHumidity,2);
         }
+        if (isTooLongWithoutSave())
+            result = false;
         return result;
     }
 

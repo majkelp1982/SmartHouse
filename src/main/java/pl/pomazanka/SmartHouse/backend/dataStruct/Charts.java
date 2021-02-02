@@ -26,7 +26,14 @@ public class Charts {
         int i = 0;
         for (Data temp : list) {
             if (temp.isNumber) serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
-            else serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getBoolean());
+            else {
+                int value;
+                if (temp.getBoolean())
+                    value = 20;
+                else
+                    value = 1;
+                serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), value);
+            }
             i++;
         }
         return serie;

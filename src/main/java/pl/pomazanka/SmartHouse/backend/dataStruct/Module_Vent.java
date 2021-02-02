@@ -265,7 +265,8 @@ public class Module_Vent extends Module implements Cloneable {
             if (result) result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(), 100);
         }
         if (result) result = cmp(module_vent.efficency, efficency);
-
+        if (isTooLongWithoutSave())
+            result = false;
         return result;
     }
 
