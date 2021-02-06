@@ -1,6 +1,6 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct.Equipment;
 
-public class SDS011 {
+public class SDS011 implements Cloneable {
     private int pm25;
     private int pm10;
 
@@ -21,6 +21,11 @@ public class SDS011 {
 
     public void setPm10(int pm10) {
         this.pm10 = pm10;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
 

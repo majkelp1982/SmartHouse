@@ -49,13 +49,14 @@ public class MainLayout extends AppLayout {
         drawer.addClassName("appLayout-drawer");
 
         //prepare links
+        RouterLink weatherViewLink = createDrawerElement("cloud.svg","Powietrze", WeatherView.class);
         RouterLink ventViewLink = createDrawerElement("recu.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
         RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewanie", HeatingView.class);
         RouterLink chartsViewLink = createDrawerElement("graph.svg","Wykresy", ChartsView.class);
         RouterLink errorsViewLink = createDrawerElement("support.svg","Diagnostyka", DiagnosticView.class);
 
-        drawer.add(ventViewLink,comfortViewLink,heatingViewLink,chartsViewLink, errorsViewLink);
+        drawer.add(weatherViewLink,ventViewLink,comfortViewLink,heatingViewLink,chartsViewLink, errorsViewLink);
         drawer.setSizeFull();
         drawer.setAlignItems(FlexComponent.Alignment.START);
 

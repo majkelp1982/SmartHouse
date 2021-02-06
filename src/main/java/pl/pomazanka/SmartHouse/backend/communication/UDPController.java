@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Weather;
 
 import java.io.IOException;
 import java.net.*;
@@ -25,6 +26,8 @@ public class UDPController {
     Module_Comfort module_comfort;
     @Autowired
     Module_Vent module_vent;
+    @Autowired
+    Module_Weather module_weather;
 
     // UDP variables
     private int timeSynchroLast = 100;
@@ -33,6 +36,8 @@ public class UDPController {
     private static byte[] buffer;
     private static int[] packetData;
     int localPort = 6000;
+    private static final int PACKET_SIZE_MODULE_11 = 12;			       	// length of UDP data from module 10 "komfort"
+    private static final int PACKET_SIZE_MODULE_11_DIAG = 7;		    	// length of UDP diagnose from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10 = 30;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_13 = 40;					// length of UDP data from module 3 "wentylacja"
@@ -57,6 +62,7 @@ public class UDPController {
         if (packetData[2] == 200) {			        // Only for diagnose frames
             switch (packetData[0]) {
                 case 10 :if (packetLength == PACKET_SIZE_MODULE_10_DIAG)    packetCorrect = true; break;
+                case 11 :if (packetLength == PACKET_SIZE_MODULE_11_DIAG)    packetCorrect = true; break;
                 case 13 :if (packetLength == PACKET_SIZE_MODULE_13_DIAG)    packetCorrect = true; break;
                 case 14 :if (packetLength == PACKET_SIZE_MODULE_14_DIAG)    packetCorrect = true; break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
@@ -66,6 +72,7 @@ public class UDPController {
             switch (packetData[0]) {		        // Only for standard frames
                 case 1: packetCorrect = true; break;
                 case 10:if (packetLength == PACKET_SIZE_MODULE_10) packetCorrect = true;break;
+                case 11:if (packetLength == PACKET_SIZE_MODULE_11) packetCorrect = true;break;
                 case 13:if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;break;
                 case 14:if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
@@ -207,6 +214,9 @@ public class UDPController {
         sendData(moduleMain, module_vent.getModuleType(), 0, 35, module_vent.getNVHumidityTrigger());
     }
 
+    private void sendWeatherNV() {
+
+    }
 
     public class EventRunBackground implements Runnable {
         @SuppressWarnings("InfiniteLoopStatement")
@@ -223,6 +233,7 @@ public class UDPController {
                 if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
                 if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
                 if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
+                if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendVentNV();
             } while (true);
         }
     }

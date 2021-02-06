@@ -1,6 +1,6 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct.Equipment;
 
-public class BME280 {
+public class BME280 implements Cloneable{
     private double temp;
     private int humidity;
     private int pressure;
@@ -30,6 +30,11 @@ public class BME280 {
 
     public void setPressure(int pressure) {
         this.pressure = pressure;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
 

@@ -36,6 +36,8 @@ public class MongoDBController {
     @Autowired
     Module_Vent module_vent;
     @Autowired
+    Module_Weather module_weather;
+    @Autowired
     Diagnostic diagnostic;
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
@@ -50,6 +52,17 @@ public class MongoDBController {
                     module_comfort.setLastSaveDateTime(LocalDateTime.now());
                 }
                 else updateLastEntry("module_comfort", module_comfort);         // else update last entry
+
+            }
+            break;
+            case 11: {
+                Module_Weather module_weatherLastStatus = module_weather.clone();
+                module_weather.dataParser(packetData);
+                if (!module_weather.compare(module_weatherLastStatus)) {
+                    saveNewEntry("module_weather", module_weather);             // if data has been changed add new entry in DB
+                    module_weather.setLastSaveDateTime(LocalDateTime.now());
+                }
+                else updateLastEntry("module_weather", module_weather);         // else update last entry
 
             }
             break;
