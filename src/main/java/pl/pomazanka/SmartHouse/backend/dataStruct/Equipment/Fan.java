@@ -1,4 +1,4 @@
-package pl.pomazanka.SmartHouse.backend.dataStruct.Vent;
+package pl.pomazanka.SmartHouse.backend.dataStruct.Equipment;
 
 public class Fan {
     private int speed;

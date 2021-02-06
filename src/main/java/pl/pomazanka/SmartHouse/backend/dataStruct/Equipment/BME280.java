@@ -1,4 +1,4 @@
-package pl.pomazanka.SmartHouse.backend.dataStruct.Vent;
+package pl.pomazanka.SmartHouse.backend.dataStruct.Equipment;
 
 public class BME280 {
     private double temp;

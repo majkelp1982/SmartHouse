@@ -1,8 +1,8 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.stereotype.Controller;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Vent.BME280;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Vent.Fan;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.BME280;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.Fan;
 
 @Controller
 public class Module_Vent extends Module implements Cloneable {
@@ -39,7 +39,7 @@ public class Module_Vent extends Module implements Cloneable {
     private int humidityTrigger;
     private int NVHumidityTrigger;
 
-    private int efficency;
+    private int efficiency;
 
     public Module_Vent() {
         super(MODULE_TYPE, "Wentylacja", "module_vent");
@@ -101,8 +101,8 @@ public class Module_Vent extends Module implements Cloneable {
         return NVHumidityTrigger;
     }
 
-    public int getEfficency() {
-        return efficency;
+    public int getEfficiency() {
+        return efficiency;
     }
 
     // Check if values are Up to Date
@@ -227,7 +227,7 @@ public class Module_Vent extends Module implements Cloneable {
                 defrostTrigger = packetData[36];
                 humidityTimeLeft = packetData[37];
                 humidityTrigger = packetData[38];
-                efficency = packetData[39];
+                efficiency = packetData[39];
                 setFrameLastUpdate(getCurrentDate());
                 break;
 
@@ -264,7 +264,7 @@ public class Module_Vent extends Module implements Cloneable {
             if (result) result = cmp(module_vent.fan[i].getSpeed(), fan[i].getSpeed(), 10);
             if (result) result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(), 100);
         }
-        if (result) result = cmp(module_vent.efficency, efficency);
+        if (result) result = cmp(module_vent.efficiency, efficiency);
         if (isTooLongWithoutSave())
             result = false;
         return result;

@@ -10,8 +10,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Vent.BME280;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Vent.Fan;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.BME280;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.Fan;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 import java.time.LocalDateTime;
@@ -118,7 +118,7 @@ public class VentView extends View {
         info[0][0][0] = new Info("normalON", true, module_vent.isNormalON());
         info[0][0][1] = new Info("Wentylator", true, module_vent.isFanON());
         info[0][0][2] = new Info("bypassOpen", true, module_vent.isBypassOpen());
-        info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficency(), 70, 1, 3);
+        info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficiency(), 70, 1, 3);
 
         Fan[] fans = module_vent.getFan();
         info[0][1][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(), 0, 0, 0);
