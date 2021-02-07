@@ -213,7 +213,7 @@ public class Module_Vent extends Module implements Cloneable {
                     hour[i] = packetData[4 + i];
                 for (int i = 0; i < 4; i++) {
                     double tValue = packetData[16 + i * 4] + packetData[16 + i * 4 + 1] / 10.0;
-                    bme280[i].setTemp(tValue);
+                    bme280[i].setTemp(getFloatValue(tValue));
                     bme280[i].setHumidity(packetData[16 + i * 4 + 2]);
                     bme280[i].setPressure(packetData[16 + i * 4 + 3] * 10);
                 }

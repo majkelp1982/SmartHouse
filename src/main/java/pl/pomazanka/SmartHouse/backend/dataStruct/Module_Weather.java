@@ -14,7 +14,6 @@ public class Module_Weather extends Module implements Cloneable {
 
     public Module_Weather() {
         super(MODULE_TYPE, "Pogoda", "module_weather");
-
     }
 
     public SDS011 getSds011() {
@@ -37,7 +36,7 @@ public class Module_Weather extends Module implements Cloneable {
         switch (controllerFrameNumber) {
             case 0: // standard frame 0
                 double tValue = packetData[3] + packetData[4] / 10.0;
-                bme280.setTemp(tValue);
+                bme280.setTemp(getFloatValue(tValue));
                 ;
                 bme280.setHumidity(packetData[5]);
                 int pressure = (packetData[6] << 8) + packetData[7];

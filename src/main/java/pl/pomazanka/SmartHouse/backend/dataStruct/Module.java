@@ -2,6 +2,7 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -166,5 +167,14 @@ public class Module {
             return text;
         }
 
+    }
+
+    public double getFloatValue(double value) {
+        double result;
+        if (value>=128)
+            result = 128 - value;
+        else result = value;
+        int temp = (int)(result*100.0);
+        return ((double)temp)/100.0;
     }
 }
