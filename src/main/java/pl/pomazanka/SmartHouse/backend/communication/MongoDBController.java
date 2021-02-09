@@ -1,11 +1,11 @@
 package pl.pomazanka.SmartHouse.backend.communication;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
-import com.mongodb.Cursor;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 @Service
 public class MongoDBController {
@@ -143,7 +144,6 @@ public class MongoDBController {
 
     public ArrayList<Charts.Data> getValues(String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
         ArrayList<Charts.Data> list = new ArrayList<>();
-
         MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(collectionName);
         BasicDBObject gtQuery = new BasicDBObject();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
@@ -165,7 +165,12 @@ public class MongoDBController {
                 JsonNode arrayNumberNode = varNameNode.get(Integer.valueOf(arrayNumber));
                 JsonNode variableNode = arrayNumberNode.get(variable);
                 valueNode = variableNode;
-            } else valueNode = nodeDoc.get(variableName);
+            } else if (variableName.contains(".")) {
+                JsonNode subNode =nodeDoc.get(variableName.substring(0,variableName.indexOf(".")));
+                valueNode = subNode.get(variableName.substring(variableName.indexOf(".")+1));
+            } else {
+                valueNode = nodeDoc.get(variableName);
+            }
 
             String value = valueNode.toString();
             LocalDateTime dateTime = getDateTimeFromJson(nodeDoc);
@@ -182,12 +187,14 @@ public class MongoDBController {
 
         diagnostic.getModules().forEach(moduleDiagInfo -> {
             String moduleStructureName = moduleDiagInfo.getModuleStructureName();
-            MongoCollection mongoCollection = mongoDatabase.getCollection(moduleStructureName);
-            FindIterable iterable = mongoCollection.find().limit(1).sort(new Document("_id", -1));
-            Iterator iterator = iterable.iterator();
-            if (iterator.hasNext()) {
-                String jsonDoc = iterator.next().toString();
-                variablesListByModule.addAll(jsonDocAnalyse(moduleStructureName, jsonDoc));
+            MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(moduleStructureName);
+//            Document document = (Document) mongoCollection.find().limit(1).sort(new Document("_id", -1));
+            for (Document document : mongoCollection.find().limit(1).sort(new Document("_id", -1))) {
+                try {
+                    variablesListByModule.addAll(getFields(moduleStructureName, document));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -219,66 +226,52 @@ public class MongoDBController {
         return variableList;
     }
 
-    private ArrayList<String> jsonDocAnalyse(String collectionName, String jsonDoc) {
-        ArrayList<String> list = new ArrayList<>();
-        int cursor = 0;
-        int tempIndex = 0;
-        String variableName;
-        String subString;
-        int variableArrayNo = 0;
-        //skip 'Document{{'
-        cursor += 10;
-        int length = jsonDoc.length();
-
-        while ((cursor < length) && (cursor != 1)) {
-            subString = "";
-            variableArrayNo = 0;
-            //find cursor index variable end
-            tempIndex = jsonDoc.indexOf("=", cursor);
-            subString = jsonDoc.substring(tempIndex + 1, tempIndex + 2);
-            if (subString.equals("[")) {
-                variableName = jsonDoc.substring(cursor, tempIndex);
-                cursor = tempIndex + 1;
-                subString = jsonDoc.substring(cursor + 1, cursor + 11);
-
-                if (subString.equals("Document{{")) {
-                    int endIndex = jsonDoc.indexOf("]", cursor);
-                    while (cursor < endIndex) {
-                        ArrayList<String> subList = new ArrayList<>();
-                        tempIndex = jsonDoc.indexOf("}}", cursor);
-                        subString = jsonDoc.substring(cursor + 1, tempIndex);
-                        subList = jsonDocAnalyse("", subString);
-                        cursor = tempIndex + 2;
-                        final String prefixName = collectionName + "." + variableName + "[" + variableArrayNo + "]";
-
-                        subList.forEach(action -> {
-                            list.add(prefixName + action.toString());
-                        });
-                        variableArrayNo++;
-                        cursor += 1;
-                    }
-                    cursor++;
-                } else {
-                    int endIndexInnerArray = jsonDoc.indexOf("]", cursor);
-                    cursor++;
-                    while (cursor < endIndexInnerArray) {
-                        list.add(collectionName + "." + variableName + "[" + variableArrayNo + "]");
-                        variableArrayNo++;
-                        cursor = jsonDoc.indexOf(",", cursor + 1);
-                    }
-                    cursor++;
-                }
-            } else {
-                subString = jsonDoc.substring(cursor, tempIndex);
-                if (subString.equals("moduleType")) break;
-
-                if (!subString.equals("_id")) list.add(collectionName + "." + subString);
-                cursor = jsonDoc.indexOf(", ", tempIndex) + 1;
-            }
-            cursor++;
+    private ArrayList<String> getFields(String collectionName, Document mongoDoc) throws JsonProcessingException {
+        ArrayList<String> variableList = new ArrayList<>();
+        Gson gson = new Gson();
+        String jsonDoc = gson.toJson(mongoDoc);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(jsonDoc);
+        Iterator<Map.Entry<String, JsonNode>> rootIterator = root.fields();
+        while (rootIterator.hasNext()) {
+            String variable=collectionName;
+            Map.Entry<String, JsonNode> field = rootIterator.next();
+            getVariable(variableList, field, variable);
         }
-        return list;
+        return variableList;
     }
+
+    private void getVariable(ArrayList<String> variableList, Map.Entry<String, JsonNode> field, String name) {
+        String key = field.getKey();
+        if (key.toUpperCase().contains("_ID")
+                || (key.toUpperCase().contains("UPDATE"))
+                || (key.toUpperCase().contains("DATETIME"))
+                || (key.toUpperCase().contains("MODULE")))
+            return;
+        String variable = name+"."+ key;
+        Iterator<Map.Entry<String, JsonNode>> childIterator = field.getValue().fields();
+        if (childIterator.hasNext()) {
+            while (childIterator.hasNext()) {
+                Map.Entry<String, JsonNode> child = childIterator.next();
+                getVariable(variableList, child,variable);
+            }
+        }
+        else {
+            Iterator<JsonNode> iterElem = field.getValue().elements();
+            if (iterElem.hasNext()) {
+                int i = 0;
+                while (iterElem.hasNext()) {
+                    JsonNode node = iterElem.next();
+                    Iterator<String> namesIterator = node.fieldNames();
+                    while (namesIterator.hasNext()) {
+                        variableList.add(variable + "[" + i + "]." + namesIterator.next());
+                    }
+                    i++;
+                }
+            }
+            else variableList.add(variable);
+        }
+     }
 
     public UserDetails getUser() {
         MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
@@ -306,5 +299,4 @@ public class MongoDBController {
             throw e;
         }
     }
-
 }
