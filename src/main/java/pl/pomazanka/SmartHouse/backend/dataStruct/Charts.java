@@ -21,9 +21,15 @@ public class Charts {
     public Coordinate[] getSerie (String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
         ArrayList<Data> list;
         list = mongoDBController.getValues(collectionName, variableName, from, to);
-        Coordinate[] serie = new Coordinate[list.size()];
+        int size;
+        if (list.get(0).isNumber)
+            size = list.size();
+        else
+            size = list.size()*2;
+        Coordinate[] serie = new Coordinate[size];
 
         int i = 0;
+        int tempValue = 0;
         for (Data temp : list) {
             if (temp.isNumber) serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
             else {
@@ -32,7 +38,10 @@ public class Charts {
                     value = 20;
                 else
                     value = 1;
+                serie[i] = new Coordinate<>(temp.getTimeStamp().minusSeconds(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), tempValue);
+                i++;
                 serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), value);
+                tempValue = value;
             }
             i++;
         }

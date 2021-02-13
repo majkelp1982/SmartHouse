@@ -174,7 +174,7 @@ public class Module {
         if (value>=128)
             result = 128 - value;
         else result = value;
-        int temp = (int)(result*100.0);
-        return ((double)temp)/100.0;
+        int temp = (int)(result*10.0);
+        return ((double)temp)/10.0;
     }
 }

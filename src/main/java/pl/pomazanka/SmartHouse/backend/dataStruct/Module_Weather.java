@@ -37,7 +37,6 @@ public class Module_Weather extends Module implements Cloneable {
             case 0: // standard frame 0
                 double tValue = packetData[3] + packetData[4] / 10.0;
                 bme280.setTemp(getFloatValue(tValue));
-                ;
                 bme280.setHumidity(packetData[5]);
                 int pressure = (packetData[6] << 8) + packetData[7];
                 bme280.setPressure(pressure);
