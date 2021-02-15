@@ -43,7 +43,7 @@ public class UDPController {
     private static final int PACKET_SIZE_MODULE_13 = 40;					// length of UDP data from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_13_DIAG = 7;			    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_14 = 22;					// length of UDP data from module 14 "Ogrzewanie"
-    private static final int PACKET_SIZE_MODULE_14_DIAG = 8;				// length of UDP diagnose from module 14 "Ogrzewanie"
+    private static final int PACKET_SIZE_MODULE_14_DIAG = 7;				// length of UDP diagnose from module 14 "Ogrzewanie"
 
     public UDPController() {
         try {
