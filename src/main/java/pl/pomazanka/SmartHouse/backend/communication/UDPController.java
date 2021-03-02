@@ -36,10 +36,10 @@ public class UDPController {
     private static byte[] buffer;
     private static int[] packetData;
     int localPort = 6000;
+    private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
+    private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_11 = 12;			       	// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_11_DIAG = 7;		    	// length of UDP diagnose from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_10 = 30;					// length of UDP data from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_13 = 40;					// length of UDP data from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_13_DIAG = 7;			    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_14 = 22;					// length of UDP data from module 14 "Ogrzewanie"
