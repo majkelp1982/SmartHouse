@@ -10,8 +10,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module;
+
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -335,9 +339,21 @@ public class View extends VerticalLayout {
     }
 
     public static boolean isUserLoggedIn() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null
-                && !(authentication instanceof AnonymousAuthenticationToken) //
-                && authentication.isAuthenticated();
-    }
+        boolean status = false;
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String ipAddress = request.getRemoteAddr();
+        if (ipAddress != null) {
+            if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1"))
+                status = true;
+            if (ipAddress.contains("192") && ipAddress.contains("168"))
+                status =  true;
+        }
+        if (!status) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            status = authentication != null
+                    && !(authentication instanceof AnonymousAuthenticationToken) //
+                    && authentication.isAuthenticated();
+        }
+        return status;
+     }
 }

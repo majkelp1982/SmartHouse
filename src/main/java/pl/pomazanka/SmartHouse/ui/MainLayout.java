@@ -33,9 +33,13 @@ public class MainLayout extends AppLayout {
         header.addClassName("appLayout-header");
 
         H1 logo = new H1("Smart House");
+        View view = new View();
         Button loginButton = new Button("Zaloguj");
         loginButton.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
-        header.add(new DrawerToggle(), logo, loginButton);
+        if (view.isUserLoggedIn()) {
+            loginButton.setVisible(false);
+        }
+         header.add(new DrawerToggle(), logo, loginButton);
         header.setSizeFull();
         header.setMinWidth("1000px");
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
