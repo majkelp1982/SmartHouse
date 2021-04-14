@@ -2,10 +2,7 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Comfort;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Heating;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Weather;
+import pl.pomazanka.SmartHouse.backend.dataStruct.*;
 
 import java.io.IOException;
 import java.net.*;
@@ -28,6 +25,8 @@ public class UDPController {
     Module_Vent module_vent;
     @Autowired
     Module_Weather module_weather;
+    @Autowired
+    Module_Sewage module_sewage;
 
     // UDP variables
     private int timeSynchroLast = 100;
@@ -38,8 +37,10 @@ public class UDPController {
     int localPort = 6000;
     private static final int PACKET_SIZE_MODULE_10 = 31;					// length of UDP data from module 10 "komfort"
     private static final int PACKET_SIZE_MODULE_10_DIAG = 7;				// length of UDP diagnose from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_11 = 12;			       	// length of UDP data from module 10 "komfort"
-    private static final int PACKET_SIZE_MODULE_11_DIAG = 7;		    	// length of UDP diagnose from module 10 "komfort"
+    private static final int PACKET_SIZE_MODULE_11 = 12;			       	// length of UDP data from module 11 "pogoda"
+    private static final int PACKET_SIZE_MODULE_11_DIAG = 7;		    	// length of UDP diagnose from module 11 "pogoda"
+    private static final int PACKET_SIZE_MODULE_12 = 9;			       	    // length of UDP data from module 12 "oczyszczalnia"
+    private static final int PACKET_SIZE_MODULE_12_DIAG = 7;		    	// length of UDP diagnose from module 12 "oczyszczalnia"
     private static final int PACKET_SIZE_MODULE_13 = 40;					// length of UDP data from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_13_DIAG = 7;			    // length of UDP diagnose from module 3 "wentylacja"
     private static final int PACKET_SIZE_MODULE_14 = 22;					// length of UDP data from module 14 "Ogrzewanie"
@@ -63,6 +64,7 @@ public class UDPController {
             switch (packetData[0]) {
                 case 10 :if (packetLength == PACKET_SIZE_MODULE_10_DIAG)    packetCorrect = true; break;
                 case 11 :if (packetLength == PACKET_SIZE_MODULE_11_DIAG)    packetCorrect = true; break;
+                case 12 :if (packetLength == PACKET_SIZE_MODULE_12_DIAG)    packetCorrect = true; break;
                 case 13 :if (packetLength == PACKET_SIZE_MODULE_13_DIAG)    packetCorrect = true; break;
                 case 14 :if (packetLength == PACKET_SIZE_MODULE_14_DIAG)    packetCorrect = true; break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
@@ -73,6 +75,7 @@ public class UDPController {
                 case 1: packetCorrect = true; break;
                 case 10:if (packetLength == PACKET_SIZE_MODULE_10) packetCorrect = true;break;
                 case 11:if (packetLength == PACKET_SIZE_MODULE_11) packetCorrect = true;break;
+                case 12:if (packetLength == PACKET_SIZE_MODULE_12) packetCorrect = true;break;
                 case 13:if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;break;
                 case 14:if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;break;
                 default : System.out.println("Wrong data format : module["+packetData[0]+"]");
@@ -218,6 +221,22 @@ public class UDPController {
 
     }
 
+    private void sendSewageNV() {
+        int newValue;
+
+        newValue =Math.abs(module_sewage.getNVmaxWaterLevel());
+        sendData(moduleMain, module_sewage.getModuleType(), 0, 5, newValue);
+
+        newValue =Math.abs(module_sewage.getNVminWaterLevel());
+        sendData(moduleMain, module_sewage.getModuleType(), 0, 6, newValue);
+
+        newValue =Math.abs(module_sewage.getNVZeroRefWaterLevel());
+        sendData(moduleMain, module_sewage.getModuleType(), 0, 7, newValue);
+
+        newValue =Math.abs(module_sewage.getNVIntervalAirPump());
+        sendData(moduleMain, module_sewage.getModuleType(), 0, 8, newValue);
+    }
+
     public class EventRunBackground implements Runnable {
         @SuppressWarnings("InfiniteLoopStatement")
         @Override
@@ -233,7 +252,8 @@ public class UDPController {
                 if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
                 if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
                 if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
-                if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendVentNV();
+                if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendWeatherNV();
+                if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
             } while (true);
         }
     }

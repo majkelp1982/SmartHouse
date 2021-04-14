@@ -136,7 +136,7 @@ public class VentView extends View {
 
         info[0][3][0] = new Info("wilgoć", true, module_vent.isDefrost());
         info[0][3][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(), 0, 0, 0);
-        humidityTrigger = new NumberField("próg załączenia [%]", module_vent.getHumidityTrigger(), 20, 100, 1);
+       humidityTrigger = new NumberField("próg załączenia [%]", module_vent.getHumidityTrigger(), 20, 100, 1);
         humidityTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
             module_vent.setNVHumidityTrigger((int) Math.round(valueChangeEvent.getValue()));
             setPendingColor(humidityTrigger.getSource());

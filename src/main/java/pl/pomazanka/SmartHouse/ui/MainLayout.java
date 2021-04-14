@@ -57,10 +57,11 @@ public class MainLayout extends AppLayout {
         RouterLink ventViewLink = createDrawerElement("recu.svg","Wentylacja", VentView.class);
         RouterLink comfortViewLink = createDrawerElement("comfort.svg","Komfort", ComfortView.class);
         RouterLink heatingViewLink = createDrawerElement("thermometer.svg","Ogrzewanie", HeatingView.class);
+        RouterLink sewageViewLink = createDrawerElement("sewage.svg","Oczyszczalnia", SewageView.class);
         RouterLink chartsViewLink = createDrawerElement("graph.svg","Wykresy", ChartsView.class);
         RouterLink errorsViewLink = createDrawerElement("support.svg","Diagnostyka", DiagnosticView.class);
 
-        drawer.add(weatherViewLink,ventViewLink,comfortViewLink,heatingViewLink,chartsViewLink, errorsViewLink);
+        drawer.add(weatherViewLink,ventViewLink,comfortViewLink,heatingViewLink,sewageViewLink,chartsViewLink, errorsViewLink);
         drawer.setSizeFull();
         drawer.setAlignItems(FlexComponent.Alignment.START);
 

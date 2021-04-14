@@ -39,6 +39,8 @@ public class MongoDBController {
     @Autowired
     Module_Weather module_weather;
     @Autowired
+    Module_Sewage module_sewage;
+    @Autowired
     Diagnostic diagnostic;
 
     public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
@@ -62,6 +64,17 @@ public class MongoDBController {
                 if (!module_weather.compare(module_weatherLastStatus)) {
                     saveNewEntry("module_weather", module_weather);             // if data has been changed add new entry in DB
                     module_weather.setLastSaveDateTime(LocalDateTime.now());
+                }
+                else updateLastEntry("module_weather", module_weather);         // else update last entry
+
+            }
+            break;
+            case 12: {
+                Module_Sewage module_sewageLastStatus = module_sewage.clone();
+                module_sewage.dataParser(packetData);
+                if (!module_sewage.compare(module_sewageLastStatus)) {
+                    saveNewEntry("module_sewage", module_sewage);             // if data has been changed add new entry in DB
+                    module_sewage.setLastSaveDateTime(LocalDateTime.now());
                 }
                 else updateLastEntry("module_weather", module_weather);         // else update last entry
 
