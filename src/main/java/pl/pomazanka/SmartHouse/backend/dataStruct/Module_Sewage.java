@@ -118,14 +118,14 @@ public class Module_Sewage extends Module implements Cloneable {
 
         switch (controllerFrameNumber) {
             case 0: // standard frame 0
-                airPump = bitStatus(packetData[4], 7);
-                waterPump = bitStatus(packetData[4], 6);
-                limitSensor = bitStatus(packetData[4], 5);
-                isWaterLevel = -1*packetData[5];
-                maxWaterLevel = -1*packetData[6];
-                minWaterLevel = -1*packetData[7];
-                zeroRefWaterLevel = -1*packetData[8];
-                intervalAirPump = -1*packetData[9];
+                airPump = bitStatus(packetData[3], 7);
+                waterPump = bitStatus(packetData[3], 6);
+                limitSensor = bitStatus(packetData[3], 5);
+                isWaterLevel = -1*packetData[4];
+                maxWaterLevel = -1*packetData[5];
+                minWaterLevel = -1*packetData[6];
+                zeroRefWaterLevel = -1*packetData[7];
+                intervalAirPump = packetData[8];
 
                 setFrameLastUpdate(getCurrentDate());
                 break;
