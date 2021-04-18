@@ -2,6 +2,7 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -11,269 +12,273 @@ import java.util.Iterator;
 @Service
 @Configurable
 public class Diagnostic {
-    private String headerName = "Diagnostyka";
-    private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
+	private String headerName = "Diagnostyka";
+	private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
 
-    private ArrayList<ModuleDiagInfo> modules;
-    private ArrayList<ModuleFault> globalFaultsList;
-    private boolean globalFaultsListGroupByFault;
+	private ArrayList<ModuleDiagInfo> modules;
+	private ArrayList<ModuleFault> globalFaultsList;
+	private boolean globalFaultsListGroupByFault;
 
-    public Diagnostic () {
-        modules = new ArrayList<>();
-        globalFaultsList = new ArrayList<>();
-    }
+	public Diagnostic() {
+		modules = new ArrayList<>();
+		globalFaultsList = new ArrayList<>();
+	}
 
-    public String getModuleName() {
-        return headerName;
-    }
-    public LocalDateTime getDiagnosticLastUpdate() {
-        return diagnosticLastUpdate;
-    }
-    public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
-        this.diagnosticLastUpdate = diagnosticLastUpdate;
-    }
+	public String getModuleName() {
+		return headerName;
+	}
 
-    public void globalFaultsListGroupByFault() {
-        globalFaultsListGroupByFault = !globalFaultsListGroupByFault;
-    }
+	public LocalDateTime getDiagnosticLastUpdate() {
+		return diagnosticLastUpdate;
+	}
 
-    public boolean isGlobalFaultsListGroupByFault() {
-        return globalFaultsListGroupByFault;
-    }
+	public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
+		this.diagnosticLastUpdate = diagnosticLastUpdate;
+	}
 
-    public void addModule (int moduleType, String moduleName, String structureName) {
-        modules.add(new ModuleDiagInfo(moduleType,moduleName, structureName));
-    }
+	public void globalFaultsListGroupByFault() {
+		globalFaultsListGroupByFault = !globalFaultsListGroupByFault;
+	}
 
-    public void updateIP (int moduleTyp, int[] IP) {
-        for (ModuleDiagInfo module: modules)
-            if (module.getModuleType() == moduleTyp)
-                module.setIP(IP);
-    }
+	public boolean isGlobalFaultsListGroupByFault() {
+		return globalFaultsListGroupByFault;
+	}
 
-    public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
-        //Get proper module type
-        for (ModuleDiagInfo module : modules) {
-            if (module.getModuleType() == moduleTyp) {
-                // Get each fault already present in global list
-                for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                    // When fault active, but not present
-                    if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
-                        fault.setOutgoing(LocalDateTime.now());
-                }
-                //Get each fault from module list
-                for (int i = 0; i<Module.FAULT_MAX; i++) {
-                    if (moduleFaultList[i] == null) break;
+	public void addModule(int moduleType, String moduleName, String structureName) {
+		modules.add(new ModuleDiagInfo(moduleType, moduleName, structureName));
+	}
 
-                    if (moduleFaultList[i].isPresent()) {
-                        boolean reqNewInstance = true;
-                        for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                            if ((fault.getIndex() == i) && (fault.getOutgoing() == null)) {
-                                reqNewInstance = false;
-                                continue;
-                            }
-                        }
-                        if (reqNewInstance)
-                            module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
-                    }
-                }
-            }
-        }
-    }
+	public void updateIP(int moduleTyp, int[] IP) {
+		for (ModuleDiagInfo module : modules)
+			if (module.getModuleType() == moduleTyp)
+				module.setIP(IP);
+	}
 
-    public void refreshGlobalFaultList() {
-        //Clear global list
-        globalFaultsList.clear();
-        for (ModuleDiagInfo module : modules) {
-            //Update global fault list
-            for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-                if (fault == null) break;
-                if (!isGlobalFaultsListGroupByFault()) globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
-                else {
-                    boolean exist = false;
-                    for (ModuleFault tmp : globalFaultsList) {
-                        if ((tmp.getModuleType() == module.getModuleType()) && (tmp.index == fault.index) && (tmp.outgoing != null) && (fault.outgoing != null)) {
-                            exist = true;
-                            tmp.setActiveTime(tmp.getActiveTime()+(ChronoUnit.SECONDS.between(fault.incoming, fault.outgoing)));
-                            tmp.increaseErrorNumber();
-                            tmp.outgoing = fault.outgoing;
-                        }
-                    }
-                    if (!exist) globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
-                }
-            }
-        }
-    }
+	public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
+		//Get proper module type
+		for (ModuleDiagInfo module : modules) {
+			if (module.getModuleType() == moduleTyp) {
+				// Get each fault already present in global list
+				for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+					// When fault active, but not present
+					if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
+						fault.setOutgoing(LocalDateTime.now());
+				}
+				//Get each fault from module list
+				for (int i = 0; i < Module.FAULT_MAX; i++) {
+					if (moduleFaultList[i] == null) break;
 
-    public ArrayList<ModuleDiagInfo> getModules() {
-        return modules;
-    }
+					if (moduleFaultList[i].isPresent()) {
+						boolean reqNewInstance = true;
+						for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+							if ((fault.getIndex() == i) && (fault.getOutgoing() == null)) {
+								reqNewInstance = false;
+								continue;
+							}
+						}
+						if (reqNewInstance)
+							module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
+					}
+				}
+			}
+		}
+	}
 
-    public ArrayList<ModuleFault> getGlobalFaultsList() {
-        return globalFaultsList;
-    }
+	public void refreshGlobalFaultList() {
+		//Clear global list
+		globalFaultsList.clear();
+		for (ModuleDiagInfo module : modules) {
+			//Update global fault list
+			for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+				if (fault == null) break;
+				if (!isGlobalFaultsListGroupByFault())
+					globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+				else {
+					boolean exist = false;
+					for (ModuleFault tmp : globalFaultsList) {
+						if ((tmp.getModuleType() == module.getModuleType()) && (tmp.index == fault.index) && (tmp.outgoing != null) && (fault.outgoing != null)) {
+							exist = true;
+							tmp.setActiveTime(tmp.getActiveTime() + (ChronoUnit.SECONDS.between(fault.incoming, fault.outgoing)));
+							tmp.increaseErrorNumber();
+							tmp.outgoing = fault.outgoing;
+						}
+					}
+					if (!exist)
+						globalFaultsList.add(new ModuleFault(module.moduleType, module.moduleName, fault.incoming, fault.outgoing, fault.index, fault.description));
+				}
+			}
+		}
+	}
 
-    public void resetGlobalList() {
-        for (Iterator<ModuleDiagInfo> iterator = modules.iterator(); iterator.hasNext();) {
-            ModuleDiagInfo module = iterator.next();
-            for (Iterator<ModuleDiagInfo.Fault> iterator1 = module.getFaultList().iterator(); iterator1.hasNext();) {
-                ModuleDiagInfo.Fault fault = iterator1.next();
-                if (fault.getOutgoing()!= null)
-                    iterator1.remove();
-            }
-        }
-    }
+	public ArrayList<ModuleDiagInfo> getModules() {
+		return modules;
+	}
 
-    public class ModuleDiagInfo {
-        private int moduleType;
-        private String moduleName;
-        private String moduleStructureName;
-        private int[] IP = new int[4];
-        private ArrayList<Fault> faultList;
+	public ArrayList<ModuleFault> getGlobalFaultsList() {
+		return globalFaultsList;
+	}
 
-        public ModuleDiagInfo(int moduleType, String moduleName, String moduleStructureName) {
-            this.moduleType = moduleType;
-            this.moduleName = moduleName;
-            this.moduleStructureName = moduleStructureName;
-            faultList = new ArrayList<>();
-        }
+	public void resetGlobalList() {
+		for (Iterator<ModuleDiagInfo> iterator = modules.iterator(); iterator.hasNext(); ) {
+			ModuleDiagInfo module = iterator.next();
+			for (Iterator<ModuleDiagInfo.Fault> iterator1 = module.getFaultList().iterator(); iterator1.hasNext(); ) {
+				ModuleDiagInfo.Fault fault = iterator1.next();
+				if (fault.getOutgoing() != null)
+					iterator1.remove();
+			}
+		}
+	}
 
-        private class Fault {
-            private LocalDateTime incoming;
-            private LocalDateTime outgoing = null;
-            private int index;
-            private String description;
+	public class ModuleDiagInfo {
+		private int moduleType;
+		private String moduleName;
+		private String moduleStructureName;
+		private int[] IP = new int[4];
+		private ArrayList<Fault> faultList;
 
-            public Fault (int index, LocalDateTime incoming, String description) {
-                this.index = index;
-                this.incoming = incoming;
-                this.description = description;
-            }
+		public ModuleDiagInfo(int moduleType, String moduleName, String moduleStructureName) {
+			this.moduleType = moduleType;
+			this.moduleName = moduleName;
+			this.moduleStructureName = moduleStructureName;
+			faultList = new ArrayList<>();
+		}
 
-            public LocalDateTime getIncoming() {
-                return incoming;
-            }
+		public int getModuleType() {
+			return moduleType;
+		}
 
-            public LocalDateTime getOutgoing() {
-                return outgoing;
-            }
+		public String getModuleName() {
+			return moduleName;
+		}
 
-            public void setOutgoing(LocalDateTime outgoing) {
-                this.outgoing = outgoing;
-            }
+		public String getIP() {
+			return String.format("%d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
+		}
 
-            public int getIndex() {
-                return index;
-            }
+		public void setIP(int[] IP) {
+			this.IP = IP;
+			setDiagnosticLastUpdate(LocalDateTime.now());
+		}
 
-            public String getDescription() {
-                return description;
-            }
-        }
+		public ArrayList<Fault> getFaultList() {
+			return faultList;
+		}
 
-        public int getModuleType() {
-            return moduleType;
-        }
+		public void addFault(int index, LocalDateTime incoming, String description) {
+			faultList.add(new Fault(index, incoming, description));
+		}
 
-        public String getModuleName() {
-            return moduleName;
-        }
+		public String getModuleStructureName() {
+			return moduleStructureName;
+		}
 
-        public String getIP() {
-            return String.format("%d.%d.%d.%d",IP[0],IP[1],IP[2],IP[3]);
-        }
+		private class Fault {
+			private LocalDateTime incoming;
+			private LocalDateTime outgoing = null;
+			private int index;
+			private String description;
 
-        public void setIP(int[] IP) {
-            this.IP = IP;
-            setDiagnosticLastUpdate(LocalDateTime.now());
-        }
+			public Fault(int index, LocalDateTime incoming, String description) {
+				this.index = index;
+				this.incoming = incoming;
+				this.description = description;
+			}
 
-        public ArrayList<Fault> getFaultList() {
-            return faultList;
-        }
+			public LocalDateTime getIncoming() {
+				return incoming;
+			}
 
-        public void addFault(int index, LocalDateTime incoming, String description) {
-            faultList.add(new Fault(index, incoming, description));
-        }
+			public LocalDateTime getOutgoing() {
+				return outgoing;
+			}
 
-        public String getModuleStructureName() {
-            return moduleStructureName;
-        }
-    }
+			public void setOutgoing(LocalDateTime outgoing) {
+				this.outgoing = outgoing;
+			}
 
-    public class ModuleFault {
-        private int moduleType;
-        private String moduleName;
-        private LocalDateTime incoming;
-        private LocalDateTime outgoing;
-        private long activeTime;
-        private int index;
-        private String description;
-        private int numberOfErrors;
+			public int getIndex() {
+				return index;
+			}
 
-        public ModuleFault(int moduleType, String moduleName, LocalDateTime incoming, LocalDateTime outgoing, int index, String description) {
-            this.moduleType =moduleType;
-            this.moduleName = moduleName;
-            this.incoming = incoming;
-            this.outgoing = outgoing;
-            this.index = index;
-            this.description = description;
-            this.numberOfErrors = 1;
+			public String getDescription() {
+				return description;
+			}
+		}
+	}
 
-            if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
-            else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
-        }
+	public class ModuleFault {
+		private int moduleType;
+		private String moduleName;
+		private LocalDateTime incoming;
+		private LocalDateTime outgoing;
+		private long activeTime;
+		private int index;
+		private String description;
+		private int numberOfErrors;
 
-        public int getModuleType() {
-            return moduleType;
-        }
+		public ModuleFault(int moduleType, String moduleName, LocalDateTime incoming, LocalDateTime outgoing, int index, String description) {
+			this.moduleType = moduleType;
+			this.moduleName = moduleName;
+			this.incoming = incoming;
+			this.outgoing = outgoing;
+			this.index = index;
+			this.description = description;
+			this.numberOfErrors = 1;
 
-        public String getModuleName() {
-            return moduleName;
-        }
+			if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
+			else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
+		}
 
-        public LocalDateTime getIncoming() {
-            return incoming;
-        }
+		public int getModuleType() {
+			return moduleType;
+		}
 
-        public String getIncomingToString() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            if (incoming != null) return incoming.format(formatter);
-            else return null;
-        }
+		public String getModuleName() {
+			return moduleName;
+		}
 
-        public LocalDateTime getOutgoing() {
-            return outgoing;
-        }
+		public LocalDateTime getIncoming() {
+			return incoming;
+		}
 
-        public String getOutgoingToString() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            if (outgoing != null) return outgoing.format(formatter);
-            else return null;
-        }
+		public String getIncomingToString() {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			if (incoming != null) return incoming.format(formatter);
+			else return null;
+		}
 
-        public long getActiveTime() {
-            return activeTime;
-        }
+		public LocalDateTime getOutgoing() {
+			return outgoing;
+		}
 
-        public void setActiveTime(long activeTime) {
-            this.activeTime = activeTime;
-        }
+		public String getOutgoingToString() {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			if (outgoing != null) return outgoing.format(formatter);
+			else return null;
+		}
 
-        public void increaseErrorNumber () {
-            numberOfErrors++;
-        }
+		public long getActiveTime() {
+			return activeTime;
+		}
 
-        public int getIndex() {
-            return index;
-        }
+		public void setActiveTime(long activeTime) {
+			this.activeTime = activeTime;
+		}
 
-        public int getNumberOfErrors() {
-            return numberOfErrors;
-        }
+		public void increaseErrorNumber() {
+			numberOfErrors++;
+		}
 
-        public String getDescription() {
-            return description;
-        }
-    }
+		public int getIndex() {
+			return index;
+		}
+
+		public int getNumberOfErrors() {
+			return numberOfErrors;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+	}
 }
