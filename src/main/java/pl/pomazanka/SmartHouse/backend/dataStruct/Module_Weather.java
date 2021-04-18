@@ -44,18 +44,28 @@ public class Module_Weather extends Module implements Cloneable {
                 sds011.setPm25(pm25);
                 int pm10 = (packetData[10] << 8) + packetData[11];
                 sds011.setPm10(pm10);
-                setFrameLastUpdate(getCurrentDate());
                 break;
 
             case 200: //diagnostic frame
-                setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
                 break;
         }
-        if (!isReqUpdateValues()) assignNV();
+        super.dataParser(packetData);
     }
 
-    private void assignNV() {
+    @Override
+    void faultListInit() throws Exception {
+
+    }
+
+    @Override
+    void faultCheck() {
+        updateGlobalFaultList();
+    }
+
+    @Override
+    void assignNV() {
+
     }
 
     public boolean compare(Module_Weather module_weather) {

@@ -268,26 +268,71 @@ public class Module_Heating extends Module implements Cloneable {
                 tReturnGroundFloor = (float) packetData[19] / 2;
                 tReturnLoft = (float) packetData[20] / 2;
                 heatPumpAlarmTemp = packetData[21];
-
-                setFrameLastUpdate(getCurrentDate());
                 break;
 
             case 200: //diagnostic frame
-                setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3],packetData[4],packetData[5],packetData[6]});
                 break;
         }
-        faultCheck();
-        if (!isReqUpdateValues()) assignNV();
+        super.dataParser(packetData);
     }
 
-    private void assignNV() {
+    @Override
+    void assignNV() {
         NVCheapTariffOnly = cheapTariffOnly;
         NVHeatingActivated = heatingActivated;
         NVWaterSuperheat = waterSuperheat;
         NVReqTempBufferCO = reqTempBufferCO;
         NVReqTempBufferCWU = reqTempBufferCWU;
         NVHeatPumpAlarmTemp = heatPumpAlarmTemp;
+    }
+
+    @Override
+    void faultListInit () throws Exception {
+        setFaultText(0,"Pompa ciepła przestała grzać");
+        setFaultText(1, "Pompa ciepla osiągnęła nastawioną graniczną temperaturę");
+        setFaultText(2,"T[tBufferCOLow] błąd odczytu");
+        setFaultText(3,"T[tBufferCOMid] błąd odczytu");
+        setFaultText(4,"T[tBufferCOHigh] błąd odczytu");
+        setFaultText(5,"T[tBufferCWULow] błąd odczytu");
+        setFaultText(6,"T[tBufferCWUMid] błąd odczytu");
+        setFaultText(7,"T[tBufferCWUHigh] błąd odczytu");
+        setFaultText(8,"T[tSupply] błąd odczytu");
+        setFaultText(9,"T[tReturn] błąd odczytu");
+        setFaultText(10,"T[tGroundSource] błąd odczytu");
+        setFaultText(11,"T[tFirePlace] błąd odczytu");
+        setFaultText(12,"T[tManifold] błąd odczytu");
+        setFaultText(13,"T[tReturnGroundFloor] błąd odczytu");
+        setFaultText(14,"T[tReturnLoft] błąd odczytu");
+    }
+
+    @Override
+    void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        // check if after 60s heating request PC is working continuously till no request
+        if (reqPCStartTime != null) {
+            if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>90)  && (tSupply<(tReturn+2)))
+                setFaultPresent(0,true);
+        }
+        if (tSupply>=heatPumpAlarmTemp) setFaultPresent(1, true);
+        if (tBufferCOLow == 100) setFaultPresent(2,true);
+        if (tBufferCOMid == 100) setFaultPresent(3,true);
+        if (tBufferCOHigh == 100) setFaultPresent(4,true);
+        if (tBufferCWULow == 100) setFaultPresent(5,true);
+        if (tBufferCWUMid == 100) setFaultPresent(6,true);
+        if (tBufferCWUHigh == 100) setFaultPresent(7,true);
+        if (tSupply == 100) setFaultPresent(8,true);
+        if (tReturn == 100) setFaultPresent(9,true);
+        if (tGroundSource == 100) setFaultPresent(10,true);
+        if (tFirePlace == 100) setFaultPresent(11,true);
+        if (tManifold == 100) setFaultPresent(12,true);
+        if (tReturnGroundFloor == 100) setFaultPresent(13,true);
+        if (tReturnLoft == 100) setFaultPresent(14,true);
+
+        updateGlobalFaultList();
     }
 
     //compare data : last save status with new set
@@ -335,51 +380,6 @@ public class Module_Heating extends Module implements Cloneable {
         return result;
     }
 
-    private void faultListInit () throws Exception {
-        setFaultText(0,"Pompa ciepła przestała grzać");
-        setFaultText(1, "Pompa ciepla osiągnęła nastawioną graniczną temperaturę");
-        setFaultText(2,"T[tBufferCOLow] błąd odczytu");
-        setFaultText(3,"T[tBufferCOMid] błąd odczytu");
-        setFaultText(4,"T[tBufferCOHigh] błąd odczytu");
-        setFaultText(5,"T[tBufferCWULow] błąd odczytu");
-        setFaultText(6,"T[tBufferCWUMid] błąd odczytu");
-        setFaultText(7,"T[tBufferCWUHigh] błąd odczytu");
-        setFaultText(8,"T[tSupply] błąd odczytu");
-        setFaultText(9,"T[tReturn] błąd odczytu");
-        setFaultText(10,"T[tGroundSource] błąd odczytu");
-        setFaultText(11,"T[tFirePlace] błąd odczytu");
-        setFaultText(12,"T[tManifold] błąd odczytu");
-        setFaultText(13,"T[tReturnGroundFloor] błąd odczytu");
-        setFaultText(14,"T[tReturnLoft] błąd odczytu");
-    }
-
-    private void faultCheck() {
-        //Clear previous faults status
-        resetFaultPresent();
-
-        //Fault check list
-        // check if after 60s heating request PC is working continuously till no request
-        if (reqPCStartTime != null) {
-            if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now())>90)  && (tSupply<(tReturn+2)))
-                setFaultPresent(0,true);
-        }
-        if (tSupply>=heatPumpAlarmTemp) setFaultPresent(1, true);
-        if (tBufferCOLow == 100) setFaultPresent(2,true);
-        if (tBufferCOMid == 100) setFaultPresent(3,true);
-        if (tBufferCOHigh == 100) setFaultPresent(4,true);
-        if (tBufferCWULow == 100) setFaultPresent(5,true);
-        if (tBufferCWUMid == 100) setFaultPresent(6,true);
-        if (tBufferCWUHigh == 100) setFaultPresent(7,true);
-        if (tSupply == 100) setFaultPresent(8,true);
-        if (tReturn == 100) setFaultPresent(9,true);
-        if (tGroundSource == 100) setFaultPresent(10,true);
-        if (tFirePlace == 100) setFaultPresent(11,true);
-        if (tManifold == 100) setFaultPresent(12,true);
-        if (tReturnGroundFloor == 100) setFaultPresent(13,true);
-        if (tReturnLoft == 100) setFaultPresent(14,true);
-
-        updateGlobalFaultList();
-    }
     @Override
     public Module_Heating clone() throws CloneNotSupportedException {
         Module_Heating module_heating = (Module_Heating) super.clone();

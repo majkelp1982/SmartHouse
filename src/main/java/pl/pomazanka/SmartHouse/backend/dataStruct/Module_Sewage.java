@@ -126,24 +126,40 @@ public class Module_Sewage extends Module implements Cloneable {
                 minWaterLevel = -1*packetData[6];
                 zeroRefWaterLevel = -1*packetData[7];
                 intervalAirPump = packetData[8];
-
-                setFrameLastUpdate(getCurrentDate());
                 break;
 
             case 200: //diagnostic frame
-                setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3],packetData[4],packetData[5],packetData[6]});
                 break;
         }
-        faultCheck();
-        if (!isReqUpdateValues()) assignNV();
+        super.dataParser(packetData);
     }
-
-    private void assignNV() {
+    
+    @Override
+    void assignNV() {
         NVmaxWaterLevel = maxWaterLevel;
         NVminWaterLevel = minWaterLevel;
         NVZeroRefWaterLevel = zeroRefWaterLevel;
         NVIntervalAirPump = intervalAirPump;
+    }
+
+    @Override
+    void faultListInit () throws Exception {
+        setFaultText(0,"Pompa wody przestała działać");
+        setFaultText(1,"Poziom wody przekroczony!!!");
+        setFaultText(2,"Sensor limitu poziomu wody aktywny!!!");
+    }
+
+    @Override
+    void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        //TODO
+        setFaultPresent(2,limitSensor);
+
+        updateGlobalFaultList();
     }
 
     //compare data : last save status with new set
@@ -158,27 +174,11 @@ public class Module_Sewage extends Module implements Cloneable {
         if (result) result = cmp(module_sewage.minWaterLevel, minWaterLevel, 0);
         if (result) result = cmp(module_sewage.zeroRefWaterLevel, zeroRefWaterLevel, 0);
         if (result) result = cmp(module_sewage.intervalAirPump, intervalAirPump, 0);
-         if (isTooLongWithoutSave())
+        if (isTooLongWithoutSave())
             result = false;
         return result;
     }
 
-    private void faultListInit () throws Exception {
-        setFaultText(0,"Pompa wody przestała działać");
-        setFaultText(1,"Poziom wody przekroczony!!!");
-        setFaultText(2,"Sensor limitu poziomu wody aktywny!!!");
-    }
-
-    private void faultCheck() {
-        //Clear previous faults status
-        resetFaultPresent();
-
-        //Fault check list
-        //TODO
-        setFaultPresent(2,limitSensor);
-
-        updateGlobalFaultList();
-    }
     @Override
     public Module_Sewage clone() throws CloneNotSupportedException {
         Module_Sewage module_sewage = (Module_Sewage) super.clone();

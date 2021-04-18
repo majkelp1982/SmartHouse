@@ -77,22 +77,44 @@ public class Module_Comfort extends Module implements Cloneable {
                     zone[i].isTemp = (float) (packetData[i * 4 + 3] * 10 + packetData[i * 4 + 4]) / 10;
                     zone[i].reqTemp = (packetData[i * 4 + 5] / 2.00);
                     zone[i].isHumidity = (int) (packetData[i * 4 + 6]);
-                    setFrameLastUpdate(getCurrentDate());
                 }
                 break;
             case 200: // standard frame 0\
-                setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3],packetData[4],packetData[5],packetData[6]});
                 break;
         }
-        faultCheck();
-        if (!isReqUpdateValues()) assignNV();
+        super.dataParser(packetData);
     }
 
-    private void assignNV() {
+    @Override
+    void assignNV() {
         for (int i=0; i<7; i++)
             zone[i].NVReqTemp = zone[i].reqTemp;
     }
+
+    @Override
+    void faultListInit () throws Exception {
+        setFaultText(0,"Termometr[salon] błąd odczytu temperatury");
+        setFaultText(1,"Termometr[pralnia] błąd odczytu temperatury");
+        setFaultText(2,"Termometr[laź.dół] błąd odczytu temperatury");
+        setFaultText(3,"Termometr[rodzic] błąd odczytu temperatury");
+        setFaultText(4,"Termometr[Natalia] błąd odczytu temperatury");
+        setFaultText(5,"Termometr[Karolina] błąd odczytu temperatury");
+        setFaultText(6,"Termometr[łaź.góra] błąd odczytu temperatury");
+    }
+
+    @Override
+    void faultCheck() {
+        //Clear previous faults status
+        resetFaultPresent();
+
+        //Fault check list
+        for (int i=0; i<7; i++)
+            if (zone[i].isTemp <11) setFaultPresent(i, true);
+        //TODO fault list to extend
+        updateGlobalFaultList();
+    }
+
 
     public boolean compare(Module_Comfort module_comfort) {
         //return FALSE if compare data are different
@@ -105,27 +127,6 @@ public class Module_Comfort extends Module implements Cloneable {
         if (isTooLongWithoutSave())
             result = false;
         return result;
-    }
-
-    private void faultListInit () throws Exception {
-        setFaultText(0,"Termometr[salon] błąd odczytu temperatury");
-        setFaultText(1,"Termometr[pralnia] błąd odczytu temperatury");
-        setFaultText(2,"Termometr[laź.dół] błąd odczytu temperatury");
-        setFaultText(3,"Termometr[rodzic] błąd odczytu temperatury");
-        setFaultText(4,"Termometr[Natalia] błąd odczytu temperatury");
-        setFaultText(5,"Termometr[Karolina] błąd odczytu temperatury");
-        setFaultText(6,"Termometr[łaź.góra] błąd odczytu temperatury");
-    }
-
-    private void faultCheck() {
-        //Clear previous faults status
-        resetFaultPresent();
-
-        //Fault check list
-        for (int i=0; i<7; i++)
-            if (zone[i].isTemp <11) setFaultPresent(i, true);
-        //TODO fault list to extend
-        updateGlobalFaultList();
     }
 
     public class Zone implements Cloneable {

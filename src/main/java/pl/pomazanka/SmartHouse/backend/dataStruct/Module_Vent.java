@@ -228,18 +228,27 @@ public class Module_Vent extends Module implements Cloneable {
                 humidityTimeLeft = packetData[37];
                 humidityTrigger = packetData[38];
                 efficiency = packetData[39];
-                setFrameLastUpdate(getCurrentDate());
                 break;
 
             case 200: //diagnostic frame
-                setDiagnosticLastUpdate(getCurrentDate());
                 setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
                 break;
         }
-        if (!isReqUpdateValues()) assignNV();
+        super.dataParser(packetData);
     }
 
-    private void assignNV() {
+    @Override
+    void faultListInit() throws Exception {
+
+    }
+
+    @Override
+    void faultCheck() {
+        updateGlobalFaultList();
+    }
+
+    @Override
+    void assignNV() {
         NVHour = hour.clone();
         NVDefrostTrigger = defrostTrigger;
         NVHumidityTrigger = humidityTrigger;

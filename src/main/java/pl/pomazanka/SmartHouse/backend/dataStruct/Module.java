@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class Module {
+public abstract class Module {
     public static final int FAULT_MAX = 100;
 
     private int moduleType;
@@ -35,6 +35,11 @@ public class Module {
     public void postConstructor() {
         diagnostic.addModule(moduleType, moduleName, moduleStructureName);
     }
+
+    //Abstract declaration
+    abstract void faultCheck();
+    abstract void assignNV();
+    abstract void faultListInit () throws Exception;
 
     public int getModuleType() {
         return moduleType;
@@ -176,5 +181,17 @@ public class Module {
         else result = value;
         int temp = (int)(result*10.0);
         return ((double)temp)/10.0;
+    }
+
+    public void dataParser(int[] packetData) {
+        int controllerFrameNumber = packetData[2];
+        if (controllerFrameNumber != 200)
+            setFrameLastUpdate(getCurrentDate());
+        else
+            setDiagnosticLastUpdate(getCurrentDate());
+
+        faultCheck();
+        if (!isReqUpdateValues()) assignNV();
+
     }
 }
