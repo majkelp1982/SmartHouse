@@ -2,11 +2,13 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
+import pl.pomazanka.SmartHouse.backend.communication.Email.Email;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.Iterator;
 
 @Service
@@ -84,8 +86,67 @@ public class Diagnostic {
 		}
 	}
 
+	void sendEmailAlert() {
+		if (globalFaultsList.size()==0)
+			return;;
+		Email email = new Email();
+		StringBuilder htmlTable= new StringBuilder();
+		htmlTable.append("<!DOCTYPE html>\n" +
+				"<html>\n" +
+				"<head>\n" +
+				"<style>\n" +
+				"table {\n" +
+				"  font-family: arial, sans-serif;\n" +
+				"  border-collapse: collapse;\n" +
+				"  width: 100%;\n" +
+				"}\n" +
+				"\n" +
+				"td, th {\n" +
+				"  border: 1px solid #dddddd;\n" +
+				"  text-align: left;\n" +
+				"  padding: 8px;\n" +
+				"}\n" +
+				"\n" +
+				"tr:nth-child(even) {\n" +
+				"  background-color: #dddddd;\n" +
+				"}\n" +
+				"</style>\n" +
+				"</head>\n" +
+				"<body>\n" +
+				"\n" +
+				"<h2>Aktualna lista błędów</h2>\n" +
+				"\n" +
+				"<table>\n" +
+				"  <tr>\n" +
+				"    <th>Typ</th>\n" +
+				"    <th>Nazwa Modułu</th>\n" +
+				"    <th>Opis</th>\n" +
+				"    <th>Początek</th>\n" +
+				"    <th>Koniec</th>\n" +
+				"    <th>czas trwania</th>\n" +
+				"    <th>lb.wystapień</th>\n" +
+				"  </tr>\n");
+		getGlobalFaultsList().forEach(moduleFault -> {
+			htmlTable.append("  <tr>\n" +
+					"<td>"+moduleFault.getModuleType()+"</td>\n" +
+					"<td>"+moduleFault.getModuleName()+"</td>\n" +
+					"<td>"+moduleFault.getDescription()+"</td>\n" +
+					"<td>"+moduleFault.getIncomingToString()+"</td>\n" +
+					"<td>"+moduleFault.getOutgoingToString()+"</td>\n" +
+					"<td>"+moduleFault.getActiveTime()+"</td>\n" +
+					"<td>"+moduleFault.getNumberOfErrors()+"</td>\n" +
+					"  </tr>\n");
+		});
+		htmlTable.append("</table>\n" +
+				"\n" +
+				"</body>\n" +
+				"</html>");
+		email.sendEmail(htmlTable.toString());
+	}
+
 	public void refreshGlobalFaultList() {
 		//Clear global list
+		int noActiveFaults = globalFaultsList.size();
 		globalFaultsList.clear();
 		for (ModuleDiagInfo module : modules) {
 			//Update global fault list
@@ -108,6 +169,8 @@ public class Diagnostic {
 				}
 			}
 		}
+		if (noActiveFaults != globalFaultsList.size())
+			sendEmailAlert();
 	}
 
 	public ArrayList<ModuleDiagInfo> getModules() {
