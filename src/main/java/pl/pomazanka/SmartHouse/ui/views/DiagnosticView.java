@@ -4,7 +4,9 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,18 @@ public class DiagnosticView extends View {
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Adres IP");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware");
+		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
+			HorizontalLayout layout = new HorizontalLayout();
+			Long duraiton = moduleDiagInfo.getDiagLastUpdate();
+			Label label = new Label(duraiton.toString());
+			if (duraiton>120) {
+				label.getStyle().set("color", View.COLOR_ALARM);
+			}
+			else
+				label.getStyle().set("color",View.COLOR_OK);
+			layout.add(label);
+			return layout;
+		})).setHeader("Last Update[s]");
 
 		moduleGrid.setItems(moduleList);
 		moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
@@ -126,6 +140,7 @@ public class DiagnosticView extends View {
 		groupButton.setButtonColor(diagnostic.isGlobalFaultsListGroupByFault(), diagnostic.isGlobalFaultsListGroupByFault());
 		diagnostic.refreshGlobalFaultList();
 		faultGrid.setItems(diagnostic.getGlobalFaultsList());
+		moduleGrid.setItems(diagnostic.getModules());
 		sectionResize();
 	}
 

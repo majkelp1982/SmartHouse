@@ -6,6 +6,7 @@ import pl.pomazanka.SmartHouse.backend.communication.Email.Email;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -56,6 +57,7 @@ public class Diagnostic {
 			if (module.getModuleType() == moduleTyp) {
 				module.setIP(IP);
 				module.setFirmwareVersion(module.getIP());
+				module.setLastDiagUpdate(LocalDateTime.now());
 			}
 	}
 
@@ -91,10 +93,11 @@ public class Diagnostic {
 	}
 
 	void sendEmailAlert() {
-		if (globalFaultsList.size()==0)
-			return;;
+		if (globalFaultsList.size() == 0)
+			return;
+		;
 		Email email = new Email();
-		StringBuilder htmlTable= new StringBuilder();
+		StringBuilder htmlTable = new StringBuilder();
 		htmlTable.append("<!DOCTYPE html>\n" +
 				"<html>\n" +
 				"<head>\n" +
@@ -132,13 +135,13 @@ public class Diagnostic {
 				"  </tr>\n");
 		getGlobalFaultsList().forEach(moduleFault -> {
 			htmlTable.append("  <tr>\n" +
-					"<td>"+moduleFault.getModuleType()+"</td>\n" +
-					"<td>"+moduleFault.getModuleName()+"</td>\n" +
-					"<td>"+moduleFault.getDescription()+"</td>\n" +
-					"<td>"+moduleFault.getIncomingToString()+"</td>\n" +
-					"<td>"+moduleFault.getOutgoingToString()+"</td>\n" +
-					"<td>"+moduleFault.getActiveTime()+"</td>\n" +
-					"<td>"+moduleFault.getNumberOfErrors()+"</td>\n" +
+					"<td>" + moduleFault.getModuleType() + "</td>\n" +
+					"<td>" + moduleFault.getModuleName() + "</td>\n" +
+					"<td>" + moduleFault.getDescription() + "</td>\n" +
+					"<td>" + moduleFault.getIncomingToString() + "</td>\n" +
+					"<td>" + moduleFault.getOutgoingToString() + "</td>\n" +
+					"<td>" + moduleFault.getActiveTime() + "</td>\n" +
+					"<td>" + moduleFault.getNumberOfErrors() + "</td>\n" +
 					"  </tr>\n");
 		});
 		htmlTable.append("</table>\n" +
@@ -201,6 +204,7 @@ public class Diagnostic {
 		private String moduleName;
 		private String firmwareVersion;
 		private String moduleStructureName;
+		private LocalDateTime diagLastUpdate;
 		private int[] IP = new int[4];
 		private ArrayList<Fault> faultList;
 
@@ -223,6 +227,12 @@ public class Diagnostic {
 			return firmwareVersion;
 		}
 
+		public Long getDiagLastUpdate() {
+			if (diagLastUpdate != null)
+				return Duration.between(diagLastUpdate,LocalDateTime.now()).getSeconds();
+			else return 999999L;
+		}
+
 		public String getIP() {
 			return String.format("%d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
 		}
@@ -242,12 +252,16 @@ public class Diagnostic {
 					buffer.append((char) ptr);
 				}
 				String htmlCode = buffer.toString();
-				String version = htmlCode.substring(htmlCode.indexOf("<i>")+15, htmlCode.indexOf("</i>"));
+				String version = htmlCode.substring(htmlCode.indexOf("<i>") + 15, htmlCode.indexOf("</i>"));
 				this.firmwareVersion = version;
 			} catch (Exception e) {
 				this.firmwareVersion = e.toString();
 			}
-	}
+		}
+
+		public void setLastDiagUpdate(LocalDateTime diagLastUpdate) {
+			this.diagLastUpdate = diagLastUpdate;
+		}
 
 		public ArrayList<Fault> getFaultList() {
 			return faultList;
