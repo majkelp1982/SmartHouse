@@ -234,20 +234,18 @@ public class Diagnostic {
 
 		public void setFirmwareVersion(String IPAddress) {
 			try {
-				URL url = new URL("http://" + IP + "/");
-
+				URL url = new URL("http://" + IPAddress + "/");
 				InputStream is = url.openStream();
 				int ptr = 0;
 				StringBuffer buffer = new StringBuffer();
 				while ((ptr = is.read()) != -1) {
 					buffer.append((char) ptr);
 				}
-				//FIXME
-				System.out.println(buffer.toString());
-				this.firmwareVersion = "NULL!!!";
-			} catch (
-					Exception e) {
-				e.printStackTrace();
+				String htmlCode = buffer.toString();
+				String version = htmlCode.substring(htmlCode.indexOf("<i>")+15, htmlCode.indexOf("</i>"));
+				this.firmwareVersion = version;
+			} catch (Exception e) {
+				this.firmwareVersion = e.toString();
 			}
 	}
 

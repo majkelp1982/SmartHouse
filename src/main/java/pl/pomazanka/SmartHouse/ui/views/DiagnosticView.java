@@ -76,7 +76,7 @@ public class DiagnosticView extends View {
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Adres IP");
-		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Firmware");
+		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware");
 
 		moduleGrid.setItems(moduleList);
 		moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
