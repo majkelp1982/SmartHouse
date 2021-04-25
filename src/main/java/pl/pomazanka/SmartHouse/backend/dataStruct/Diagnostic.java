@@ -84,6 +84,7 @@ public class Diagnostic {
 				}
 			}
 		}
+		refreshGlobalFaultList();
 	}
 
 	void sendEmailAlert() {
@@ -146,7 +147,7 @@ public class Diagnostic {
 
 	public void refreshGlobalFaultList() {
 		//Clear global list
-		int noActiveFaults = globalFaultsList.size();
+		int activeErrorCount = globalFaultsList.size();
 		globalFaultsList.clear();
 		for (ModuleDiagInfo module : modules) {
 			//Update global fault list
@@ -169,7 +170,7 @@ public class Diagnostic {
 				}
 			}
 		}
-		if (noActiveFaults != globalFaultsList.size())
+		if (activeErrorCount != globalFaultsList.size())
 			sendEmailAlert();
 	}
 
