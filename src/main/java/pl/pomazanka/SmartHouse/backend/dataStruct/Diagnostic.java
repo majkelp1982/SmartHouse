@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 import pl.pomazanka.SmartHouse.backend.communication.Email.Email;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.Iterator;
 
 @Service
@@ -50,10 +51,12 @@ public class Diagnostic {
 		modules.add(new ModuleDiagInfo(moduleType, moduleName, structureName));
 	}
 
-	public void updateIP(int moduleTyp, int[] IP) {
+	public void updateDiag(int moduleTyp, int[] IP) {
 		for (ModuleDiagInfo module : modules)
-			if (module.getModuleType() == moduleTyp)
+			if (module.getModuleType() == moduleTyp) {
 				module.setIP(IP);
+				module.setFirmwareVersion(module.getIP());
+			}
 	}
 
 	public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
@@ -196,6 +199,7 @@ public class Diagnostic {
 	public class ModuleDiagInfo {
 		private int moduleType;
 		private String moduleName;
+		private String firmwareVersion;
 		private String moduleStructureName;
 		private int[] IP = new int[4];
 		private ArrayList<Fault> faultList;
@@ -215,6 +219,10 @@ public class Diagnostic {
 			return moduleName;
 		}
 
+		public String getFirmwareVersion() {
+			return firmwareVersion;
+		}
+
 		public String getIP() {
 			return String.format("%d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
 		}
@@ -223,6 +231,25 @@ public class Diagnostic {
 			this.IP = IP;
 			setDiagnosticLastUpdate(LocalDateTime.now());
 		}
+
+		public void setFirmwareVersion(String IPAddress) {
+			try {
+				URL url = new URL("http://" + IP + "/");
+
+				InputStream is = url.openStream();
+				int ptr = 0;
+				StringBuffer buffer = new StringBuffer();
+				while ((ptr = is.read()) != -1) {
+					buffer.append((char) ptr);
+				}
+				//FIXME
+				System.out.println(buffer.toString());
+				this.firmwareVersion = "NULL!!!";
+			} catch (
+					Exception e) {
+				e.printStackTrace();
+			}
+	}
 
 		public ArrayList<Fault> getFaultList() {
 			return faultList;

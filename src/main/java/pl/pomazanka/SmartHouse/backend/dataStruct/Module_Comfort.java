@@ -81,6 +81,7 @@ public class Module_Comfort extends Module implements Cloneable {
 				setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
 				break;
 		}
+
 		super.dataParser(packetData);
 	}
 
