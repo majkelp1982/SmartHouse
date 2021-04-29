@@ -272,7 +272,7 @@ public class Module_Heating extends Module implements Cloneable {
 				break;
 
 			case 200: //diagnostic frame
-				setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
+				updateDiag(packetData);
 				break;
 		}
 		super.dataParser(packetData);

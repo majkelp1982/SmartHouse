@@ -52,10 +52,11 @@ public class Diagnostic {
 		modules.add(new ModuleDiagInfo(moduleType, moduleName, structureName));
 	}
 
-	public void updateDiag(int moduleTyp, int[] IP) {
+	public void updateDiag(int moduleTyp, int[] IP, int signal) {
 		for (ModuleDiagInfo module : modules)
 			if (module.getModuleType() == moduleTyp) {
 				module.setIP(IP);
+				module.setSignal(signal);
 				module.setFirmwareVersion(module.getIP());
 				module.setLastDiagUpdate(LocalDateTime.now());
 			}
@@ -206,6 +207,7 @@ public class Diagnostic {
 		private String moduleStructureName;
 		private LocalDateTime diagLastUpdate;
 		private int[] IP = new int[4];
+		private int signal;
 		private ArrayList<Fault> faultList;
 
 		public ModuleDiagInfo(int moduleType, String moduleName, String moduleStructureName) {
@@ -231,6 +233,14 @@ public class Diagnostic {
 			if (diagLastUpdate != null)
 				return Duration.between(diagLastUpdate,LocalDateTime.now()).getSeconds();
 			else return 999999L;
+		}
+
+		public int getSignal() {
+			return signal;
+		}
+
+		public void setSignal(int signal) {
+			this.signal = signal;
 		}
 
 		public String getIP() {

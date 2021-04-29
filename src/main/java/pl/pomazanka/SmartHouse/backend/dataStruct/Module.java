@@ -53,9 +53,8 @@ public abstract class Module {
 		return IP;
 	}
 
-	public void setIP(int[] IP) {
-		this.IP = IP;
-		diagnostic.updateDiag(getModuleType(), IP);
+	public void updateDiag(int[] packetData) {
+		diagnostic.updateDiag(getModuleType(), new int[]{packetData[3], packetData[4], packetData[5], packetData[6]},(-1*packetData[7]));
 	}
 
 	public void setFaultPresent(int faultNo, boolean present) {

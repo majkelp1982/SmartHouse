@@ -78,7 +78,7 @@ public class Module_Comfort extends Module implements Cloneable {
 				}
 				break;
 			case 200: // standard frame 0\
-				setIP(new int[]{packetData[3], packetData[4], packetData[5], packetData[6]});
+				updateDiag(packetData);
 				break;
 		}
 

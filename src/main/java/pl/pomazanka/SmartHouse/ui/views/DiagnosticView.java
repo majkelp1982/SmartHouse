@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,16 +75,26 @@ public class DiagnosticView extends View {
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Adres IP");
+		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
+			HorizontalLayout layout = new HorizontalLayout();
+			int signal = moduleDiagInfo.getSignal();
+			Label label = new Label("" + signal);
+			if (signal < -80) {
+				label.getStyle().set("color", View.COLOR_ALARM);
+			} else
+				label.getStyle().set("color", View.COLOR_OK);
+			layout.add(label);
+			return layout;
+		})).setHeader("Sygnał[db");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware");
 		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
 			HorizontalLayout layout = new HorizontalLayout();
 			Long duraiton = moduleDiagInfo.getDiagLastUpdate();
 			Label label = new Label(duraiton.toString());
-			if (duraiton>120) {
+			if (duraiton > 120) {
 				label.getStyle().set("color", View.COLOR_ALARM);
-			}
-			else
-				label.getStyle().set("color",View.COLOR_OK);
+			} else
+				label.getStyle().set("color", View.COLOR_OK);
 			layout.add(label);
 			return layout;
 		})).setHeader("Last Update[s]");
