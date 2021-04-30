@@ -79,7 +79,7 @@ public class DiagnosticView extends View {
 			HorizontalLayout layout = new HorizontalLayout();
 			int signal = moduleDiagInfo.getSignal();
 			Label label = new Label("" + signal);
-			if (signal < -80) {
+			if (signal <= -80) {
 				label.getStyle().set("color", View.COLOR_ALARM);
 			} else
 				label.getStyle().set("color", View.COLOR_OK);
