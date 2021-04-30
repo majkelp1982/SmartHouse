@@ -32,17 +32,21 @@ public class Charts {
 		int i = 0;
 		int tempValue = 0;
 		for (Data temp : list) {
-			if (temp.isNumber)
-				serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
+			LocalDateTime timeStamp = temp.getTimeStamp();
+			//Add offset
+			LocalDateTime timeWithOffset = timeStamp.plusHours(1);
+			if (temp.isNumber) {
+				serie[i] = new Coordinate<>(timeWithOffset.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
+			}
 			else {
 				int value;
 				if (temp.getBoolean())
 					value = 20;
 				else
 					value = 1;
-				serie[i] = new Coordinate<>(temp.getTimeStamp().minusSeconds(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), tempValue);
+				serie[i] = new Coordinate<>(timeWithOffset.minusNanos(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), tempValue);
 				i++;
-				serie[i] = new Coordinate<>(temp.getTimeStamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), value);
+				serie[i] = new Coordinate<>(timeWithOffset.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), value);
 				tempValue = value;
 			}
 			i++;

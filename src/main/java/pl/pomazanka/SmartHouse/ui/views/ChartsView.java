@@ -102,6 +102,9 @@ public class ChartsView extends View {
 								.withFormat("dd/MM HH:mm:ss")
 								.withShow(true)
 								.build())
+						.withShared(false)
+						.withFillSeriesColor(false)
+						.withFollowCursor(true)
 						.build())
 				.build();
 		apexChart.setWidth("2000px");
