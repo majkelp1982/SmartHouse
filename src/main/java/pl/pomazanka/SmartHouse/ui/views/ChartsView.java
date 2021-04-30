@@ -4,6 +4,7 @@ import com.github.appreciated.apexcharts.ApexCharts;
 import com.github.appreciated.apexcharts.ApexChartsBuilder;
 import com.github.appreciated.apexcharts.config.builder.*;
 import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.tooltip.builder.XBuilder;
 import com.github.appreciated.apexcharts.config.xaxis.XAxisType;
 import com.github.appreciated.apexcharts.helper.Coordinate;
 import com.github.appreciated.apexcharts.helper.Series;
@@ -91,9 +92,15 @@ public class ChartsView extends View {
 								.build())
 						.build())
 				.withYaxis(YAxisBuilder.get()
-						.withSeriesName("TBufferCOLow")
 						.withTooltip(TooltipBuilder.get()
 								.withEnabled(true)
+								.build())
+						.build())
+				.withTooltip(TooltipBuilder.get()
+						.withEnabled(true)
+						.withX(XBuilder.get()
+								.withFormat("dd/MM HH:mm:ss")
+								.withShow(true)
 								.build())
 						.build())
 				.build();
