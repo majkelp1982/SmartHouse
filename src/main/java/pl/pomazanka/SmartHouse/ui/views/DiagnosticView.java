@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +79,24 @@ public class DiagnosticView extends View {
 		moduleList = diagnostic.getModules();
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
-		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getIP).setHeader("Adres IP");
+		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
+			HorizontalLayout layout = new HorizontalLayout();
+			Button button = new Button(moduleDiagInfo.getIP(), false, false);
+			button.getSource().addClickListener(buttonClickEvent -> {
+				try {
+					System.setProperty("java.awt.headless","false");
+					URL url = new URL("http://"+moduleDiagInfo.getIP()+"/diagnose");
+					URI uri = url.toURI();
+					Desktop.getDesktop().browse(uri);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+			});
+			layout.add(button.getSource());
+			return layout;
+		})).setHeader("Adres IP");
 		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
 			HorizontalLayout layout = new HorizontalLayout();
 			int signal = moduleDiagInfo.getSignal();
@@ -85,7 +107,7 @@ public class DiagnosticView extends View {
 				label.getStyle().set("color", View.COLOR_OK);
 			layout.add(label);
 			return layout;
-		})).setHeader("Sygnał[db");
+		})).setHeader("Sygnał[db]");
 		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware");
 		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
 			HorizontalLayout layout = new HorizontalLayout();

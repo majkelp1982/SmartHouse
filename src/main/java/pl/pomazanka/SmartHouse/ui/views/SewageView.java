@@ -3,6 +3,7 @@ package pl.pomazanka.SmartHouse.ui.views;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,12 @@ public class SewageView extends View {
 		section[0].getTileDetailsContainer(1).add(refZero.getSource());
 		section[0].getTileDetailsContainer(1).add(interwal.getSource());
 
+		Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+		section[0].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
+		section[0].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
 		add(header.getHeader(), section[0].getSection());
 	}
 
