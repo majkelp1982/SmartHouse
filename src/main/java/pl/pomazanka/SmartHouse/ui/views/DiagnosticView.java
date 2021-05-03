@@ -83,16 +83,17 @@ public class DiagnosticView extends View {
 			HorizontalLayout layout = new HorizontalLayout();
 			Button button = new Button(moduleDiagInfo.getIP(), false, false);
 			button.getSource().addClickListener(buttonClickEvent -> {
-				try {
-					System.setProperty("java.awt.headless","false");
-					URL url = new URL("http://"+moduleDiagInfo.getIP()+"/diagnose");
-					URI uri = url.toURI();
-					Desktop.getDesktop().browse(uri);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
+				UI.getCurrent().getPage().executeJs("window.open('http://"+moduleDiagInfo.getIP()+"/diagnose', '_blank');");
+//				try {
+//					System.setProperty("java.awt.headless","false");
+//					URL url = new URL("http://"+moduleDiagInfo.getIP()+"/diagnose");
+//					URI uri = url.toURI();
+//					Desktop.getDesktop().browse(uri);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				} catch (URISyntaxException e) {
+//					e.printStackTrace();
+//				}
 			});
 			layout.add(button.getSource());
 			return layout;
