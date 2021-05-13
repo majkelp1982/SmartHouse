@@ -161,12 +161,14 @@ public class Module_Sewage extends Module implements Cloneable {
 
 	//compare data : last save status with new set
 	public boolean compare(Module_Sewage module_sewage) {
+		if (module_sewage == null)
+			return false;
 		boolean result = true;
 		if (result) result = cmp(module_sewage.airPump, airPump);
 		if (result) result = cmp(module_sewage.waterPump, waterPump);
 		if (result) result = cmp(module_sewage.limitSensor, limitSensor);
 
-		if (result) result = cmp(module_sewage.isWaterLevel, isWaterLevel, 3);
+		if (result) result = cmp(module_sewage.isWaterLevel, isWaterLevel, 1);
 		if (result) result = cmp(module_sewage.maxWaterLevel, maxWaterLevel, 0);
 		if (result) result = cmp(module_sewage.minWaterLevel, minWaterLevel, 0);
 		if (result) result = cmp(module_sewage.zeroRefWaterLevel, zeroRefWaterLevel, 0);

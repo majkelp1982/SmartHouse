@@ -338,6 +338,8 @@ public class Module_Heating extends Module implements Cloneable {
 
 	//compare data : last save status with new set
 	public boolean compare(Module_Heating module_Heating) {
+		if (module_Heating == null)
+			return false;
 		boolean result = true;
 		if (result) result = cmp(module_Heating.heatSourceActive, heatSourceActive);
 		if (result) result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);

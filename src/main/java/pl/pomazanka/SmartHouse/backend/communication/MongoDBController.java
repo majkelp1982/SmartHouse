@@ -41,56 +41,65 @@ public class MongoDBController {
 	private MongoClient mongoClient = new MongoClient("localhost", 27017);
 	private MongoDatabase mongoDatabase = mongoClient.getDatabase("house");
 
+	private Module_Comfort module_comfortLastSaved;
+	private Module_Weather module_weatherLastSaved;
+	private Module_Sewage module_sewageLastSaved;
+	private Module_Vent module_ventLastSaved;
+	private Module_Heating module_heatingLastSaved;
+
+	public MongoDBController() throws CloneNotSupportedException {
+	}
+
 	public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
 		int moduleType = packetData[0];             // Get basic data from UDP frame
 
 		switch (moduleType) {
 			case 10: {
-				Module_Comfort module_comfortLastStatus = module_comfort.clone();
 				module_comfort.dataParser(packetData);
-				if (!module_comfort.compare(module_comfortLastStatus)) {
+				if (!module_comfort.compare(module_comfortLastSaved)) {
 					saveNewEntry("module_comfort", module_comfort);             // if data has been changed add new entry in DB
 					module_comfort.setLastSaveDateTime(LocalDateTime.now());
+					module_comfortLastSaved = module_comfort.clone();
 				} else updateLastEntry("module_comfort", module_comfort);         // else update last entry
 
 			}
 			break;
 			case 11: {
-				Module_Weather module_weatherLastStatus = module_weather.clone();
 				module_weather.dataParser(packetData);
-				if (!module_weather.compare(module_weatherLastStatus)) {
+				if (!module_weather.compare(module_weatherLastSaved)) {
 					saveNewEntry("module_weather", module_weather);             // if data has been changed add new entry in DB
 					module_weather.setLastSaveDateTime(LocalDateTime.now());
-				} else updateLastEntry("module_weather", module_weather);         // else update last entry
+					module_weatherLastSaved = module_weather.clone();
+					} else updateLastEntry("module_weather", module_weather);         // else update last entry
 
 			}
 			break;
 			case 12: {
-				Module_Sewage module_sewageLastStatus = module_sewage.clone();
 				module_sewage.dataParser(packetData);
-				if (!module_sewage.compare(module_sewageLastStatus)) {
+				if (!module_sewage.compare(module_sewageLastSaved)) {
 					saveNewEntry("module_sewage", module_sewage);             // if data has been changed add new entry in DB
 					module_sewage.setLastSaveDateTime(LocalDateTime.now());
+					module_sewageLastSaved = module_sewage.clone();
 				} else updateLastEntry("module_weather", module_weather);         // else update last entry
 
 			}
 			break;
 			case 13: {
-				Module_Vent module_ventLastStatus = module_vent.clone();
 				module_vent.dataParser(packetData);
-				if (!module_vent.compare(module_ventLastStatus)) {
+				if (!module_vent.compare(module_ventLastSaved)) {
 					saveNewEntry("module_vent", module_vent);                    // if data has been changed add new entry in DB
 					module_vent.setLastSaveDateTime(LocalDateTime.now());
+					module_ventLastSaved = module_vent.clone();
 				} else updateLastEntry("module_vent", module_vent);                // else update last entry
 
 			}
 			break;
 			case 14: {
-				Module_Heating module_heatingLastStatus = module_heating.clone();
 				module_heating.dataParser(packetData);
-				if (!module_heating.compare(module_heatingLastStatus)) {
+				if (!module_heating.compare(module_heatingLastSaved)) {
 					saveNewEntry("module_heating", module_heating);             // if data has been changed add new entry in DB
 					module_heating.setLastSaveDateTime(LocalDateTime.now());
+					module_heatingLastSaved = module_heating.clone();
 				} else updateLastEntry("module_heating", module_heating);         // else update last entry
 			}
 			break;

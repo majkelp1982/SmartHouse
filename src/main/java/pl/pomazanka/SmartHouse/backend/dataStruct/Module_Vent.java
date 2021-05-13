@@ -249,6 +249,8 @@ public class Module_Vent extends Module implements Cloneable {
 	}
 
 	public boolean compare(Module_Vent module_vent) {
+		if (module_vent == null)
+			return false;
 		//return FALSE if compare data are different
 		boolean result = true;
 		if (result) result = cmp(module_vent.fanON, fanON);
@@ -268,6 +270,7 @@ public class Module_Vent extends Module implements Cloneable {
 			if (result) result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(), 100);
 		}
 		if (result) result = cmp(module_vent.efficiency, efficiency);
+		if (result) result = cmp(module_vent.humidityTrigger, humidityTrigger);
 		if (isTooLongWithoutSave())
 			result = false;
 		return result;

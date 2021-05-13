@@ -116,10 +116,12 @@ public class Module_Comfort extends Module implements Cloneable {
 
 
 	public boolean compare(Module_Comfort module_comfort) {
+		if (module_comfort == null)
+			return false;
 		//return FALSE if compare data are different
 		boolean result = true;
 		for (int i = 0; i < 7; i++) {
-			if (result) result = cmp(module_comfort.zone[i].isTemp, zone[i].isTemp, 0.2);
+			if (result) result = cmp(module_comfort.zone[i].isTemp, zone[i].isTemp, 0.4);
 			if (result) result = cmp(module_comfort.zone[i].reqTemp, zone[i].reqTemp, 0);
 			if (result) result = cmp(module_comfort.zone[i].isHumidity, zone[i].isHumidity, 2);
 		}

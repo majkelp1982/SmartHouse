@@ -34,23 +34,27 @@ public class WeatherView extends View {
 
 		//Sections
 		section[0] = new Section();
+		section[1] = new Section();
 
 		//Create tile for sections
 		//Section 0
 		section[0].createTile("air.svg", "Jakość");
 		section[0].createTile("room.svg", "Parametry");
+		//Section 0
+		section[1].createTile("sun.svg", "świtało");
 
 		//Create sections info/buttons/number fields
 		createInfoSection0();
+		createInfoSection1();
 
 		//Add components to details containers
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 2; j++)
 				for (int k = 0; k < 3; k++)
 					if (info[i][j][k] != null)
 						section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
 
-		add(header.getHeader(), section[0].getSection());
+		add(header.getHeader(), section[0].getSection(), section[1].getSection());
 	}
 
 	private void createInfoSection0() {
@@ -61,6 +65,11 @@ public class WeatherView extends View {
 		info[0][1][0] = new Info("temp", "°C", false, false, module_weather.getBme280().getTemp(), 0, 0, 0);
 		info[0][1][1] = new Info("wilgotność", "%", false, false, module_weather.getBme280().getHumidity(), 0, 0, 0);
 		info[0][1][2] = new Info("ciśnienie", "hPa", false, false, module_weather.getBme280().getPressure(), 0, 0, 0);
+	}
+
+	private void createInfoSection1() {
+		//Create info's for [section][tileNo][intoNo]
+		info[1][0][0] = new Info("natężenie światła", "%", false, false, module_weather.getLightIntens(), 0, 0, 0);
 	}
 
 	private void update() {
@@ -75,6 +84,7 @@ public class WeatherView extends View {
 		info[0][1][1].setValue(module_weather.getBme280().getHumidity());
 		info[0][1][2].setValue(module_weather.getBme280().getPressure());
 
+		info[1][0][0].setValue(module_weather.getLightIntens());
 	}
 
 	@Override
