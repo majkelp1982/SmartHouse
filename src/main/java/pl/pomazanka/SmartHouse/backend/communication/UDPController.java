@@ -18,7 +18,7 @@ public class UDPController {
 	private static final int BUFFER_SIZE = 128;
 	private static final int PACKET_SIZE_MODULE_10 = 31;                    // length of UDP data from module 10 "komfort"
 	private static final int PACKET_SIZE_MODULE_10_DIAG = 8;                // length of UDP diagnose from module 10 "komfort"
-	private static final int PACKET_SIZE_MODULE_11 = 12;                    // length of UDP data from module 11 "pogoda"
+	private static final int PACKET_SIZE_MODULE_11 = 13;                    // length of UDP data from module 11 "pogoda"
 	private static final int PACKET_SIZE_MODULE_11_DIAG = 8;                // length of UDP diagnose from module 11 "pogoda"
 	private static final int PACKET_SIZE_MODULE_12 = 9;                        // length of UDP data from module 12 "oczyszczalnia"
 	private static final int PACKET_SIZE_MODULE_12_DIAG = 8;                // length of UDP diagnose from module 12 "oczyszczalnia"
