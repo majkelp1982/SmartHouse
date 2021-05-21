@@ -36,6 +36,8 @@ public class MongoDBController {
 	@Autowired
 	Module_Sewage module_sewage;
 	@Autowired
+	Module_ExtLight module_extLight;
+	@Autowired
 	Diagnostic diagnostic;
 	//MongoDB
 	private MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -46,6 +48,7 @@ public class MongoDBController {
 	private Module_Sewage module_sewageLastSaved;
 	private Module_Vent module_ventLastSaved;
 	private Module_Heating module_heatingLastSaved;
+	private Module_ExtLight module_extLightLastSaved;
 
 	public MongoDBController() throws CloneNotSupportedException {
 	}
@@ -101,6 +104,15 @@ public class MongoDBController {
 					module_heating.setLastSaveDateTime(LocalDateTime.now());
 					module_heatingLastSaved = module_heating.clone();
 				} else updateLastEntry("module_heating", module_heating);         // else update last entry
+			}
+			break;
+			case 16: {
+				module_extLight.dataParser(packetData);
+				if (!module_extLight.compare(module_extLightLastSaved)) {
+					saveNewEntry("module_extLights", module_extLight);             // if data has been changed add new entry in DB
+					module_extLight.setLastSaveDateTime(LocalDateTime.now());
+					module_extLightLastSaved = module_extLight.clone();
+				} else updateLastEntry("module_extLights", module_extLight);         // else update last entry
 			}
 			break;
 		}

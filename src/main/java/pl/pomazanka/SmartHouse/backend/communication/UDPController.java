@@ -9,6 +9,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +28,8 @@ public class UDPController {
 	private static final int PACKET_SIZE_MODULE_13_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
 	private static final int PACKET_SIZE_MODULE_14 = 22;                    // length of UDP data from module 14 "Ogrzewanie"
 	private static final int PACKET_SIZE_MODULE_14_DIAG = 8;                // length of UDP diagnose from module 14 "Ogrzewanie"
+	private static final int PACKET_SIZE_MODULE_16 = 19;                    // length of UDP data from module 16 "Oświetlenie zewnętrzne"
+	private static final int PACKET_SIZE_MODULE_16_DIAG = 8;                // length of UDP diagnose from module 16 "Oświetlenie zewnętrzne"
 	private static DatagramSocket datagramSocket;
 	private static byte[] buffer;
 	private static int[] packetData;
@@ -43,6 +47,8 @@ public class UDPController {
 	Module_Weather module_weather;
 	@Autowired
 	Module_Sewage module_sewage;
+	@Autowired
+	Module_ExtLight module_extLight;
 	int localPort = 6000;
 	// UDP variables
 	private int timeSynchroLast = 100;
@@ -78,6 +84,9 @@ public class UDPController {
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14_DIAG) packetCorrect = true;
 					break;
+				case 16:
+					if (packetLength == PACKET_SIZE_MODULE_16_DIAG) packetCorrect = true;
+					break;
 				default:
 					System.out.println("Wrong data format : module[" + packetData[0] + "]");
 			}
@@ -100,6 +109,9 @@ public class UDPController {
 					break;
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;
+					break;
+				case 16:
+					if (packetLength == PACKET_SIZE_MODULE_16) packetCorrect = true;
 					break;
 				default:
 					System.out.println("Wrong data format : module[" + packetData[0] + "]");
@@ -228,7 +240,32 @@ public class UDPController {
 		sendData(moduleMain, module_sewage.getModuleType(), 0, 8, newValue);
 	}
 
-	public class UDPListener implements Runnable {
+	private void sendExtLightNV() {
+		int newValue = 0;
+		newValue = (((module_extLight.getNVLightDimmer()[0].isForceMax()? 1 : 0) << 7) | ((module_extLight.getNVLightDimmer()[1].isForceMax()? 1 : 0) << 6)
+				| ((module_extLight.getNVLightDimmer()[2].isForceMax()? 1 : 0) << 5) | ((module_extLight.getNVLightDimmer()[3].isForceMax()? 1 : 0) << 4)
+				| ((module_extLight.getNVLightDimmer()[0].isForce0()? 1 : 0) << 3) | ((module_extLight.getNVLightDimmer()[1].isForce0()? 1 : 0) << 2)
+				| ((module_extLight.getNVLightDimmer()[2].isForce0()? 1 : 0) << 1) | ((module_extLight.getNVLightDimmer()[3].isForce0()? 1 : 0) << 0));
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 3, newValue);
+
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 8, module_extLight.getNVstartLightLevel());
+
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 9, module_extLight.getNVLightDimmer()[0].getStandByIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 10, module_extLight.getNVLightDimmer()[1].getStandByIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 11, module_extLight.getNVLightDimmer()[2].getStandByIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 12, module_extLight.getNVLightDimmer()[3].getStandByIntens());
+
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 13, module_extLight.getNVoffTime().getHour());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 14, module_extLight.getNVoffTime().getMinute());
+
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 15, module_extLight.getNVLightDimmer()[0].getMaxIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 16, module_extLight.getNVLightDimmer()[1].getMaxIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 17, module_extLight.getNVLightDimmer()[2].getMaxIntens());
+		sendData(moduleMain, module_extLight.getModuleType(), 0, 18, module_extLight.getNVLightDimmer()[3].getMaxIntens());
+
+	}
+
+		public class UDPListener implements Runnable {
 		@SuppressWarnings("InfiniteLoopStatement")
 		@Override
 		public void run() {
@@ -245,7 +282,7 @@ public class UDPController {
 					for (int i = 0; i < packet.getLength(); i++)
 						packetData[i] = (packet.getData()[i] & 0xff);                // 0xFF to change values to unsigned int
 
-					System.out.print("UDP=");
+					System.out.print(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss"))+" UDP=");
 					for (int i = 0; i < packet.getLength(); i++)
 						System.out.print("[" + packetData[i] + "]");
 					System.out.println();
@@ -278,6 +315,7 @@ public class UDPController {
 				if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
 				if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendWeatherNV();
 				if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
+				if ((module_extLight.isReqUpdateValues()) && (!module_extLight.isAllUpToDate())) sendExtLightNV();
 			} while (true);
 		}
 	}
