@@ -58,6 +58,7 @@ public class ExtLightsView extends View {
 
 		Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
 		section[0].getSection().addClickListener(event -> {
+			System.out.println("click");
 			if (!isUserLoggedIn())
 				notification.open();
 		});

@@ -270,29 +270,33 @@ public class UDPController {
 		@Override
 		public void run() {
 			while (true) {
-				buffer = new byte[BUFFER_SIZE];
-				DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
-				packetData = new int[BUFFER_SIZE];
 				try {
-					datagramSocket.receive(packet);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (packet.getLength() > 0) {
-					for (int i = 0; i < packet.getLength(); i++)
-						packetData[i] = (packet.getData()[i] & 0xff);                // 0xFF to change values to unsigned int
-
-					System.out.print(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss"))+" UDP=");
-					for (int i = 0; i < packet.getLength(); i++)
-						System.out.print("[" + packetData[i] + "]");
-					System.out.println();
-				}
-				if (packetDataCorrect(packetData, packet.getLength())) {
+					buffer = new byte[BUFFER_SIZE];
+					DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
+					packetData = new int[BUFFER_SIZE];
 					try {
-						mongoDBController.saveUDPFrame(packetData);
-					} catch (CloneNotSupportedException e) {
+						datagramSocket.receive(packet);
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					if (packet.getLength() > 0) {
+						for (int i = 0; i < packet.getLength(); i++)
+							packetData[i] = (packet.getData()[i] & 0xff);                // 0xFF to change values to unsigned int
+
+						System.out.print(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) + " UDP=");
+						for (int i = 0; i < packet.getLength(); i++)
+							System.out.print("[" + packetData[i] + "]");
+						System.out.println();
+					}
+					if (packetDataCorrect(packetData, packet.getLength())) {
+						try {
+							mongoDBController.saveUDPFrame(packetData);
+						} catch (CloneNotSupportedException e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (Throwable throwable) {
+					throwable.printStackTrace();
 				}
 			}
 		}
