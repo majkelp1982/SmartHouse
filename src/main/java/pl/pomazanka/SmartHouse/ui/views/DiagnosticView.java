@@ -59,9 +59,9 @@ public class DiagnosticView extends View {
 		//Section 0
 		section[0].createTile("place.svg", "IP");
 		section[0].getTileDetailsContainer(0).add(moduleGrid);
-		section[0].getTileDetailsContainer(0).setWidth("1000px");
+		section[0].getTileDetailsContainer(0).setWidth("1200px");
 		section[0].getTileDetailsContainer(0).setHeight("300px");
-		section[0].getTileDetailsContainer(0).setHeight((moduleList.size() * 30 + 120) + "px");
+		section[0].getTileDetailsContainer(0).setHeight((moduleList.size() * 50 + 120) + "px");
 
 		//Section 1
 		section[1].createTile("support.svg", "Błędy");
@@ -77,23 +77,13 @@ public class DiagnosticView extends View {
 
 	private void createInfoSection0() {
 		moduleList = diagnostic.getModules();
-		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ");
-		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu");
+		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleType).setHeader("Typ").setWidth("10px");
+		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getModuleName).setHeader("Nazwa modułu").setWidth("50px");
 		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
 			HorizontalLayout layout = new HorizontalLayout();
 			Button button = new Button(moduleDiagInfo.getIP(), false, false);
 			button.getSource().addClickListener(buttonClickEvent -> {
 				UI.getCurrent().getPage().executeJs("window.open('http://"+moduleDiagInfo.getIP()+"/diagnose', '_blank');");
-//				try {
-//					System.setProperty("java.awt.headless","false");
-//					URL url = new URL("http://"+moduleDiagInfo.getIP()+"/diagnose");
-//					URI uri = url.toURI();
-//					Desktop.getDesktop().browse(uri);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				} catch (URISyntaxException e) {
-//					e.printStackTrace();
-//				}
 			});
 			layout.add(button.getSource());
 			return layout;
@@ -108,8 +98,8 @@ public class DiagnosticView extends View {
 				label.getStyle().set("color", View.COLOR_OK);
 			layout.add(label);
 			return layout;
-		})).setHeader("Sygnał[db]");
-		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware");
+		})).setHeader("Sygnał[db]").setWidth("15px");
+		moduleGrid.addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion).setHeader("Firmware").setWidth("150px");;
 		moduleGrid.addColumn(new ComponentRenderer<>(moduleDiagInfo -> {
 			HorizontalLayout layout = new HorizontalLayout();
 			Long duraiton = moduleDiagInfo.getDiagLastUpdate();
@@ -123,7 +113,7 @@ public class DiagnosticView extends View {
 		})).setHeader("Last Update[s]");
 
 		moduleGrid.setItems(moduleList);
-		moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+//		moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
 	}
 
 	private void createInfoSection1() {

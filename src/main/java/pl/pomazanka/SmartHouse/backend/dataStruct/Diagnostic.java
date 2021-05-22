@@ -154,7 +154,10 @@ public class Diagnostic {
 
 	public void refreshGlobalFaultList() {
 		//Clear global list
-		int activeErrorCount = globalFaultsList.size();
+		ArrayList<String> activeErrorList = new ArrayList<>();
+		for (ModuleFault fault : globalFaultsList) {
+			activeErrorList.add(""+fault.getModuleType()+fault.getIndex());
+		}
 		globalFaultsList.clear();
 		for (ModuleDiagInfo module : modules) {
 			//Update global fault list
@@ -177,8 +180,11 @@ public class Diagnostic {
 				}
 			}
 		}
-		if (activeErrorCount != globalFaultsList.size())
-			sendEmailAlert();
+		for (ModuleFault fault : globalFaultsList)
+			if (!activeErrorList.contains(""+fault.getModuleType()+fault.getIndex())) {
+//				sendEmailAlert();
+				break;
+			}
 	}
 
 	public ArrayList<ModuleDiagInfo> getModules() {

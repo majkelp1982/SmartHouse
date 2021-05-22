@@ -21,12 +21,13 @@ public class Module_ExtLights extends Module implements Cloneable {
 	private LocalTime offTime = LocalTime.now();
 	private transient LocalTime NVoffTime;
 
-	public Module_ExtLights() {
+	public Module_ExtLights() throws Exception {
 		super(MODULE_TYPE, "Oświetlenie", "module_extLights");
 		for (int i = 0; i < 4; i++) {
 			lightDimmer[i] = new LightDimmer();
 			NVLightDimmer[i] = new LightDimmer();
 		}
+		faultListInit();
 	}
 
 	public int getStartLightLevel() {
@@ -125,11 +126,15 @@ public class Module_ExtLights extends Module implements Cloneable {
 
 	@Override
 	void faultListInit() throws Exception {
-
+//		setFaultText(0, "Test");
 	}
 
 	@Override
 	void faultCheck() {
+		//Clear previous faults status
+		resetFaultPresent();
+
+		//TODO fault list to extend
 		updateGlobalFaultList();
 	}
 
