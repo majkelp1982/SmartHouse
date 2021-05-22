@@ -272,6 +272,13 @@ public class View extends VerticalLayout {
 			info.add(nameLabel, valueLabel);
 		}
 
+		public Info(HorizontalLayout valueInfo) {
+			info = valueInfo;
+			nameLabel = (Label) info.getComponentAt(0);
+			this.colorEnabled = false;
+			valueLabel = (Label) info.getComponentAt(1);
+		}
+
 		public Info(String name, boolean colorEnabled, boolean status) {
 			info = new HorizontalLayout();
 			this.colorEnabled = colorEnabled;
@@ -281,6 +288,12 @@ public class View extends VerticalLayout {
 		}
 
 		public void setValue(Number isValue) {
+			if (unit == null)
+				try {
+					unit = valueLabel.getText().substring(valueLabel.getText().indexOf("[")+1, valueLabel.getText().indexOf("]"));
+				}
+			catch (Exception e) {
+			}
 			valueLabel.setText(" " + isValue + "[" + unit + "]");
 			setComponentColor(valueLabel, colorEnabled, exceedAlarm, isValue, expectedValue, warningLimit, alarmLimit);
 		}
@@ -313,6 +326,10 @@ public class View extends VerticalLayout {
 			setButtonColor(status, status);
 		}
 
+		public Button(com.vaadin.flow.component.button.Button button) {
+			this.button = button;
+		}
+
 		public void setButtonColor(boolean isStatus, boolean expectedStatus) {
 			setActualColor(button, isStatus);
 			if (isStatus == expectedStatus) {
@@ -338,6 +355,10 @@ public class View extends VerticalLayout {
 			numberField.setStep(step);
 			numberField.setMin(min);
 			numberField.setMax(max);
+		}
+
+		public NumberField(com.vaadin.flow.component.textfield.NumberField numberField) {
+			this.numberField = numberField;
 		}
 
 		public void setNumberField(double isValue, double expectedValue) {

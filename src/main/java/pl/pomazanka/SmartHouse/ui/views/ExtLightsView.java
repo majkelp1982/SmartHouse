@@ -61,7 +61,12 @@ public class ExtLightsView extends View {
 			if (!isUserLoggedIn())
 				notification.open();
 		});
-		section[0].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
+		section[1].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
+		section[0].getSection().setEnabled(isUserLoggedIn());
+		section[1].getSection().setEnabled(isUserLoggedIn());
 		add(header.getHeader(), section[0].getSection(), section[1].getSection());
 	}
 
@@ -85,7 +90,7 @@ public class ExtLightsView extends View {
 			module_extLights.setReqUpdateValues(true);
 		});
 
-		Info info = new Info("intensywność", String.valueOf(module_extLights.getLightDimmer()[id].getIntens()));
+		Info info = new Info("intensywność", "%", false, false, module_extLights.getLightDimmer()[id].getIntens(), 0, 0, 0);
 
 		NumberField setIntens = new NumberField("standBy [%]", module_extLights.getLightDimmer()[id].getStandByIntens(), 10, 90, 1);
 		setIntens.getSource().addValueChangeListener(valueChangeEvent -> {
@@ -139,21 +144,39 @@ public class ExtLightsView extends View {
 	}
 
 	private void update() {
-		System.out.println("update ExtLight");
 		//Header
 		header.setLastUpdate(module_extLights.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_extLights.getDiagnosticLastUpdate());
 
 		for (int i = 0; i < 4; i++) {
 			VerticalLayout layout = (VerticalLayout) section[0].getTileDetailsContainer(i).getComponentAt(0);
-			com.vaadin.flow.component.button.Button button100 = (com.vaadin.flow.component.button.Button) layout.getComponentAt(0);
-			com.vaadin.flow.component.button.Button button0 = (com.vaadin.flow.component.button.Button) layout.getComponentAt(1);
-			HorizontalLayout subLayout = (HorizontalLayout) layout.getComponentAt(2);
-			Label label = (Label) subLayout.getComponentAt(1);
-			com.vaadin.flow.component.textfield.NumberField numberField = (com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(3);
 
+			Button buttonMax = new Button((com.vaadin.flow.component.button.Button) layout.getComponentAt(0));
+			buttonMax.setButtonColor(module_extLights.getLightDimmer()[i].isForceMax(), module_extLights.getNVLightDimmer()[i].isForceMax());
+			Button button0 = new Button((com.vaadin.flow.component.button.Button) layout.getComponentAt(1));
+			button0.setButtonColor(module_extLights.getLightDimmer()[i].isForce0(), module_extLights.getNVLightDimmer()[i].isForce0());
 
+			Info intens = new Info((HorizontalLayout) layout.getComponentAt(2));
+			intens.setValue(module_extLights.getLightDimmer()[i].getIntens());
+
+			NumberField standByIntens = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(3));
+			standByIntens.setNumberField(module_extLights.getLightDimmer()[i].getStandByIntens(), module_extLights.getNVLightDimmer()[i].getStandByIntens());
+
+			NumberField maxIntens = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(4));
+			maxIntens.setNumberField(module_extLights.getLightDimmer()[i].getMaxIntens(), module_extLights.getNVLightDimmer()[i].getMaxIntens());
 		}
+
+		VerticalLayout layout = (VerticalLayout) section[1].getTileDetailsContainer(0).getComponentAt(0);
+
+		NumberField startLevel = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(0));
+		startLevel.setNumberField(module_extLights.getStartLightLevel(), module_extLights.getNVstartLightLevel());
+
+		NumberField hour = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(1));
+		hour.setNumberField(module_extLights.getOffTime().getHour(), module_extLights.getNVoffTime().getHour());
+
+		NumberField minute = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(2));
+		minute.setNumberField(module_extLights.getOffTime().getMinute(), module_extLights.getNVoffTime().getMinute());
+
 	}
 
 	@Override
