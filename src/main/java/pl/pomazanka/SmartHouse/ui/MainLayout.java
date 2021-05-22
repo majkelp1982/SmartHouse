@@ -58,7 +58,7 @@ public class MainLayout extends AppLayout {
 		RouterLink comfortViewLink = createDrawerElement("comfort.svg", "Komfort", ComfortView.class);
 		RouterLink heatingViewLink = createDrawerElement("thermometer.svg", "Ogrzewanie", HeatingView.class);
 		RouterLink sewageViewLink = createDrawerElement("sewage.svg", "Oczyszczalnia", SewageView.class);
-		RouterLink extLightViewLink = createDrawerElement("light-bulb.svg", "Oswietlenie", ExtLightView.class);
+		RouterLink extLightViewLink = createDrawerElement("light-bulb.svg", "Oswietlenie", ExtLightsView.class);
 		RouterLink chartsViewLink = createDrawerElement("graph.svg", "Wykresy", ChartsView.class);
 		RouterLink errorsViewLink = createDrawerElement("support.svg", "Diagnostyka", DiagnosticView.class);
 

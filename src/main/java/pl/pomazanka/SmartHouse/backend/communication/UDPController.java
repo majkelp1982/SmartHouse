@@ -48,7 +48,7 @@ public class UDPController {
 	@Autowired
 	Module_Sewage module_sewage;
 	@Autowired
-	Module_ExtLight module_extLight;
+	Module_ExtLights module_extLights;
 	int localPort = 6000;
 	// UDP variables
 	private int timeSynchroLast = 100;
@@ -242,26 +242,26 @@ public class UDPController {
 
 	private void sendExtLightNV() {
 		int newValue = 0;
-		newValue = (((module_extLight.getNVLightDimmer()[0].isForceMax()? 1 : 0) << 7) | ((module_extLight.getNVLightDimmer()[1].isForceMax()? 1 : 0) << 6)
-				| ((module_extLight.getNVLightDimmer()[2].isForceMax()? 1 : 0) << 5) | ((module_extLight.getNVLightDimmer()[3].isForceMax()? 1 : 0) << 4)
-				| ((module_extLight.getNVLightDimmer()[0].isForce0()? 1 : 0) << 3) | ((module_extLight.getNVLightDimmer()[1].isForce0()? 1 : 0) << 2)
-				| ((module_extLight.getNVLightDimmer()[2].isForce0()? 1 : 0) << 1) | ((module_extLight.getNVLightDimmer()[3].isForce0()? 1 : 0) << 0));
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 3, newValue);
+		newValue = (((module_extLights.getNVLightDimmer()[0].isForceMax()? 1 : 0) << 7) | ((module_extLights.getNVLightDimmer()[1].isForceMax()? 1 : 0) << 6)
+				| ((module_extLights.getNVLightDimmer()[2].isForceMax()? 1 : 0) << 5) | ((module_extLights.getNVLightDimmer()[3].isForceMax()? 1 : 0) << 4)
+				| ((module_extLights.getNVLightDimmer()[0].isForce0()? 1 : 0) << 3) | ((module_extLights.getNVLightDimmer()[1].isForce0()? 1 : 0) << 2)
+				| ((module_extLights.getNVLightDimmer()[2].isForce0()? 1 : 0) << 1) | ((module_extLights.getNVLightDimmer()[3].isForce0()? 1 : 0) << 0));
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 3, newValue);
 
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 8, module_extLight.getNVstartLightLevel());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 8, module_extLights.getNVstartLightLevel());
 
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 9, module_extLight.getNVLightDimmer()[0].getStandByIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 10, module_extLight.getNVLightDimmer()[1].getStandByIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 11, module_extLight.getNVLightDimmer()[2].getStandByIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 12, module_extLight.getNVLightDimmer()[3].getStandByIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 9, module_extLights.getNVLightDimmer()[0].getStandByIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 10, module_extLights.getNVLightDimmer()[1].getStandByIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 11, module_extLights.getNVLightDimmer()[2].getStandByIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 12, module_extLights.getNVLightDimmer()[3].getStandByIntens());
 
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 13, module_extLight.getNVoffTime().getHour());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 14, module_extLight.getNVoffTime().getMinute());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 13, module_extLights.getNVoffTime().getHour());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 14, module_extLights.getNVoffTime().getMinute());
 
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 15, module_extLight.getNVLightDimmer()[0].getMaxIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 16, module_extLight.getNVLightDimmer()[1].getMaxIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 17, module_extLight.getNVLightDimmer()[2].getMaxIntens());
-		sendData(moduleMain, module_extLight.getModuleType(), 0, 18, module_extLight.getNVLightDimmer()[3].getMaxIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 15, module_extLights.getNVLightDimmer()[0].getMaxIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 16, module_extLights.getNVLightDimmer()[1].getMaxIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 17, module_extLights.getNVLightDimmer()[2].getMaxIntens());
+		sendData(moduleMain, module_extLights.getModuleType(), 0, 18, module_extLights.getNVLightDimmer()[3].getMaxIntens());
 
 	}
 
@@ -315,7 +315,7 @@ public class UDPController {
 				if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
 				if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendWeatherNV();
 				if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
-				if ((module_extLight.isReqUpdateValues()) && (!module_extLight.isAllUpToDate())) sendExtLightNV();
+				if ((module_extLights.isReqUpdateValues()) && (!module_extLights.isAllUpToDate())) sendExtLightNV();
 			} while (true);
 		}
 	}

@@ -10,17 +10,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Module_ExtLight;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Module_ExtLights;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 import java.time.LocalTime;
 
 @PageTitle("Smart House | Oświetlenie")
 @Route(value = "Oswietlenie", layout = MainLayout.class)
-public class ExtLightView extends View {
+public class ExtLightsView extends View {
 
 	@Autowired
-	Module_ExtLight module_extLight;
+	Module_ExtLights module_extLights;
 
 	//Update thread
 	Thread thread;
@@ -31,13 +31,13 @@ public class ExtLightView extends View {
 	Info[][][] info = new Info[1][2][4];
 
 
-	public ExtLightView(Module_ExtLight module_extLight) {
-		this.module_extLight = module_extLight;
+	public ExtLightsView(Module_ExtLights module_extLights) {
+		this.module_extLights = module_extLights;
 
 		//Header
-		header = new Header(module_extLight, "light-bulb.svg");
-		header.setLastUpdate(module_extLight.getFrameLastUpdate());
-		header.setDiagnoseUpdate(module_extLight.getDiagnosticLastUpdate());
+		header = new Header(module_extLights, "light-bulb.svg");
+		header.setLastUpdate(module_extLights.getFrameLastUpdate());
+		header.setDiagnoseUpdate(module_extLights.getDiagnosticLastUpdate());
 
 		//Sections
 		section[0] = new Section();
@@ -67,38 +67,38 @@ public class ExtLightView extends View {
 
 	private VerticalLayout createLightView(int id) {
 		VerticalLayout layout = new VerticalLayout();
-		Button button100 = new Button("Wymuś Max", true, module_extLight.getLightDimmer()[id].isForceMax());
+		Button button100 = new Button("Wymuś Max", true, module_extLights.getLightDimmer()[id].isForceMax());
 		button100.getSource().addClickListener(buttonClickEvent -> {
-			module_extLight.getNVLightDimmer()[id].setForceMax(!module_extLight.getLightDimmer()[id].isForceMax());
-			if (module_extLight.getNVLightDimmer()[id].isForceMax())
-				module_extLight.getNVLightDimmer()[id].setForce0(false);
+			module_extLights.getNVLightDimmer()[id].setForceMax(!module_extLights.getLightDimmer()[id].isForceMax());
+			if (module_extLights.getNVLightDimmer()[id].isForceMax())
+				module_extLights.getNVLightDimmer()[id].setForce0(false);
 			setPendingColor(button100.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
-		Button button0 = new Button("Wymuś 0%", true, module_extLight.getLightDimmer()[id].isForce0());
+		Button button0 = new Button("Wymuś 0%", true, module_extLights.getLightDimmer()[id].isForce0());
 		button0.getSource().addClickListener(buttonClickEvent -> {
-			module_extLight.getNVLightDimmer()[id].setForce0(!module_extLight.getLightDimmer()[id].isForce0());
-			if (module_extLight.getNVLightDimmer()[id].isForce0())
-				module_extLight.getNVLightDimmer()[id].setForceMax(false);
+			module_extLights.getNVLightDimmer()[id].setForce0(!module_extLights.getLightDimmer()[id].isForce0());
+			if (module_extLights.getNVLightDimmer()[id].isForce0())
+				module_extLights.getNVLightDimmer()[id].setForceMax(false);
 			setPendingColor(button0.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
-		Info info = new Info("intensywność", String.valueOf(module_extLight.getLightDimmer()[id].getIntens()));
+		Info info = new Info("intensywność", String.valueOf(module_extLights.getLightDimmer()[id].getIntens()));
 
-		NumberField setIntens = new NumberField("standBy [%]", module_extLight.getLightDimmer()[id].getStandByIntens(), 10, 90, 1);
+		NumberField setIntens = new NumberField("standBy [%]", module_extLights.getLightDimmer()[id].getStandByIntens(), 10, 90, 1);
 		setIntens.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_extLight.getNVLightDimmer()[id].setStandByIntens((int) Math.round(valueChangeEvent.getValue()));
+			module_extLights.getNVLightDimmer()[id].setStandByIntens((int) Math.round(valueChangeEvent.getValue()));
 			setPendingColor(setIntens.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
-		NumberField maxIntens = new NumberField("Max [%]", module_extLight.getLightDimmer()[id].getMaxIntens(), 50, 100, 1);
+		NumberField maxIntens = new NumberField("Max [%]", module_extLights.getLightDimmer()[id].getMaxIntens(), 50, 100, 1);
 		maxIntens.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_extLight.getNVLightDimmer()[id].setMaxIntens((int) Math.round(valueChangeEvent.getValue()));
+			module_extLights.getNVLightDimmer()[id].setMaxIntens((int) Math.round(valueChangeEvent.getValue()));
 			setPendingColor(maxIntens.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
 		layout.add(button100.getSource(), button0.getSource(), info.getSource(), setIntens.getSource(), maxIntens.getSource());
@@ -114,24 +114,24 @@ public class ExtLightView extends View {
 	private void createInfoSection1() {
 		VerticalLayout layout = new VerticalLayout();
 
-		NumberField setStartIntensLevel = new NumberField("próg załączenia [%]", module_extLight.getStartLightLevel(), 5, 50, 1);
+		NumberField setStartIntensLevel = new NumberField("próg załączenia [%]", module_extLights.getStartLightLevel(), 5, 50, 1);
 		setStartIntensLevel.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_extLight.setNVstartLightLevel((int) Math.round(valueChangeEvent.getValue()));
+			module_extLights.setNVstartLightLevel((int) Math.round(valueChangeEvent.getValue()));
 			setPendingColor(setStartIntensLevel.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
-		NumberField setOffTimeHour = new NumberField("godzina wyłączenia", module_extLight.getOffTime().getHour(), 0, 23, 1);
+		NumberField setOffTimeHour = new NumberField("godzina wyłączenia", module_extLights.getOffTime().getHour(), 0, 23, 1);
 		setOffTimeHour.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_extLight.setNVoffTime(LocalTime.of((int) Math.round(valueChangeEvent.getValue()),module_extLight.getOffTime().getMinute()));
+			module_extLights.setNVoffTime(LocalTime.of((int) Math.round(valueChangeEvent.getValue()), module_extLights.getOffTime().getMinute()));
 			setPendingColor(setOffTimeHour.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
-		NumberField setOffTimeMinute = new NumberField("minuta wyłączenia", module_extLight.getOffTime().getMinute(), 0, 59, 1);
+		NumberField setOffTimeMinute = new NumberField("minuta wyłączenia", module_extLights.getOffTime().getMinute(), 0, 59, 1);
 		setOffTimeMinute.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_extLight.setNVoffTime(LocalTime.of(module_extLight.getOffTime().getHour(), (int) Math.round(valueChangeEvent.getValue())));
+			module_extLights.setNVoffTime(LocalTime.of(module_extLights.getOffTime().getHour(), (int) Math.round(valueChangeEvent.getValue())));
 			setPendingColor(setOffTimeMinute.getSource());
-			module_extLight.setReqUpdateValues(true);
+			module_extLights.setReqUpdateValues(true);
 		});
 
 		layout.add(setStartIntensLevel.getSource(), setOffTimeHour.getSource(), setOffTimeMinute.getSource());
@@ -139,9 +139,10 @@ public class ExtLightView extends View {
 	}
 
 	private void update() {
+		System.out.println("update ExtLight");
 		//Header
-		header.setLastUpdate(module_extLight.getFrameLastUpdate());
-		header.setDiagnoseUpdate(module_extLight.getDiagnosticLastUpdate());
+		header.setLastUpdate(module_extLights.getFrameLastUpdate());
+		header.setDiagnoseUpdate(module_extLights.getDiagnosticLastUpdate());
 
 		for (int i = 0; i < 4; i++) {
 			VerticalLayout layout = (VerticalLayout) section[0].getTileDetailsContainer(i).getComponentAt(0);
@@ -151,7 +152,6 @@ public class ExtLightView extends View {
 			Label label = (Label) subLayout.getComponentAt(1);
 			com.vaadin.flow.component.textfield.NumberField numberField = (com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(3);
 
-			System.out.println("update");
 
 		}
 	}
@@ -159,21 +159,22 @@ public class ExtLightView extends View {
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
 		//Start thread when view active
-		thread = new ExtLightView.FeederThread(attachEvent.getUI(), this);
+		thread = new FeederThread(attachEvent.getUI(), this);
 		thread.start();       //On Attach update all components
 	}
 
 	@Override
 	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
+//		thread.interrupt();
+		thread.stop();
 		thread = null;
 	}
 
-	private static class FeederThread extends Thread {
+	private class FeederThread extends Thread {
 		private final UI ui;
-		private final ExtLightView view;
+		private final ExtLightsView view;
 
-		public FeederThread(UI ui, ExtLightView view) {
+		public FeederThread(UI ui, ExtLightsView view) {
 			this.ui = ui;
 			this.view = view;
 		}

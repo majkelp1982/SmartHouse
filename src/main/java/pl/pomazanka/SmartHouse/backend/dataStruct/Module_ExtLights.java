@@ -6,7 +6,7 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.LightDimmer;
 import java.time.LocalTime;
 
 @Controller
-public class Module_ExtLight extends Module implements Cloneable {
+public class Module_ExtLights extends Module implements Cloneable {
 	//Module ventilation type
 	private transient static byte MODULE_TYPE = 16;
 	private transient final byte ID_ENTRANCE = 0;
@@ -15,14 +15,14 @@ public class Module_ExtLight extends Module implements Cloneable {
 	private transient final byte ID_FENCE = 3;
 
 	private LightDimmer[] lightDimmer = new LightDimmer[4];
-	private LightDimmer[] NVLightDimmer = new LightDimmer[4];
+	private transient LightDimmer[] NVLightDimmer = new LightDimmer[4];
 	private int startLightLevel;
-	private int NVstartLightLevel;
+	private transient int NVstartLightLevel;
 	private LocalTime offTime = LocalTime.now();
-	private LocalTime NVoffTime;
+	private transient LocalTime NVoffTime;
 
-	public Module_ExtLight() {
-		super(MODULE_TYPE, "Oświetlenie", "module_extLight");
+	public Module_ExtLights() {
+		super(MODULE_TYPE, "Oświetlenie", "module_extLights");
 		for (int i = 0; i < 4; i++) {
 			lightDimmer[i] = new LightDimmer();
 			NVLightDimmer[i] = new LightDimmer();
@@ -146,28 +146,35 @@ public class Module_ExtLight extends Module implements Cloneable {
 		NVoffTime = offTime;
 	}
 
-	public boolean compare(Module_ExtLight module_extLight) {
-		if (module_extLight == null)
+	public boolean compare(Module_ExtLights module_extLights) {
+		if (module_extLights == null)
 			return false;
 		//return FALSE if compare data are different
 		boolean result = true;
 		for (int i = 0; i < 4; i++) {
-			if (result) result = cmp(module_extLight.lightDimmer[i].getIntens(), lightDimmer[i].getIntens(), 1);
-			if (result) result = cmp(module_extLight.lightDimmer[i].getStandByIntens(), lightDimmer[i].getStandByIntens(), 1);
-			if (result) result = cmp(module_extLight.lightDimmer[i].getMaxIntens(), lightDimmer[i].getMaxIntens(), 1);
-			if (result) result = cmp(module_extLight.lightDimmer[i].isForce0(), lightDimmer[i].isForce0());
-			if (result) result = cmp(module_extLight.lightDimmer[i].isForceMax(), lightDimmer[i].isForceMax());
+			if (result) result = cmp(module_extLights.lightDimmer[i].getIntens(), lightDimmer[i].getIntens(), 1);
+			if (result) result = cmp(module_extLights.lightDimmer[i].getStandByIntens(), lightDimmer[i].getStandByIntens(), 1);
+			if (result) result = cmp(module_extLights.lightDimmer[i].getMaxIntens(), lightDimmer[i].getMaxIntens(), 1);
+			if (result) result = cmp(module_extLights.lightDimmer[i].isForce0(), lightDimmer[i].isForce0());
+			if (result) result = cmp(module_extLights.lightDimmer[i].isForceMax(), lightDimmer[i].isForceMax());
 		}
-		if (result) result = cmp((module_extLight.getOffTime().getHour() * 100 + module_extLight.getOffTime().getMinute()), (getOffTime().getHour() * 100 + getOffTime().getMinute()));
+		if (result) result = cmp((module_extLights.getOffTime().getHour() * 100 + module_extLights.getOffTime().getMinute()), (getOffTime().getHour() * 100 + getOffTime().getMinute()));
 		if (isTooLongWithoutSave())
 			result = false;
 		return result;
 	}
 
 	@Override
-	public Module_ExtLight clone() throws CloneNotSupportedException {
-		Module_ExtLight module_extLight = (Module_ExtLight) super.clone();
-		module_extLight.lightDimmer = lightDimmer.clone();
-		return module_extLight;
+	public Module_ExtLights clone() throws CloneNotSupportedException {
+		Module_ExtLights module_extLights = (Module_ExtLights) super.clone();
+		module_extLights.lightDimmer = lightDimmer.clone();
+		for (int i=0; i<4; i++) {
+			try {
+				module_extLights.lightDimmer[i] = (LightDimmer) lightDimmer[i].clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		return module_extLights;
 	}
 }
