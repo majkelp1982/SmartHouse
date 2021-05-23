@@ -15,7 +15,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Charts;
-import pl.pomazanka.SmartHouse.backend.dataStruct.Diagnostic;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
 import javax.annotation.PostConstruct;
@@ -27,8 +26,6 @@ import java.util.ArrayList;
 public class ChartsView extends View {
 	@Autowired
 	Charts charts;
-	@Autowired
-	Diagnostic diagnostic;
 	//Objects
 	private Dialog chartDialog = new Dialog();
 	private Header header;

@@ -1,9 +1,11 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import pl.pomazanka.SmartHouse.backend.communication.Email.Email;
 
+import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Duration;
@@ -15,7 +17,8 @@ import java.util.Iterator;
 
 @Service
 @Configurable
-public class Diagnostic {
+public class Diagnostic extends Module {
+	private transient static byte MODULE_TYPE = 01;
 	private String headerName = "Diagnostyka";
 	private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
 
@@ -23,9 +26,49 @@ public class Diagnostic {
 	private ArrayList<ModuleFault> globalFaultsList;
 	private boolean globalFaultsListGroupByFault;
 
-	public Diagnostic() {
+	public Diagnostic() throws Exception {
+		super(MODULE_TYPE, "Główny", "module_main");
 		modules = new ArrayList<>();
+		addModule(MODULE_TYPE, "Główny", "module_main");
 		globalFaultsList = new ArrayList<>();
+		faultListInit();
+	}
+
+	@PostConstruct
+	public void postConstructor() {
+		InnerThread innerThread = new InnerThread(this);
+		innerThread.start();
+	}
+
+	@Override
+	void faultCheck() {
+		//Clear previous faults status
+		resetFaultPresent();
+
+		//Fault check list
+		for (ModuleDiagInfo module : modules) {
+			if ((module.getDiagLastUpdate() >= 180)
+					&&	(module.getDiagLastUpdate() != 999999) )
+				setFaultPresent(module.getModuleType(), true);
+		}
+
+		//TODO fault list to extend
+		try {
+			updateGlobalFaultList();
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	void assignNV() {
+		return;
+	}
+
+	@Override
+	void faultListInit() throws Exception {
 	}
 
 	public String getModuleName() {
@@ -48,8 +91,10 @@ public class Diagnostic {
 		return globalFaultsListGroupByFault;
 	}
 
-	public void addModule(int moduleType, String moduleName, String structureName) {
+	public void addModule(int moduleType, String moduleName, String structureName) throws Exception {
 		modules.add(new ModuleDiagInfo(moduleType, moduleName, structureName));
+		if (moduleType != 1)
+			setFaultText(moduleType, "Moduł "+ moduleName.toUpperCase()+ "["+moduleType+"] nie odpowiada od dłuższego czasu");
 	}
 
 	public void updateDiag(int moduleTyp, int[] IP, int signal) {
@@ -74,7 +119,7 @@ public class Diagnostic {
 				}
 				//Get each fault from module list
 				for (int i = 0; i < Module.FAULT_MAX; i++) {
-					if (moduleFaultList[i] == null) break;
+					if (moduleFaultList[i] == null) continue;
 
 					if (moduleFaultList[i].isPresent()) {
 						boolean reqNewInstance = true;
@@ -156,7 +201,7 @@ public class Diagnostic {
 		//Clear global list
 		ArrayList<String> activeErrorList = new ArrayList<>();
 		for (ModuleFault fault : globalFaultsList) {
-			activeErrorList.add(""+fault.getModuleType()+fault.getIndex());
+			activeErrorList.add("" + fault.getModuleType() + fault.getIndex());
 		}
 		globalFaultsList.clear();
 		for (ModuleDiagInfo module : modules) {
@@ -181,8 +226,8 @@ public class Diagnostic {
 			}
 		}
 		for (ModuleFault fault : globalFaultsList)
-			if (!activeErrorList.contains(""+fault.getModuleType()+fault.getIndex())) {
-//				sendEmailAlert();
+			if (!activeErrorList.contains("" + fault.getModuleType() + fault.getIndex())) {
+				sendEmailAlert();
 				break;
 			}
 	}
@@ -237,7 +282,7 @@ public class Diagnostic {
 
 		public Long getDiagLastUpdate() {
 			if (diagLastUpdate != null)
-				return Duration.between(diagLastUpdate,LocalDateTime.now()).getSeconds();
+				return Duration.between(diagLastUpdate, LocalDateTime.now()).getSeconds();
 			else return 999999L;
 		}
 
@@ -399,5 +444,25 @@ public class Diagnostic {
 		public String getDescription() {
 			return description;
 		}
+	}
+
+	private static class InnerThread extends Thread {
+		Diagnostic diagnostic;
+
+		public InnerThread(Diagnostic diagnostic) {
+			this.diagnostic = diagnostic;
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				diagnostic.faultCheck();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+
 	}
 }

@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public abstract class Module {
-	public static final int FAULT_MAX = 100;
+	public static final int FAULT_MAX = 20;
 	@Autowired
 	transient Diagnostic diagnostic;
 	private int moduleType;
@@ -30,7 +30,7 @@ public abstract class Module {
 	}
 
 	@PostConstruct
-	public void postConstructor() {
+	public void postConstructor() throws Exception {
 		diagnostic.addModule(moduleType, moduleName, moduleStructureName);
 	}
 
@@ -58,7 +58,8 @@ public abstract class Module {
 	}
 
 	public void setFaultPresent(int faultNo, boolean present) {
-		fault[faultNo].setPresent(present);
+		if (fault[faultNo] != null)
+			fault[faultNo].setPresent(present);
 	}
 
 	public void setFaultText(int faultNo, String text) throws Exception {
@@ -193,5 +194,8 @@ public abstract class Module {
 			return text;
 		}
 
+		public void setText(String text) {
+			this.text = text;
+		}
 	}
 }

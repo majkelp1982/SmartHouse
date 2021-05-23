@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @PageTitle("Smart House | Diagnostyka")
 @Route(value = "Diagnostyka", layout = MainLayout.class)
@@ -37,6 +38,7 @@ public class DiagnosticView extends View {
 	private Section[] section = new Section[2];
 	private Grid<Diagnostic.ModuleDiagInfo> moduleGrid = new Grid<>();
 	private List<Diagnostic.ModuleDiagInfo> moduleList = new ArrayList<>();
+	private List<Diagnostic.ModuleDiagInfo> modulesTable = new ArrayList<>();
 	private Button globalResetButton;
 	private Button groupButton;
 
@@ -112,8 +114,10 @@ public class DiagnosticView extends View {
 			return layout;
 		})).setHeader("Last Update[s]");
 
-		moduleGrid.setItems(moduleList);
-//		moduleGrid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
+		modulesTable.clear();
+		moduleList.stream().filter(modMain-> !Objects.equals(modMain.getModuleType(), 1)).
+				forEach(item ->modulesTable.add(item));
+		moduleGrid.setItems(modulesTable);
 	}
 
 	private void createInfoSection1() {
@@ -160,7 +164,7 @@ public class DiagnosticView extends View {
 		groupButton.setButtonColor(diagnostic.isGlobalFaultsListGroupByFault(), diagnostic.isGlobalFaultsListGroupByFault());
 		diagnostic.refreshGlobalFaultList();
 		faultGrid.setItems(diagnostic.getGlobalFaultsList());
-		moduleGrid.setItems(diagnostic.getModules());
+		moduleGrid.setItems(modulesTable);
 		sectionResize();
 	}
 
