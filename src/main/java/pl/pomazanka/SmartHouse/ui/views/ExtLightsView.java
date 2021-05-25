@@ -143,7 +143,7 @@ public class ExtLightsView extends View {
 		section[1].getTileDetailsContainer(0).add(layout);
 	}
 
-	private void update() {
+	void update() {
 		//Header
 		header.setLastUpdate(module_extLights.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_extLights.getDiagnosticLastUpdate());
@@ -172,46 +172,12 @@ public class ExtLightsView extends View {
 		startLevel.setNumberField(module_extLights.getStartLightLevel(), module_extLights.getNVstartLightLevel());
 
 		NumberField hour = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(1));
+
 		hour.setNumberField(module_extLights.getOffTime().getHour(), module_extLights.getNVoffTime().getHour());
 
 		NumberField minute = new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(2));
 		minute.setNumberField(module_extLights.getOffTime().getMinute(), module_extLights.getNVoffTime().getMinute());
 
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-//		thread.interrupt();
-		thread.stop();
-		thread = null;
-	}
-
-	private class FeederThread extends Thread {
-		private final UI ui;
-		private final ExtLightsView view;
-
-		public FeederThread(UI ui, ExtLightsView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }
 

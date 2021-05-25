@@ -1,7 +1,6 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 
-public class View extends VerticalLayout {
+public abstract class View extends VerticalLayout {
 
 	// static variables
 	//***************************************
@@ -35,6 +34,9 @@ public class View extends VerticalLayout {
 
 	//Last telegram updates info
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	//Update thread
+	Thread thread;
 
 	public static boolean isUserLoggedIn() {
 		boolean status = false;
@@ -373,6 +375,43 @@ public class View extends VerticalLayout {
 
 		public com.vaadin.flow.component.textfield.NumberField getSource() {
 			return numberField;
+		}
+	}
+
+	abstract void update();
+
+	@Override
+	protected void onAttach(AttachEvent attachEvent) {
+		//Start thread when view active
+		thread = new View.FeederThread(attachEvent.getUI(), this);
+		thread.start();       //On Attach update all components
+	}
+
+	@Override
+	protected void onDetach(DetachEvent attachEvent) {
+		thread.stop();
+		thread = null;
+	}
+
+	private static class FeederThread extends Thread {
+		private final UI ui;
+		private final View view;
+
+		public FeederThread(UI ui, View view) {
+			this.ui = ui;
+			this.view = view;
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					ui.access(view::update);
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

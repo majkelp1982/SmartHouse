@@ -15,6 +15,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static java.lang.System.currentTimeMillis;
+
 @Service
 @Configurable
 public class Diagnostic extends Module {
@@ -455,11 +457,18 @@ public class Diagnostic extends Module {
 
 		@Override
 		public void run() {
+			long lastWatchdogCheck = currentTimeMillis();
 			while (true) {
-				diagnostic.faultCheck();
 				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+					diagnostic.faultCheck();
+					if (lastWatchdogCheck + 10000 < currentTimeMillis()) {
+						lastWatchdogCheck = currentTimeMillis();
+						System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) + " Diagnostic thread OK");
+					}
+					Thread.sleep(10000);
+				}
+				catch (Throwable e) {
+					e.printStackTrace();
 				}
 			}
 		}

@@ -17,9 +17,6 @@ public class ComfortView extends View {
 	@Autowired
 	Module_Comfort module_comfort;
 
-	//Update thread
-	Thread thread;
-
 	//Objects
 	Header header;
 	Section[] section = new Section[2];
@@ -160,7 +157,7 @@ public class ComfortView extends View {
 		numberFields[6] = new NumberField("nastawa [°C]", zone[6].reqTemp, 9, 99, 0.5);
 	}
 
-	private void update() {
+	 void update() {
 		//Header
 		header.setLastUpdate(module_comfort.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_comfort.getDiagnosticLastUpdate());
@@ -173,43 +170,8 @@ public class ComfortView extends View {
 				info[i][j][1].setValue(zone[k].isHumidity);
 				k++;
 			}
-
 		for (int i = 0; i <= 6; i++)
 			numberFields[i].setNumberField(zone[i].reqTemp, zone[i].NVReqTemp);
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new ComfortView.FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
-	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final ComfortView view;
-
-		public FeederThread(UI ui, ComfortView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }
 

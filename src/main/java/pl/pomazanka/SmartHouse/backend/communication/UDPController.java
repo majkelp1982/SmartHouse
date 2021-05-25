@@ -14,6 +14,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.currentTimeMillis;
+import static java.lang.System.setOut;
+
 @Controller
 public class UDPController {
 
@@ -53,6 +56,8 @@ public class UDPController {
 	// UDP variables
 	private int timeSynchroLast = 100;
 
+	Thread UDPThread = new Thread(new UDPListener());
+
 	public UDPController() {
 		try {
 			datagramSocket = new DatagramSocket(localPort);
@@ -60,7 +65,7 @@ public class UDPController {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		new Thread(new UDPListener()).start();
+		UDPThread.start();
 		// Set new thread
 		new Thread(new EventRunBackground()).start();
 	}
@@ -269,6 +274,7 @@ public class UDPController {
 		@SuppressWarnings("InfiniteLoopStatement")
 		@Override
 		public void run() {
+			long lastWatchdogCheck = currentTimeMillis();
 			while (true) {
 				try {
 					buffer = new byte[BUFFER_SIZE];
@@ -295,11 +301,18 @@ public class UDPController {
 							e.printStackTrace();
 						}
 					}
+					if (lastWatchdogCheck+10000<currentTimeMillis()) {
+						lastWatchdogCheck = currentTimeMillis();
+						System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) +" UDP controller thread OK");
+					}
+
 				} catch (Throwable throwable) {
 					throwable.printStackTrace();
 				}
 			}
 		}
+
+
 	}
 
 	public class EventRunBackground implements Runnable {
@@ -307,6 +320,13 @@ public class UDPController {
 		@Override
 		public void run() {
 			do {
+				//check if UDP thread alive
+				if ((!UDPThread.isAlive()) || (UDPThread.isInterrupted()))
+				{
+					mongoDBController.saveError("MAIN", "PRÓBA PONOWNEGO URUCHOMIENIA UDP THREAD");
+					System.out.println("PRÓBA PONOWNEGO URUCHOMIENIA UDP THREAD");;
+					UDPThread.start();
+				}
 				try {
 					TimeUnit.MILLISECONDS.sleep(1000);
 				} catch (InterruptedException e) {

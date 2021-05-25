@@ -33,10 +33,9 @@ public class MainLayout extends AppLayout {
 		header.addClassName("appLayout-header");
 
 		H1 logo = new H1("Smart House");
-		View view = new View();
 		Button loginButton = new Button("Zaloguj");
 		loginButton.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
-		if (view.isUserLoggedIn()) {
+		if (View.isUserLoggedIn()) {
 			loginButton.setVisible(false);
 		}
 		header.add(new DrawerToggle(), logo, loginButton);
