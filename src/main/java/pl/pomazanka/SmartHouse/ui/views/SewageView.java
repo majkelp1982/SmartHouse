@@ -104,7 +104,7 @@ public class SewageView extends View {
 		});
 	}
 
-	private void update() {
+	void update() {
 		//Header
 		header.setLastUpdate(module_sewage.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_sewage.getDiagnosticLastUpdate());
@@ -118,40 +118,6 @@ public class SewageView extends View {
 		minLevel.setNumberField(module_sewage.getMinWaterLevel(), module_sewage.getNVminWaterLevel());
 		refZero.setNumberField(module_sewage.getZeroRefWaterLevel(), module_sewage.getNVZeroRefWaterLevel());
 		interwal.setNumberField(module_sewage.getIntervalAirPump(), module_sewage.getNVIntervalAirPump());
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new SewageView.FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
-	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final SewageView view;
-
-		public FeederThread(UI ui, SewageView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }
 

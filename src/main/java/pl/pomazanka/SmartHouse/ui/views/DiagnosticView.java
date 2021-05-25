@@ -159,7 +159,7 @@ public class DiagnosticView extends View {
 		});
 	}
 
-	private void update() {
+	void update() {
 		header.setDiagnoseUpdate(diagnostic.getDiagnosticLastUpdate());
 		groupButton.setButtonColor(diagnostic.isGlobalFaultsListGroupByFault(), diagnostic.isGlobalFaultsListGroupByFault());
 		diagnostic.refreshGlobalFaultList();
@@ -172,43 +172,5 @@ public class DiagnosticView extends View {
 		if (diagnostic.isGlobalFaultsListGroupByFault()) section[1].getTileDetailsContainer(0).setMinWidth("1600px");
 		else section[1].getTileDetailsContainer(0).setMinWidth("1200px");
 		section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size() * 35 + 180) + "px");
-	}
-
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
-	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final DiagnosticView view;
-
-		public FeederThread(UI ui, DiagnosticView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-
-				try {
-					ui.access(view::update);
-
-					//FIXME instead sleep add newData in all modules structure to respons immediately
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }

@@ -321,7 +321,7 @@ public class VentView extends View {
 		module_vent.setReqUpdateValues(true);
 	}
 
-	private void update() {
+	void update() {
 		//Header
 		header.setLastUpdate(module_vent.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_vent.getDiagnosticLastUpdate());
@@ -354,19 +354,6 @@ public class VentView extends View {
 		//Grid
 		actualDiagram = getActualDiagram();
 		grid.setItems(actualDiagram);
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new VentView.FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
 	}
 
 	private static class Quarter {
@@ -441,26 +428,4 @@ public class VentView extends View {
 			this.quarter[quarterNo].setActive(status);
 		}
 	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final VentView view;
-
-		public FeederThread(UI ui, VentView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-	}
-
 }

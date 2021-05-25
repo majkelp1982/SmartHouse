@@ -208,7 +208,7 @@ public class HeatingView extends View {
 		});
 	}
 
-	private void update() {
+	void update() {
 		//Header
 		header.setLastUpdate(module_heating.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_heating.getDiagnosticLastUpdate());
@@ -290,40 +290,5 @@ public class HeatingView extends View {
 		info[1][3][2].setValue(zone[5]);
 		info[1][3][3].setValue(zone[6]);
 
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
-	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final HeatingView view;
-
-		public FeederThread(UI ui, HeatingView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					//FIXME instead sleep add newData in all modules structure to respons immediately
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }

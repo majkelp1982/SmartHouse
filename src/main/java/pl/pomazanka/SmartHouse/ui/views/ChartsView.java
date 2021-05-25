@@ -159,10 +159,14 @@ public class ChartsView extends View {
 				chartCount++;
 			} catch (Exception e) {
 				e.printStackTrace();
-				Notification notification = new Notification("Bląd przy dodawaniu [" + variableName + "] z kolekcji [" + collectionName + "]", 10000);
+				Notification notification = new Notification("Błąd przy dodawaniu [" + variableName + "] z kolekcji [" + collectionName + "]", 10000);
 				notification.open();
 			}
 		}
 		apexChart.updateSeries(series);
+	}
+
+	@Override
+	void update() {
 	}
 }

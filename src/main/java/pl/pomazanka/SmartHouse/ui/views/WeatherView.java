@@ -72,7 +72,7 @@ public class WeatherView extends View {
 		info[1][0][0] = new Info("natężenie światła", "%", false, false, module_weather.getLightIntens(), 0, 0, 0);
 	}
 
-	private void update() {
+	void update() {
 		//Header
 		header.setLastUpdate(module_weather.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_weather.getDiagnosticLastUpdate());
@@ -85,40 +85,6 @@ public class WeatherView extends View {
 		info[0][1][2].setValue(module_weather.getBme280().getPressure());
 
 		info[1][0][0].setValue(module_weather.getLightIntens());
-	}
-
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		//Start thread when view active
-		thread = new WeatherView.FeederThread(attachEvent.getUI(), this);
-		thread.start();       //On Attach update all components
-	}
-
-	@Override
-	protected void onDetach(DetachEvent attachEvent) {
-		thread.interrupt();
-		thread = null;
-	}
-
-	private static class FeederThread extends Thread {
-		private final UI ui;
-		private final WeatherView view;
-
-		public FeederThread(UI ui, WeatherView view) {
-			this.ui = ui;
-			this.view = view;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				ui.access(view::update);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 	}
 }
 
