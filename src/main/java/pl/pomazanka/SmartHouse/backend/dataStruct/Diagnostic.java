@@ -49,7 +49,7 @@ public class Diagnostic extends Module {
 
 		//Fault check list
 		for (ModuleDiagInfo module : modules) {
-			if ((module.getDiagLastUpdate() >= 180)
+			if ((module.getDiagLastUpdate() >= 720)
 					&&	(module.getDiagLastUpdate() != 999999) )
 				setFaultPresent(module.getModuleType(), true);
 		}
