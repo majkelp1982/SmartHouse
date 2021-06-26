@@ -1,6 +1,7 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.pomazanka.SmartHouse.backend.common.Logger;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;

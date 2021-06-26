@@ -2,6 +2,7 @@ package pl.pomazanka.SmartHouse.backend.communication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import pl.pomazanka.SmartHouse.backend.common.Logger;
 import pl.pomazanka.SmartHouse.backend.dataStruct.*;
 
 import java.io.IOException;
@@ -15,7 +16,6 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.setOut;
 
 @Controller
 public class UDPController {
@@ -289,26 +289,39 @@ public class UDPController {
 						for (int i = 0; i < packet.getLength(); i++)
 							packetData[i] = (packet.getData()[i] & 0xff);                // 0xFF to change values to unsigned int
 
-						System.out.print(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) + " UDP=");
+						String message="UDP=";
 						for (int i = 0; i < packet.getLength(); i++)
-							System.out.print("[" + packetData[i] + "]");
-						System.out.println();
+							message+="[" + packetData[i] + "]";
+						Logger.debug(message);
 					}
 					if (packetDataCorrect(packetData, packet.getLength())) {
 						try {
+							Logger.debug("* * * *zapis pakietu ["+packetData[0]+"]["+packetData[1]+"]["+packetData[2]+"]* * * *");
 							mongoDBController.saveUDPFrame(packetData);
+							Logger.debug("* * * *koniec zapisu pakietu ["+packetData[0]+"]["+packetData[1]+"]["+packetData[2]+"]* * * *");
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
 					}
 					if (lastWatchdogCheck+10000<currentTimeMillis()) {
 						lastWatchdogCheck = currentTimeMillis();
-						System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) +" UDP controller thread OK");
+						Logger.debug("UDP controller thread OK");
 					}
+
+				} catch (Error error) {
+					System.out.println("ERROR wątku "+error.getMessage());
+					mongoDBController.saveError("MAIN ERROR", error.getMessage());
+				} catch (Exception exc) {
+					System.out.println("ERROR wątku "+exc.getMessage());
+					mongoDBController.saveError("MAIN EXCEPTION", exc.getMessage());
 
 				} catch (Throwable throwable) {
 					throwable.printStackTrace();
+					System.out.println("BłAD WĄTKU"+throwable);;
+					mongoDBController.saveError("MAIN THROWABLE", throwable.getMessage());
+
 				}
+
 			}
 		}
 

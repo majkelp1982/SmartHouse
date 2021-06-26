@@ -13,6 +13,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import pl.pomazanka.SmartHouse.backend.common.Logger;
 import pl.pomazanka.SmartHouse.backend.dataStruct.*;
 import pl.pomazanka.SmartHouse.backend.security.UserInstance;
 
@@ -56,6 +57,7 @@ public class MongoDBController {
 	public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
 		int moduleType = packetData[0];             // Get basic data from UDP frame
 
+		Logger.debug("Obsługa komunikatu UDP");
 		switch (moduleType) {
 			case 10: {
 				module_comfort.dataParser(packetData);
@@ -116,6 +118,7 @@ public class MongoDBController {
 			}
 			break;
 		}
+		Logger.debug("Obsługa komunikatu UDP zakończona");
 	}
 
 	public void saveNotice(String source, String text) {
@@ -135,6 +138,7 @@ public class MongoDBController {
 	}
 
 	public void saveNewEntry(String collectionName, Object object) {
+		Logger.debug("Zapis kolekcji do bazy");
 		// Help variables
 		Gson gson = new Gson();
 		String json;
@@ -146,6 +150,7 @@ public class MongoDBController {
 		Document documentActual = Document.parse(json);
 		MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
 		mongoCollection.insertOne(documentActual);
+		Logger.debug("Zapis kolekcji do bazy zakończone");
 	}
 
 	public void dropCollection(String collectionName) {
@@ -154,6 +159,7 @@ public class MongoDBController {
 	}
 
 	private void updateLastEntry(String collectionName, Object object) {
+		Logger.debug("Aktualizacja kolekcji w bazie");
 		// Help variables
 		Gson gson = new Gson();
 		String json;
@@ -167,6 +173,7 @@ public class MongoDBController {
 		Document documentToUpdate = (Document) mongoCollection.find().limit(1).sort(new Document("_id", -1)).first();
 		if (documentToUpdate != null) mongoCollection.deleteOne(documentToUpdate);
 		mongoCollection.insertOne(documentNew);
+		Logger.debug("Aktualizacja kolekcji w bazie zakończona");
 	}
 
 	public ArrayList<Charts.Data> getValues(String collectionName, String variableName, LocalDateTime from, LocalDateTime to) throws Exception {
