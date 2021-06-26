@@ -3,11 +3,15 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import pl.pomazanka.SmartHouse.backend.common.Logger;
 import pl.pomazanka.SmartHouse.backend.communication.Email.Email;
 
 import javax.annotation.PostConstruct;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -100,13 +104,24 @@ public class Diagnostic extends Module {
 	}
 
 	public void updateDiag(int moduleTyp, int[] IP, int signal) {
-		for (ModuleDiagInfo module : modules)
+		Logger.debug("updateDiag");
+		int i = 0;
+		Logger.debug("ilość modułów "+modules.size());
+		for (ModuleDiagInfo module : modules) {
+			i++;
 			if (module.getModuleType() == moduleTyp) {
+				Logger.debug("moduł odnaleziono na pozycji "+i);
 				module.setIP(IP);
+				Logger.debug("IP ustawione");
 				module.setSignal(signal);
+				Logger.debug("sygnał ustawiony");
 				module.setFirmwareVersion(module.getIP());
+				Logger.debug("firmware ustawiony");
 				module.setLastDiagUpdate(LocalDateTime.now());
+				Logger.debug("data ustawiona");
 			}
+		}
+		Logger.debug("updateDiag zakończone");
 	}
 
 	public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
@@ -308,14 +323,12 @@ public class Diagnostic extends Module {
 		public void setFirmwareVersion(String IPAddress) {
 			try {
 				URL url = new URL("http://" + IPAddress + "/");
-				InputStream is = url.openStream();
-				int ptr = 0;
-				StringBuffer buffer = new StringBuffer();
-				while ((ptr = is.read()) != -1) {
-					buffer.append((char) ptr);
-				}
-				String htmlCode = buffer.toString();
-				String version = htmlCode.substring(htmlCode.indexOf("<i>") + 15, htmlCode.indexOf("</i>"));
+				URLConnection connection = url.openConnection();
+				connection.setConnectTimeout(3000);
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						connection.getInputStream()));
+				String inputLine = in.readLine();
+				String version = inputLine.substring(inputLine.indexOf("<i>") + 15, inputLine.indexOf("</i>"));
 				this.firmwareVersion = version;
 			} catch (Exception e) {
 				this.firmwareVersion = e.toString();
@@ -463,7 +476,7 @@ public class Diagnostic extends Module {
 					diagnostic.faultCheck();
 					if (lastWatchdogCheck + 10000 < currentTimeMillis()) {
 						lastWatchdogCheck = currentTimeMillis();
-						System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) + " Diagnostic thread OK");
+	//					System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")) + " Diagnostic thread OK");
 					}
 					Thread.sleep(10000);
 				}
