@@ -325,12 +325,14 @@ public class Diagnostic extends Module {
 				URL url = new URL("http://" + IPAddress + "/");
 				URLConnection connection = url.openConnection();
 				connection.setConnectTimeout(3000);
+				connection.setReadTimeout(3000);
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
 				String inputLine = in.readLine();
 				String version = inputLine.substring(inputLine.indexOf("<i>") + 15, inputLine.indexOf("</i>"));
 				this.firmwareVersion = version;
 			} catch (Exception e) {
+				Logger.error("Wyjątek przy pobrani firmware");
 				this.firmwareVersion = e.toString();
 			}
 		}
