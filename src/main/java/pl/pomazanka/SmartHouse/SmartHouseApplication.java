@@ -8,6 +8,8 @@ import pl.pomazanka.SmartHouse.backend.common.Logger;
 public class SmartHouseApplication {
 	public static void main(String[] args) {
 		Logger.level = Logger.DEBUG;
+		System.setProperty("sun.net.client.defaultConnectTimeout", "5000");
+		System.setProperty("sun.net.client.defaultReadTimeout", "5000");
 		SpringApplication.run(SmartHouseApplication.class, args);
 	}
 }
