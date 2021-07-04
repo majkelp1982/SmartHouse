@@ -1,0 +1,19 @@
+body {
+    background : rgb(47, 59, 81);
+}
+
+.appLayout-header {
+  background-color: rgb(35, 46, 66);
+  box-shadow: 2px 1px 10px 0px rgb(31, 39, 62);
+}
+.appLayout-drawer {
+  background-color: rgb(35, 46, 66);
+  box-shadow: 2px 1px 10px 0px rgb(31, 39, 62);
+  transform: scale(0.1);
+}
+
+.module {
+  background-color: rgb(35, 46, 66);
+  box-shadow: 2px 1px 1px 0px rgb(31, 39, 62);
+  color: grey;
+}
