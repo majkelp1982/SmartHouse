@@ -242,7 +242,7 @@ public class Module_Vent extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		NVHour = hour.clone();
 		NVDefrostTrigger = defrostTrigger;
 		NVHumidityTrigger = humidityTrigger;

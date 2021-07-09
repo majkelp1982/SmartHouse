@@ -70,8 +70,7 @@ public class Module_Weather extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
-
+	protected void assignNV(Object object) throws Exception {
 	}
 
 	public boolean compare(Module_Weather module_weather) {

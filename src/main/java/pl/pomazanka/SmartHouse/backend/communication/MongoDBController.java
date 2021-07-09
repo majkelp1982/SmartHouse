@@ -33,6 +33,8 @@ public class MongoDBController {
 	@Autowired
 	Module_Vent module_vent;
 	@Autowired
+	Module_Vent2 module_vent2;
+	@Autowired
 	Module_Weather module_weather;
 	@Autowired
 	Module_Sewage module_sewage;
@@ -48,6 +50,7 @@ public class MongoDBController {
 	private Module_Weather module_weatherLastSaved;
 	private Module_Sewage module_sewageLastSaved;
 	private Module_Vent module_ventLastSaved;
+	private Module_Vent2 module_vent2LastSaved;
 	private Module_Heating module_heatingLastSaved;
 	private Module_ExtLights module_extLightsLastSaved;
 
@@ -96,9 +99,18 @@ public class MongoDBController {
 					module_vent.setLastSaveDateTime(LocalDateTime.now());
 					module_ventLastSaved = module_vent.clone();
 				} else updateLastEntry("module_vent", module_vent);                // else update last entry
-
 			}
 			break;
+			case 130: {
+				module_vent2.dataParser(packetData);
+				if (!module_vent2.compare(module_vent2LastSaved)) {
+					saveNewEntry("module_vent2", module_vent2);                    // if data has been changed add new entry in DB
+					module_vent2.setLastSaveDateTime(LocalDateTime.now());
+					module_vent2LastSaved = module_vent2.clone();
+				} else updateLastEntry("module_vent2", module_vent2);                // else update last entry
+			}
+			break;
+
 			case 14: {
 				module_heating.dataParser(packetData);
 				if (!module_heating.compare(module_heatingLastSaved)) {

@@ -133,7 +133,7 @@ public class Module_Sewage extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		NVmaxWaterLevel = maxWaterLevel;
 		NVminWaterLevel = minWaterLevel;
 		NVZeroRefWaterLevel = zeroRefWaterLevel;

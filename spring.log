@@ -1,599 +1,86 @@
-2021-06-26 06:08:17.629  INFO 12268 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 12268 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:08:17.684  INFO 12268 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:08:19.560  INFO 12268 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:08:19.572  INFO 12268 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:08:19.572  INFO 12268 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:08:19.774  INFO 12268 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:08:19.774  INFO 12268 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2001 ms
-2021-06-26 06:08:20.425  INFO 12268 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:08:20.515  INFO 12268 --- [cluster-ClusterId{value='60d6a834a9a3fa158b4a0ee9', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:1}] to localhost:27017
-2021-06-26 06:08:20.523  INFO 12268 --- [cluster-ClusterId{value='60d6a834a9a3fa158b4a0ee9', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=4504800}
-2021-06-26 06:08:20.584  INFO 12268 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:2}] to localhost:27017
-2021-06-26 06:08:20.775  INFO 12268 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:08:20.985  INFO 12268 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:08:20.993  INFO 12268 --- [cluster-ClusterId{value='60d6a834a9a3fa158b4a0eea', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:3}] to localhost:27017
-2021-06-26 06:08:20.996  INFO 12268 --- [cluster-ClusterId{value='60d6a834a9a3fa158b4a0eea', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2144400}
-2021-06-26 06:08:21.220  INFO 12268 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@76d0ecd7, org.springframework.security.web.context.SecurityContextPersistenceFilter@3a2546d6, org.springframework.security.web.header.HeaderWriterFilter@781dbe44, org.springframework.security.web.authentication.logout.LogoutFilter@eaf8427, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@48ccbb32, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@b8a144e, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@57c69937, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7661e474, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@a21c74, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1ad1c363, org.springframework.security.web.session.SessionManagementFilter@1132baa3, org.springframework.security.web.access.ExceptionTranslationFilter@28989415, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6b16de91]
-2021-06-26 06:08:21.286  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:08:21.288  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:08:21.320  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:08:21.333  INFO 12268 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:08:21.337  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:08:21.344  INFO 12268 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:08:21.359  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:08:21.359  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:08:21.359  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:08:21.360  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:08:21.361  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:08:21.361  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:08:21.361  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:08:21.361  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:08:21.363  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:08:21.363  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:08:21.363  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:08:21.364  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:08:21.364  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:08:21.364  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:08:21.369  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.370  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.370  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:08:21.371  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:08:21.372  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:08:21.373  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:08:21.378  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:08:21.379  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:08:21.379  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:08:21.379  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:08:21.379  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:08:21.385  INFO 12268 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:08:21.435  INFO 12268 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:08:21.441  INFO 12268 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 4.495 seconds (JVM running for 5.905)
-2021-06-26 06:15:51.252  INFO 12268 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:16:23.406  INFO 8352 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 8352 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:16:23.411  INFO 8352 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:16:24.906  INFO 8352 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:16:24.916  INFO 8352 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:16:24.916  INFO 8352 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:16:25.087  INFO 8352 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:16:25.087  INFO 8352 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1578 ms
-2021-06-26 06:16:25.477  INFO 8352 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:16:25.547  INFO 8352 --- [cluster-ClusterId{value='60d6aa19287a931fc90b3e09', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:4}] to localhost:27017
-2021-06-26 06:16:25.576  INFO 8352 --- [cluster-ClusterId{value='60d6aa19287a931fc90b3e09', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=3983300}
-2021-06-26 06:16:25.649  INFO 8352 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:5}] to localhost:27017
-2021-06-26 06:16:25.799  INFO 8352 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:16:25.924  INFO 8352 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:16:25.928  INFO 8352 --- [cluster-ClusterId{value='60d6aa19287a931fc90b3e0c', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:6}] to localhost:27017
-2021-06-26 06:16:25.930  INFO 8352 --- [cluster-ClusterId{value='60d6aa19287a931fc90b3e0c', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=680600}
-2021-06-26 06:16:26.095  INFO 8352 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4e67cfe1, org.springframework.security.web.context.SecurityContextPersistenceFilter@54489296, org.springframework.security.web.header.HeaderWriterFilter@2a8f8555, org.springframework.security.web.authentication.logout.LogoutFilter@21dea711, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@5abf6a99, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@687eb455, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@55bf35e5, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@267ff4df, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7f6b7426, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@25567581, org.springframework.security.web.session.SessionManagementFilter@13ef7fa1, org.springframework.security.web.access.ExceptionTranslationFilter@8eb6f9a, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6bb4cc0e]
-2021-06-26 06:16:26.148  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:16:26.150  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:16:26.173  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:16:26.183  INFO 8352 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:16:26.186  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:16:26.191  INFO 8352 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:16:26.204  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:16:26.205  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:16:26.205  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:16:26.206  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:16:26.207  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:16:26.207  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:16:26.208  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:16:26.208  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:16:26.211  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:16:26.212  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:16:26.212  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:16:26.212  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:16:26.213  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:16:26.213  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:16:26.217  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.218  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:16:26.219  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:16:26.220  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:16:26.223  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:16:26.224  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:16:26.224  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:16:26.224  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:16:26.224  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:16:26.230  INFO 8352 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:16:26.281  INFO 8352 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:16:26.285  INFO 8352 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 3.571 seconds (JVM running for 4.406)
-2021-06-26 06:16:51.965  INFO 8352 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:16:56.477  INFO 14924 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 14924 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:16:56.483  INFO 14924 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:16:58.011  INFO 14924 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:16:58.021  INFO 14924 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:16:58.021  INFO 14924 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:16:58.174  INFO 14924 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:16:58.175  INFO 14924 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1610 ms
-2021-06-26 06:16:58.598  INFO 14924 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:16:58.681  INFO 14924 --- [cluster-ClusterId{value='60d6aa3a28564e2ed5c0073d', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:7}] to localhost:27017
-2021-06-26 06:16:58.687  INFO 14924 --- [cluster-ClusterId{value='60d6aa3a28564e2ed5c0073d', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2737800}
-2021-06-26 06:16:58.749  INFO 14924 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:8}] to localhost:27017
-2021-06-26 06:16:58.895  INFO 14924 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:16:59.025  INFO 14924 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:16:59.029  INFO 14924 --- [cluster-ClusterId{value='60d6aa3b28564e2ed5c0073e', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:9}] to localhost:27017
-2021-06-26 06:16:59.031  INFO 14924 --- [cluster-ClusterId{value='60d6aa3b28564e2ed5c0073e', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=727800}
-2021-06-26 06:16:59.180  INFO 14924 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@13e00016, org.springframework.security.web.context.SecurityContextPersistenceFilter@5c234920, org.springframework.security.web.header.HeaderWriterFilter@62e73ab6, org.springframework.security.web.authentication.logout.LogoutFilter@2ad7bd26, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@591f6f83, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@370c7cc5, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@7b3cbe6e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@38087342, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4e974b9e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@177ede17, org.springframework.security.web.session.SessionManagementFilter@29bd85db, org.springframework.security.web.access.ExceptionTranslationFilter@4e17442f, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@66020d69]
-2021-06-26 06:16:59.234  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:16:59.235  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:16:59.256  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:16:59.265  INFO 14924 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:16:59.268  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:16:59.273  INFO 14924 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:16:59.285  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:16:59.286  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:16:59.286  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:16:59.287  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:16:59.287  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:16:59.287  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:16:59.288  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:16:59.288  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:16:59.289  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:16:59.289  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:16:59.290  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:16:59.290  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:16:59.290  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:16:59.290  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:16:59.296  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.296  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:16:59.297  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:16:59.298  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:16:59.299  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:16:59.299  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:16:59.299  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:16:59.299  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:16:59.299  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:16:59.302  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:16:59.303  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:16:59.303  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:16:59.303  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:16:59.303  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:16:59.307  INFO 14924 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:16:59.350  INFO 14924 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:16:59.356  INFO 14924 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 3.486 seconds (JVM running for 4.289)
-2021-06-26 06:29:51.454  INFO 14924 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:29:57.695  INFO 16248 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 16248 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:29:57.713  INFO 16248 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:30:00.844  INFO 16248 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:30:00.864  INFO 16248 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:30:00.865  INFO 16248 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:30:01.140  INFO 16248 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:30:01.140  INFO 16248 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 3314 ms
-2021-06-26 06:30:02.049  INFO 16248 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:30:02.189  INFO 16248 --- [cluster-ClusterId{value='60d6ad4aa2ae676384308c7b', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:10}] to localhost:27017
-2021-06-26 06:30:02.200  INFO 16248 --- [cluster-ClusterId{value='60d6ad4aa2ae676384308c7b', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=5444400}
-2021-06-26 06:30:02.345  INFO 16248 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:11}] to localhost:27017
-2021-06-26 06:30:02.570  INFO 16248 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:30:02.760  INFO 16248 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:30:02.765  INFO 16248 --- [cluster-ClusterId{value='60d6ad4aa2ae676384308c7c', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:12}] to localhost:27017
-2021-06-26 06:30:02.766  INFO 16248 --- [cluster-ClusterId{value='60d6ad4aa2ae676384308c7c', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=735200}
-2021-06-26 06:30:03.152  INFO 16248 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7f8c3646, org.springframework.security.web.context.SecurityContextPersistenceFilter@53e93fb7, org.springframework.security.web.header.HeaderWriterFilter@734fbae3, org.springframework.security.web.authentication.logout.LogoutFilter@c497a55, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@63f2e0b, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@45f9d394, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@14b95942, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2326180c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5409dfdd, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3375b118, org.springframework.security.web.session.SessionManagementFilter@4a6a6a69, org.springframework.security.web.access.ExceptionTranslationFilter@8ac12e6, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@10dfa7ef]
-2021-06-26 06:30:03.267  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:30:03.270  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:30:03.312  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:30:03.327  INFO 16248 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:30:03.333  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:30:03.342  INFO 16248 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:30:03.358  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:30:03.359  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:30:03.359  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:30:03.360  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:30:03.361  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:30:03.361  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:30:03.361  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:30:03.361  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:30:03.363  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:30:03.363  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:30:03.364  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:30:03.364  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:30:03.364  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:30:03.365  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:30:03.372  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.374  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.374  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.374  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.374  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.374  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:30:03.375  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:30:03.376  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:30:03.380  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:30:03.381  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:30:03.381  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:30:03.381  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:30:03.381  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:30:03.388  INFO 16248 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:30:03.477  INFO 16248 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:30:03.488  INFO 16248 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 6.855 seconds (JVM running for 7.785)
-2021-06-26 06:30:19.176  INFO 16248 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:54:28.900  INFO 11644 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 11644 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:54:28.908  INFO 11644 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:54:30.374  INFO 11644 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:54:30.384  INFO 11644 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:54:30.384  INFO 11644 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:54:30.552  INFO 11644 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:54:30.552  INFO 11644 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1552 ms
-2021-06-26 06:54:31.257  INFO 11644 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:54:31.320  INFO 11644 --- [cluster-ClusterId{value='60d6b307973b2218f772385a', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:13}] to localhost:27017
-2021-06-26 06:54:31.327  INFO 11644 --- [cluster-ClusterId{value='60d6b307973b2218f772385a', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=3703500}
-2021-06-26 06:54:31.392  INFO 11644 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:14}] to localhost:27017
-2021-06-26 06:54:31.556  INFO 11644 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:54:31.693  INFO 11644 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:54:31.697  INFO 11644 --- [cluster-ClusterId{value='60d6b307973b2218f772385b', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:15}] to localhost:27017
-2021-06-26 06:54:31.699  INFO 11644 --- [cluster-ClusterId{value='60d6b307973b2218f772385b', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=676700}
-2021-06-26 06:54:31.890  INFO 11644 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@283a8ad6, org.springframework.security.web.context.SecurityContextPersistenceFilter@25de8898, org.springframework.security.web.header.HeaderWriterFilter@2b458cd6, org.springframework.security.web.authentication.logout.LogoutFilter@68d6f48e, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@1f172892, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@6fef75c6, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@59e082f8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@dd737ea, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1247c72e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7185e611, org.springframework.security.web.session.SessionManagementFilter@7103745, org.springframework.security.web.access.ExceptionTranslationFilter@3a5e2525, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1c00d406]
-2021-06-26 06:54:31.942  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:54:31.944  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:54:31.967  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:54:31.983  INFO 11644 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:54:31.986  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:54:31.990  INFO 11644 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:54:32.002  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:54:32.002  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:54:32.003  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:54:32.003  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:54:32.004  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:54:32.004  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:54:32.005  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:54:32.005  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:54:32.006  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:54:32.006  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:54:32.007  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:54:32.007  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:54:32.007  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:54:32.007  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:54:32.011  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.011  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:54:32.012  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:54:32.013  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:54:32.016  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:54:32.017  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:54:32.017  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:54:32.017  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:54:32.017  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:54:32.020  INFO 11644 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:54:32.061  INFO 11644 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:54:32.067  INFO 11644 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 3.856 seconds (JVM running for 4.598)
-2021-06-26 06:55:09.725  INFO 11644 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:55:14.466  INFO 15328 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 15328 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:55:14.473  INFO 15328 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:55:15.904  INFO 15328 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:55:15.914  INFO 15328 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:55:15.915  INFO 15328 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:55:16.079  INFO 15328 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:55:16.079  INFO 15328 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1529 ms
-2021-06-26 06:55:16.509  INFO 15328 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:55:16.581  INFO 15328 --- [cluster-ClusterId{value='60d6b33478e7c266b94da913', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:16}] to localhost:27017
-2021-06-26 06:55:16.587  INFO 15328 --- [cluster-ClusterId{value='60d6b33478e7c266b94da913', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=3513700}
-2021-06-26 06:55:16.651  INFO 15328 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:17}] to localhost:27017
-2021-06-26 06:55:16.828  INFO 15328 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:55:16.987  INFO 15328 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:55:16.991  INFO 15328 --- [cluster-ClusterId{value='60d6b33478e7c266b94da914', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:18}] to localhost:27017
-2021-06-26 06:55:16.992  INFO 15328 --- [cluster-ClusterId{value='60d6b33478e7c266b94da914', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=704900}
-2021-06-26 06:55:17.156  INFO 15328 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@68e47e7, org.springframework.security.web.context.SecurityContextPersistenceFilter@328e4ec2, org.springframework.security.web.header.HeaderWriterFilter@4baf997, org.springframework.security.web.authentication.logout.LogoutFilter@b428830, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@8ac12e6, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@2b458cd6, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@1c00d406, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@68fc9167, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6546371, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@16ac4d3d, org.springframework.security.web.session.SessionManagementFilter@643f6179, org.springframework.security.web.access.ExceptionTranslationFilter@20b829d5, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@3b770d07]
-2021-06-26 06:55:17.198  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:55:17.199  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:55:17.220  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:55:17.228  INFO 15328 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:55:17.232  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:55:17.237  INFO 15328 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:55:17.248  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:55:17.248  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:55:17.248  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:55:17.249  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:55:17.250  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:55:17.250  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:55:17.250  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:55:17.250  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:55:17.251  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:55:17.251  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:55:17.252  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:55:17.252  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:55:17.252  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:55:17.252  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:55:17.256  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.256  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.256  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.256  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.256  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:55:17.257  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:55:17.260  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:55:17.260  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:55:17.260  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:55:17.260  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:55:17.260  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:55:17.263  INFO 15328 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:55:17.299  INFO 15328 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:55:17.305  INFO 15328 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 3.403 seconds (JVM running for 4.132)
-2021-06-26 06:56:07.848  INFO 15328 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:56:19.717  INFO 9744 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 9744 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:56:19.725  INFO 9744 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:56:21.644  INFO 9744 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:56:21.655  INFO 9744 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:56:21.655  INFO 9744 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:56:21.870  INFO 9744 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:56:21.872  INFO 9744 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2050 ms
-2021-06-26 06:56:22.648  INFO 9744 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:56:22.746  INFO 9744 --- [cluster-ClusterId{value='60d6b37659a4b650ced68a41', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:19}] to localhost:27017
-2021-06-26 06:56:22.755  INFO 9744 --- [cluster-ClusterId{value='60d6b37659a4b650ced68a41', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=4730300}
-2021-06-26 06:56:22.838  INFO 9744 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:20}] to localhost:27017
-2021-06-26 06:56:23.034  INFO 9744 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:56:23.219  INFO 9744 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:56:23.226  INFO 9744 --- [cluster-ClusterId{value='60d6b37759a4b650ced68a42', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:21}] to localhost:27017
-2021-06-26 06:56:23.227  INFO 9744 --- [cluster-ClusterId{value='60d6b37759a4b650ced68a42', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=632800}
-2021-06-26 06:56:23.461  INFO 9744 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@72a7aa4f, org.springframework.security.web.context.SecurityContextPersistenceFilter@3b3056a6, org.springframework.security.web.header.HeaderWriterFilter@28cb86b2, org.springframework.security.web.authentication.logout.LogoutFilter@75ad30c1, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@26ca12a2, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@17134190, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@537ca28e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@51d8f2f2, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@586843bc, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5b322873, org.springframework.security.web.session.SessionManagementFilter@748904e8, org.springframework.security.web.access.ExceptionTranslationFilter@19b9f903, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@14a1769d]
-2021-06-26 06:56:23.529  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:56:23.532  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:56:23.566  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:56:23.582  INFO 9744 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:56:23.589  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:56:23.597  INFO 9744 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:56:23.619  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:56:23.621  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:56:23.621  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:56:23.622  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:56:23.623  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:56:23.623  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:56:23.624  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:56:23.624  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:56:23.626  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:56:23.627  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:56:23.627  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:56:23.628  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:56:23.628  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:56:23.629  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:56:23.634  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.636  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.636  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.637  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.637  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.638  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.639  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.640  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:56:23.640  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:56:23.652  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:56:23.655  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:56:23.656  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:56:23.658  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:56:23.658  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:56:23.659  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:56:23.659  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:56:23.659  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:56:23.659  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:56:23.660  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:56:23.660  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:56:23.667  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:56:23.667  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:56:23.667  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:56:23.668  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:56:23.668  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:56:23.674  INFO 9744 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:56:23.768  INFO 9744 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:56:23.785  INFO 9744 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 4.903 seconds (JVM running for 5.732)
-2021-06-26 06:57:04.442  INFO 9744 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:57:07.359  INFO 4052 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 4052 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:57:07.368  INFO 4052 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:57:09.047  INFO 4052 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:57:09.058  INFO 4052 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:57:09.058  INFO 4052 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:57:09.239  INFO 4052 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:57:09.239  INFO 4052 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1784 ms
-2021-06-26 06:57:09.745  INFO 4052 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:57:09.812  INFO 4052 --- [cluster-ClusterId{value='60d6b3a5997cc92564b01b46', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:22}] to localhost:27017
-2021-06-26 06:57:09.820  INFO 4052 --- [cluster-ClusterId{value='60d6b3a5997cc92564b01b46', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=4474200}
-2021-06-26 06:57:09.923  INFO 4052 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:23}] to localhost:27017
-2021-06-26 06:57:10.098  INFO 4052 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:57:10.231  INFO 4052 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:57:10.237  INFO 4052 --- [cluster-ClusterId{value='60d6b3a6997cc92564b01b47', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:24}] to localhost:27017
-2021-06-26 06:57:10.238  INFO 4052 --- [cluster-ClusterId{value='60d6b3a6997cc92564b01b47', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=791400}
-2021-06-26 06:57:10.474  INFO 4052 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@9e33a6a, org.springframework.security.web.context.SecurityContextPersistenceFilter@6164e137, org.springframework.security.web.header.HeaderWriterFilter@5b7308aa, org.springframework.security.web.authentication.logout.LogoutFilter@2ba024cb, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@7185e611, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@72eed547, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@c497a55, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7ef8e623, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1eab8437, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7493d937, org.springframework.security.web.session.SessionManagementFilter@42aa1324, org.springframework.security.web.access.ExceptionTranslationFilter@b428830, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@2bdb5e0f]
-2021-06-26 06:57:10.537  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:57:10.539  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:57:10.572  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:57:10.583  INFO 4052 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:57:10.590  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:57:10.597  INFO 4052 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:57:10.613  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:57:10.614  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:57:10.614  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:57:10.615  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:57:10.615  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:57:10.616  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:57:10.616  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:57:10.616  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:57:10.619  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:57:10.620  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:57:10.620  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:57:10.621  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:57:10.621  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:57:10.622  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:57:10.627  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.628  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.628  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.628  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:57:10.629  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:57:10.630  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:57:10.634  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:57:10.636  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:57:10.636  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:57:10.636  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:57:10.636  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:57:10.643  INFO 4052 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:57:10.706  INFO 4052 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:57:10.714  INFO 4052 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 4.146 seconds (JVM running for 5.291)
-2021-06-26 06:57:21.167  INFO 4052 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2021-06-26 06:57:21.167  INFO 4052 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2021-06-26 06:57:21.175  INFO 4052 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
-2021-06-26 06:57:21.443  WARN 4052 --- [http-nio-8080-exec-1] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [162] milliseconds.
-2021-06-26 06:57:21.454  INFO 4052 --- [http-nio-8080-exec-1] c.vaadin.flow.spring.SpringInstantiator  : The number of beans implementing 'I18NProvider' is 0. Cannot use Spring beans for I18N, falling back to the default behavior
-2021-06-26 06:58:33.122  INFO 4052 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:58:33.256  INFO 4052 --- [SpringContextShutdownHook] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:58:33.257  WARN 4052 --- [SpringContextShutdownHook] org.atmosphere.cpr.DefaultBroadcaster    : AtmosphereResource 2c084aa7-f951-4212-9691-1ac0911e06d2 is not suspended. If cached messages exists, this may cause unexpected situation. Suspend first
-2021-06-26 06:58:38.412  INFO 788 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 788 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
-2021-06-26 06:58:38.418  INFO 788 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
-2021-06-26 06:58:40.315  INFO 788 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
-2021-06-26 06:58:40.328  INFO 788 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2021-06-26 06:58:40.328  INFO 788 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
-2021-06-26 06:58:40.510  INFO 788 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2021-06-26 06:58:40.510  INFO 788 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1958 ms
-2021-06-26 06:58:41.012  INFO 788 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:58:41.078  INFO 788 --- [cluster-ClusterId{value='60d6b401dbac2858ee77a769', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:25}] to localhost:27017
-2021-06-26 06:58:41.087  INFO 788 --- [cluster-ClusterId{value='60d6b401dbac2858ee77a769', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=5256400}
-2021-06-26 06:58:41.185  INFO 788 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:26}] to localhost:27017
-2021-06-26 06:58:41.368  INFO 788 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-06-26 06:58:41.521  INFO 788 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
-2021-06-26 06:58:41.527  INFO 788 --- [cluster-ClusterId{value='60d6b401dbac2858ee77a76a', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:27}] to localhost:27017
-2021-06-26 06:58:41.528  INFO 788 --- [cluster-ClusterId{value='60d6b401dbac2858ee77a76a', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=811100}
-2021-06-26 06:58:41.737  INFO 788 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@762bf32d, org.springframework.security.web.context.SecurityContextPersistenceFilter@17134190, org.springframework.security.web.header.HeaderWriterFilter@29dcdd1c, org.springframework.security.web.authentication.logout.LogoutFilter@7f642bf, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@5b322873, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@1182413a, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@6d7740f0, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5599b5bb, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1d1bf7bf, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7b1a30e5, org.springframework.security.web.session.SessionManagementFilter@524f5ea5, org.springframework.security.web.access.ExceptionTranslationFilter@4f235e8e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4c5da4f9]
-2021-06-26 06:58:41.795  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
-2021-06-26 06:58:41.798  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
-2021-06-26 06:58:41.839  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
-2021-06-26 06:58:41.851  INFO 788 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 06:58:41.856  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
-2021-06-26 06:58:41.863  INFO 788 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
-2021-06-26 06:58:41.874  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
-2021-06-26 06:58:41.875  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
-2021-06-26 06:58:41.877  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
-2021-06-26 06:58:41.878  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
-2021-06-26 06:58:41.878  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
-2021-06-26 06:58:41.879  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
-2021-06-26 06:58:41.879  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
-2021-06-26 06:58:41.879  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
-2021-06-26 06:58:41.880  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
-2021-06-26 06:58:41.881  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
-2021-06-26 06:58:41.881  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
-2021-06-26 06:58:41.881  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
-2021-06-26 06:58:41.881  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
-2021-06-26 06:58:41.882  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
-2021-06-26 06:58:41.885  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.886  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.886  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.886  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.886  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
-2021-06-26 06:58:41.887  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
-2021-06-26 06:58:41.888  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
-2021-06-26 06:58:41.888  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
-2021-06-26 06:58:41.888  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
-2021-06-26 06:58:41.888  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
-2021-06-26 06:58:41.888  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
-2021-06-26 06:58:41.891  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
-2021-06-26 06:58:41.892  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
-2021-06-26 06:58:41.893  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
-2021-06-26 06:58:41.893  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
-2021-06-26 06:58:41.893  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
-2021-06-26 06:58:41.898  INFO 788 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
-2021-06-26 06:58:41.945  INFO 788 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2021-06-26 06:58:41.952  INFO 788 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 4.408 seconds (JVM running for 5.283)
-2021-06-26 06:58:46.901  INFO 788 --- [http-nio-8080-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2021-06-26 06:58:46.901  INFO 788 --- [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2021-06-26 06:58:46.916  INFO 788 --- [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 15 ms
-2021-06-26 06:58:47.106  WARN 788 --- [http-nio-8080-exec-3] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [160] milliseconds.
-2021-06-26 06:58:47.113  INFO 788 --- [http-nio-8080-exec-3] c.vaadin.flow.spring.SpringInstantiator  : The number of beans implementing 'I18NProvider' is 0. Cannot use Spring beans for I18N, falling back to the default behavior
-2021-06-26 07:02:32.847  INFO 788 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
-2021-06-26 07:02:32.979  INFO 788 --- [SpringContextShutdownHook] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
-2021-06-26 07:02:32.980  WARN 788 --- [SpringContextShutdownHook] org.atmosphere.cpr.DefaultBroadcaster    : AtmosphereResource dcf96d24-bc94-4294-850c-5b85c3f4da1e is not suspended. If cached messages exists, this may cause unexpected situation. Suspend first
+2021-07-09 09:58:28.751  INFO 440 --- [main] p.p.SmartHouse.SmartHouseApplication     : Starting SmartHouseApplication on Michal with PID 440 (started by spoma in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse)
+2021-07-09 09:58:28.916  INFO 440 --- [main] p.p.SmartHouse.SmartHouseApplication     : No active profile set, falling back to default profiles: default
+2021-07-09 09:58:30.953  INFO 440 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-07-09 09:58:30.962  INFO 440 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-07-09 09:58:30.962  INFO 440 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.31]
+2021-07-09 09:58:31.142  INFO 440 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-07-09 09:58:31.142  INFO 440 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2089 ms
+2021-07-09 09:58:33.551  INFO 440 --- [main] c.v.f.s.VaadinServletContextInitializer  : Search for subclasses and classes with annotations took 2 seconds
+2021-07-09 09:58:33.555  INFO 440 --- [main] c.v.f.server.startup.DevModeInitializer  : Starting dev-mode updaters in D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse folder.
+2021-07-09 09:58:33.708  INFO 440 --- [main] dev-updater                              : Visited 94 classes. Took 24 ms.
+2021-07-09 09:58:33.782  INFO 440 --- [main] dev-updater                              : Skipping `npm install`.
+2021-07-09 09:58:33.783  INFO 440 --- [main] dev-updater                              : Copying frontend resources from jar files ...
+2021-07-09 09:58:34.051  INFO 440 --- [main] dev-updater                              : Visited 12 resources. Took 268 ms.
+2021-07-09 09:58:34.079  WARN 440 --- [main] dev-updater                              : Use the './' prefix for files in the 'D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse\.\frontend' folder: 'styles.css', please update your annotations.
+2021-07-09 09:58:34.242  INFO 440 --- [main] dev-updater                              : No js modules to update 'D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse\target\frontend\generated-flow-imports.js' file
+2021-07-09 09:58:35.972  INFO 440 --- [main] dev-webpack                              : Starting webpack-dev-server, port: 57655 dir: D:\Desktop\InteliJ-workspace\20 Projects\SmartHouse
+2021-07-09 09:58:35.975  INFO 440 --- [main] dev-webpack                              : Running webpack to compile frontend resources. This may take a moment, please stand by...
+2021-07-09 09:59:07.227  INFO 440 --- [main] dev-webpack                              : Webpack startup and compilation completed in 31255ms
+2021-07-09 09:59:07.443  INFO 440 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+2021-07-09 09:59:07.564  INFO 440 --- [cluster-ClusterId{value='60e801cb39069a062fb4aee2', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:59}] to localhost:27017
+2021-07-09 09:59:07.569  INFO 440 --- [cluster-ClusterId{value='60e801cb39069a062fb4aee2', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2696500}
+2021-07-09 09:59:07.601  INFO 440 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:60}] to localhost:27017
+2021-07-09 09:59:07.937  INFO 440 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-07-09 09:59:08.072  INFO 440 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+2021-07-09 09:59:08.077  INFO 440 --- [cluster-ClusterId{value='60e801cc39069a062fb4aee3', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:61}] to localhost:27017
+2021-07-09 09:59:08.078  INFO 440 --- [cluster-ClusterId{value='60e801cc39069a062fb4aee3', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[4, 2, 3]}, minWireVersion=0, maxWireVersion=8, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=684000}
+2021-07-09 09:59:08.306  INFO 440 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@433ae644, org.springframework.security.web.context.SecurityContextPersistenceFilter@1b0c0b3e, org.springframework.security.web.header.HeaderWriterFilter@6a146acb, org.springframework.security.web.authentication.logout.LogoutFilter@2e3bfce8, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@daa6654, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4f67dbce, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@653b49c4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5960fd98, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@44ccebf1, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@687eb9c9, org.springframework.security.web.session.SessionManagementFilter@5354b0bc, org.springframework.security.web.access.ExceptionTranslationFilter@165348d0, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@2ba8f528]
+2021-07-09 09:59:08.367  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler mapped to context-path: /*
+2021-07-09 09:59:08.368  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed the following AtmosphereInterceptor mapped to AtmosphereHandler com.vaadin.flow.server.communication.PushAtmosphereHandler
+2021-07-09 09:59:08.416  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using org.atmosphere.util.VoidAnnotationProcessor for processing annotation
+2021-07-09 09:59:08.433  INFO 440 --- [main] org.atmosphere.util.ForkJoinPool         : Using ForkJoinPool  java.util.concurrent.ForkJoinPool. Set the org.atmosphere.cpr.broadcaster.maxAsyncWriteThreads to -1 to fully use its power.
+2021-07-09 09:59:08.438  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+2021-07-09 09:59:08.449  INFO 440 --- [main] o.a.container.JSR356AsyncSupport         : JSR 356 Mapping path /vaadinServlet
+2021-07-09 09:59:08.467  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installing Default AtmosphereInterceptors
+2021-07-09 09:59:08.467  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CorsInterceptor : CORS Interceptor Support
+2021-07-09 09:59:08.467  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.CacheHeadersInterceptor : Default Response's Headers Interceptor
+2021-07-09 09:59:08.468  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+2021-07-09 09:59:08.469  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+2021-07-09 09:59:08.469  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Dropping Interceptor org.atmosphere.interceptor.HeartbeatInterceptor
+2021-07-09 09:59:08.470  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+2021-07-09 09:59:08.470  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+2021-07-09 09:59:08.472  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+2021-07-09 09:59:08.472  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor : org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor
+2021-07-09 09:59:08.473  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+2021-07-09 09:59:08.473  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : 	org.atmosphere.interceptor.IdleResourceInterceptor : org.atmosphere.interceptor.IdleResourceInterceptor
+2021-07-09 09:59:08.473  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults to disable them.
+2021-07-09 09:59:08.475  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor CORS Interceptor Support with priority FIRST_BEFORE_DEFAULT 
+2021-07-09 09:59:08.482  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Default Response's Headers Interceptor with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser Padding Interceptor Support with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Android Interceptor Support with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor SSE Interceptor Support with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor JSONP Interceptor Support with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Atmosphere JavaScript Protocol with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.483  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.WebSocketMessageSuspendInterceptor with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor Browser disconnection detection with priority AFTER_DEFAULT 
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor org.atmosphere.interceptor.IdleResourceInterceptor with priority BEFORE_DEFAULT 
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using EndpointMapper class org.atmosphere.util.DefaultEndpointMapper
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterCache: org.atmosphere.cache.UUIDBroadcasterCache
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Default Broadcaster Class: org.atmosphere.cpr.DefaultBroadcaster
+2021-07-09 09:59:08.484  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Shared List Resources: false
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Broadcaster Polling Wait Time 100
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Shared ExecutorService supported: true
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Messaging ExecutorService Pool Size unavailable - Not instance of ThreadPoolExecutor
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Async I/O Thread Pool Size: 200
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using AtmosphereResurceFactory: org.atmosphere.cpr.DefaultAtmosphereResourceFactory
+2021-07-09 09:59:08.485  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+2021-07-09 09:59:08.489  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Invoke AtmosphereInterceptor on WebSocket message true
+2021-07-09 09:59:08.490  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : HttpSession supported: true
+2021-07-09 09:59:08.490  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using DefaultAtmosphereObjectFactory for dependency injection and object creation
+2021-07-09 09:59:08.490  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere is using async support: org.atmosphere.container.JSR356AsyncSupport running under container: Apache Tomcat/9.0.31 using javax.servlet/3.0 and jsr356/WebSocket API
+2021-07-09 09:59:08.490  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Atmosphere Framework 2.4.30.slf4jvaadin1 started.
+2021-07-09 09:59:08.496  INFO 440 --- [main] org.atmosphere.cpr.AtmosphereFramework   : Installed AtmosphereInterceptor  Track Message Size Interceptor using | with priority BEFORE_DEFAULT 
+2021-07-09 09:59:08.542  INFO 440 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-07-09 09:59:08.547  INFO 440 --- [main] p.p.SmartHouse.SmartHouseApplication     : Started SmartHouseApplication in 40.66 seconds (JVM running for 42.374)
+2021-07-09 10:10:44.391  INFO 440 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-07-09 10:10:44.391  INFO 440 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-07-09 10:10:44.399  INFO 440 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms
+2021-07-09 10:10:44.469  WARN 440 --- [http-nio-8080-exec-1] c.v.f.s.DefaultDeploymentConfiguration   : 
+====================================================================
+Vaadin is running in DEBUG MODE.
+In order to run your application in production mode and disable debug features, you should enable it by setting the servlet init parameter productionMode to true.
+See https://vaadin.com/docs/v14/flow/production/tutorial-production-mode-basic.html for more information about the production mode.
+====================================================================
+2021-07-09 10:10:44.653  WARN 440 --- [http-nio-8080-exec-1] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [144] milliseconds.
+2021-07-09 10:10:44.661  INFO 440 --- [http-nio-8080-exec-1] c.vaadin.flow.spring.SpringInstantiator  : The number of beans implementing 'I18NProvider' is 0. Cannot use Spring beans for I18N, falling back to the default behavior

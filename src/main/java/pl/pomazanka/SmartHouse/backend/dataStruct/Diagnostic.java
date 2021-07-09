@@ -69,7 +69,7 @@ public class Diagnostic extends Module {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		return;
 	}
 
