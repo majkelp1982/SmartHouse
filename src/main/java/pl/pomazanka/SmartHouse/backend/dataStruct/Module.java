@@ -2,14 +2,19 @@ package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.common.Logger;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.ControlValue;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.Mode;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.VentZones;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.Zone;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public abstract class Module {
-	public static final int FAULT_MAX = 20;
+	public static final int FAULT_MAX = 200;
 	@Autowired
 	transient Diagnostic diagnostic;
 	private int moduleType;
@@ -38,8 +43,6 @@ public abstract class Module {
 	//Abstract declaration
 	abstract void faultCheck();
 
-	abstract void assignNV();
-
 	abstract void faultListInit() throws Exception;
 
 	public int getModuleType() {
@@ -56,6 +59,60 @@ public abstract class Module {
 
 	public void updateDiag(int[] packetData) {
 		diagnostic.updateDiag(getModuleType(), new int[]{packetData[3], packetData[4], packetData[5], packetData[6]},(-1*packetData[7]));
+	}
+
+	protected void assignNV(Object object) throws Exception {
+			Field[] fields = this.getClass().getDeclaredFields();
+
+			for (int i = 0; i < fields.length; i++) {
+				String fieldType = fields[i].getGenericType().getTypeName();
+				if (fieldType == null)
+					throw new Exception("Zmienna nie może być typem null");
+				if (fieldType.toUpperCase().contains("INT"))
+					continue;
+				if (fieldType.toUpperCase().contains("BYTE"))
+					continue;
+				if (fieldType.toUpperCase().contains("BOOLEAN"))
+					continue;
+				if (fieldType.toUpperCase().contains("FLOAT"))
+					continue;
+				if (fieldType.toUpperCase().contains("BME"))
+					continue;
+				if (fieldType.toUpperCase().contains("FAN"))
+					continue;
+				fields[i].setAccessible(true);
+				if (fields[i].getType() == ControlValue.class) {
+					ControlValue value = (ControlValue) fields[i].get(this);
+					value.setUpToDate();
+					continue;
+				}
+				if (fields[i].getType() == Mode.class) {
+					Mode value = (Mode) fields[i].get(this);
+					ControlValue trigger = value.getTrigger();
+					ControlValue triggerInt = value.getTriggerInt();
+					ControlValue delayTime = value.getDelayTime();
+					trigger.setUpToDate();
+					triggerInt.setUpToDate();
+					delayTime.setUpToDate();
+					continue;
+				}
+
+				if (fields[i].getType() == VentZones[].class) {
+					VentZones[] ventZones = (VentZones[]) fields[i].get(this);
+					for (int j = 0; j < ventZones.length; j++) {
+						Field[] subFields = ventZones[j].getClass().getDeclaredFields();
+						for (int k = 0; k < subFields.length; k++) {
+							subFields[k].setAccessible(true);
+							Zone zone = (Zone) subFields[k].get(ventZones[j]);
+							ControlValue subValue = zone.getRequest();
+							subValue.setUpToDate();
+						}
+					}
+					continue;
+				}
+				//if still type not found throw exception
+				throw new Exception("Nieznany typ zmiennej");
+			}
 	}
 
 	public void setFaultPresent(int faultNo, boolean present) {
@@ -138,6 +195,10 @@ public abstract class Module {
 		return value1 == value2;
 	}
 
+	public boolean cmp(ControlValue value1, ControlValue value2) {
+		return value1.getIsValue().equals(value2.getIsValue());
+	}
+
 	protected LocalDateTime getCurrentDate() {
 		return LocalDateTime.now();
 	}
@@ -170,7 +231,13 @@ public abstract class Module {
 			setDiagnosticLastUpdate(getCurrentDate());
 
 		faultCheck();
-		if (!isReqUpdateValues()) assignNV();
+		try {
+			if (!isReqUpdateValues()) assignNV(this);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			//FIXME tłumimy?
+		}
 
 	}
 

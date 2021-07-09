@@ -139,7 +139,7 @@ public class Module_ExtLights extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		for (int i=0; i<4; i++) {
 			try {
 				NVLightDimmer[i] = (LightDimmer) lightDimmer[i].clone();

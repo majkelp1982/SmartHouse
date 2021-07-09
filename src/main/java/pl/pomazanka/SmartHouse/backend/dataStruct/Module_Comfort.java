@@ -86,7 +86,7 @@ public class Module_Comfort extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		for (int i = 0; i < 7; i++)
 			zone[i].NVReqTemp = zone[i].reqTemp;
 	}

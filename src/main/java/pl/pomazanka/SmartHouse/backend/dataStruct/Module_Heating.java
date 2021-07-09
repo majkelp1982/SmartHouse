@@ -279,7 +279,7 @@ public class Module_Heating extends Module implements Cloneable {
 	}
 
 	@Override
-	void assignNV() {
+	protected void assignNV(Object object) throws Exception {
 		NVCheapTariffOnly = cheapTariffOnly;
 		NVHeatingActivated = heatingActivated;
 		NVWaterSuperheat = waterSuperheat;

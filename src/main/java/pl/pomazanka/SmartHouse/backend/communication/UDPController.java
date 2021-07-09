@@ -29,6 +29,9 @@ public class UDPController {
 	private static final int PACKET_SIZE_MODULE_12_DIAG = 8;                // length of UDP diagnose from module 12 "oczyszczalnia"
 	private static final int PACKET_SIZE_MODULE_13 = 40;                    // length of UDP data from module 3 "wentylacja"
 	private static final int PACKET_SIZE_MODULE_13_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
+	//FIXME tymczasowe dodane 0
+	public static final int PACKET_SIZE_MODULE_130 = 90;                    // length of UDP data from module 3 "wentylacja"
+	private static final int PACKET_SIZE_MODULE_130_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
 	private static final int PACKET_SIZE_MODULE_14 = 22;                    // length of UDP data from module 14 "Ogrzewanie"
 	private static final int PACKET_SIZE_MODULE_14_DIAG = 8;                // length of UDP diagnose from module 14 "Ogrzewanie"
 	private static final int PACKET_SIZE_MODULE_16 = 19;                    // length of UDP data from module 16 "Oświetlenie zewnętrzne"
@@ -46,6 +49,8 @@ public class UDPController {
 	Module_Comfort module_comfort;
 	@Autowired
 	Module_Vent module_vent;
+	@Autowired
+	Module_Vent2 module_vent2;
 	@Autowired
 	Module_Weather module_weather;
 	@Autowired
@@ -86,6 +91,9 @@ public class UDPController {
 				case 13:
 					if (packetLength == PACKET_SIZE_MODULE_13_DIAG) packetCorrect = true;
 					break;
+				case 130:
+					if (packetLength == PACKET_SIZE_MODULE_130_DIAG) packetCorrect = true;
+					break;
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14_DIAG) packetCorrect = true;
 					break;
@@ -111,6 +119,9 @@ public class UDPController {
 					break;
 				case 13:
 					if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;
+					break;
+				case 130:
+					if (packetLength == PACKET_SIZE_MODULE_130) packetCorrect = true;
 					break;
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;
@@ -223,6 +234,25 @@ public class UDPController {
 		sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[11]);
 		sendData(moduleMain, module_vent.getModuleType(), 0, 33, module_vent.getNVDefrostTrigger());
 		sendData(moduleMain, module_vent.getModuleType(), 0, 35, module_vent.getNVHumidityTrigger());
+	}
+
+	private void sendVent2NV() {
+//		int[] hours = module_vent.getNVHour();
+//
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 1, hours[0]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 2, hours[1]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 3, hours[2]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[3]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[4]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[5]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[6]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[7]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[8]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[9]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[10]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[11]);
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 33, module_vent.getNVDefrostTrigger());
+//		sendData(moduleMain, module_vent.getModuleType(), 0, 35, module_vent.getNVHumidityTrigger());
 	}
 
 	private void sendWeatherNV() {
@@ -350,6 +380,7 @@ public class UDPController {
 				if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
 				if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
 				if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
+				if ((module_vent2.isReqUpdateValues()) && (!module_vent2.isAllUpToDate())) sendVent2NV();
 				if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendWeatherNV();
 				if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
 				if ((module_extLights.isReqUpdateValues()) && (!module_extLights.isAllUpToDate())) sendExtLightNV();
