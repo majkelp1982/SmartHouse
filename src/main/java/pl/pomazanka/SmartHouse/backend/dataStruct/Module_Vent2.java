@@ -28,10 +28,10 @@ public class Module_Vent2 extends Module implements Cloneable {
 	// byte 0
 	private boolean humidityAlert = false;
 	private boolean bypassOpen = false;
-	private boolean circuitPump = false;
+	private boolean circuitPump =false;
 	private boolean reqPumpColdWater = false;
 	private boolean reqPumpHotWater = false;
-	private boolean defrostActive;
+	private boolean defrostActive = false;
 	private ControlValue reqAutoDiagnosis = new ControlValue(false);
 
 	// byte 1
@@ -96,104 +96,52 @@ public class Module_Vent2 extends Module implements Cloneable {
 		return humidityAlert;
 	}
 
-	public void setHumidityAlert(boolean humidityAlert) {
-		this.humidityAlert = humidityAlert;
-	}
-
 	public boolean isBypassOpen() {
 		return bypassOpen;
-	}
-
-	public void setBypassOpen(boolean bypassOpen) {
-		this.bypassOpen = bypassOpen;
 	}
 
 	public boolean isCircuitPump() {
 		return circuitPump;
 	}
 
-	public void setCircuitPump(boolean circuitPump) {
-		this.circuitPump = circuitPump;
-	}
-
 	public boolean isReqPumpColdWater() {
 		return reqPumpColdWater;
-	}
-
-	public void setReqPumpColdWater(boolean reqPumpColdWater) {
-		this.reqPumpColdWater = reqPumpColdWater;
 	}
 
 	public boolean isReqPumpHotWater() {
 		return reqPumpHotWater;
 	}
 
-	public void setReqPumpHotWater(boolean reqPumpHotWater) {
-		this.reqPumpHotWater = reqPumpHotWater;
-	}
-
 	public boolean isDefrostActive() {
 		return defrostActive;
-	}
-
-	public void setDefrostActive(boolean defrostActive) {
-		this.defrostActive = defrostActive;
 	}
 
 	public ControlValue getReqAutoDiagnosis() {
 		return reqAutoDiagnosis;
 	}
 
-	public void setReqAutoDiagnosis(ControlValue reqAutoDiagnosis) {
-		this.reqAutoDiagnosis = reqAutoDiagnosis;
-	}
-
 	public boolean isNormalOn() {
 		return normalOn;
-	}
-
-	public void setNormalOn(boolean normalOn) {
-		this.normalOn = normalOn;
 	}
 
 	public ControlValue getActiveCooling() {
 		return activeCooling;
 	}
 
-	public void setActiveCooling(ControlValue activeCooling) {
-		this.activeCooling = activeCooling;
-	}
-
 	public ControlValue getActiveHeating() {
 		return activeHeating;
-	}
-
-	public void setActiveHeating(ControlValue activeHeating) {
-		this.activeHeating = activeHeating;
 	}
 
 	public ControlValue getReqLazDol() {
 		return reqLazDol;
 	}
 
-	public void setReqLazDol(ControlValue reqLazDol) {
-		this.reqLazDol = reqLazDol;
-	}
-
 	public ControlValue getReqLazGora() {
 		return reqLazGora;
 	}
 
-	public void setReqLazGora(ControlValue reqLazGora) {
-		this.reqLazGora = reqLazGora;
-	}
-
 	public ControlValue getReqKuchnia() {
 		return reqKuchnia;
-	}
-
-	public void setReqKuchnia(ControlValue reqKuchnia) {
-		this.reqKuchnia = reqKuchnia;
 	}
 
 	public BME280[] getBme280() {
@@ -216,56 +164,29 @@ public class Module_Vent2 extends Module implements Cloneable {
 		return heatExchanger;
 	}
 
-	public void setHeatExchanger(Float[] heatExchanger) {
-		this.heatExchanger = heatExchanger;
-	}
-
 	public Mode getNormalMode() {
 		return normalMode;
-	}
-
-	public void setNormalMode(Mode normalMode) {
-		this.normalMode = normalMode;
 	}
 
 	public Mode getHumidityAlertMode() {
 		return humidityAlertMode;
 	}
 
-	public void setHumidityAlertMode(Mode humidityAlertMode) {
-		this.humidityAlertMode = humidityAlertMode;
-	}
-
 	public Mode getDefrostMode() {
 		return defrostMode;
-	}
-
-	public void setDefrostMode(Mode defrostMode) {
-		this.defrostMode = defrostMode;
 	}
 
 	public VentZones[] getActiveTempRegByHours() {
 		return activeTempRegByHours;
 	}
 
-	public void setActiveTempRegByHours(VentZones[] activeTempRegByHours) {
-		this.activeTempRegByHours = activeTempRegByHours;
-	}
 
 	public ControlValue getMinTemp() {
 		return minTemp;
 	}
 
-	public void setMinTemp(ControlValue minTemp) {
-		this.minTemp = minTemp;
-	}
-
 	public VentZones[] getNormalOnByHours() {
 		return normalOnByHours;
-	}
-
-	public void setNormalOnByHours(VentZones[] normalOnByHours) {
-		this.normalOnByHours = normalOnByHours;
 	}
 
 	public boolean isAllUpToDate() {
@@ -322,24 +243,24 @@ public class Module_Vent2 extends Module implements Cloneable {
 			case 0: // standard frame 0
 				//byte 0
 				humidityAlert = bitStatus(data[0], 7);
-				bypassOpen = bitStatus(data[0], 6);
-				circuitPump = bitStatus(data[0], 5);
-				reqPumpColdWater = bitStatus(data[0], 4);
-				reqPumpHotWater = bitStatus(data[0], 3);
-				defrostActive = bitStatus(data[0], 2);
+				bypassOpen = (bitStatus(data[0], 6));
+				circuitPump = (bitStatus(data[0], 5));
+				reqPumpColdWater = (bitStatus(data[0], 4));
+				reqPumpHotWater = (bitStatus(data[0], 3));
+				defrostActive = (bitStatus(data[0], 2));
 				reqAutoDiagnosis.setIsValue(bitStatus(data[0], 0));
 
 				//byte 1
-				normalOn = bitStatus(data[1], 7);
-				activeCooling.setIsValue(bitStatus(data[1], 6));
-				activeHeating.setIsValue(bitStatus(data[1], 5));
-				reqLazDol.setIsValue(bitStatus(data[1], 4));
-				reqLazGora.setIsValue(bitStatus(data[1], 3));
-				reqKuchnia.setIsValue(bitStatus(data[1], 2));
+				normalOn = (bitStatus(data[1], 7));
+				activeCooling.setIsValue(bitStatus(data[0], 0));
+				activeHeating.setIsValue(bitStatus(data[0], 0));
+				reqLazDol.setIsValue(bitStatus(data[0], 0));
+				reqLazGora.setIsValue(bitStatus(data[0], 0));
+				reqKuchnia.setIsValue(bitStatus(data[0], 0));
 
 				//byte 2-17
 				for (int i = 0; i < 4; i++) {
-					double tValue = data[2 + i * 4] + packetData[2 + i * 4 + 1] / 10.0;
+					double tValue = data[2 + i * 4] + data[2 + i * 4 + 1] / 10.0;
 					bme280[i].setTemp(getFloatValue(tValue));
 					bme280[i].setHumidity(data[2 + i * 4 + 2]);
 					bme280[i].setPressure(data[2 + i * 4 + 3] * 10);

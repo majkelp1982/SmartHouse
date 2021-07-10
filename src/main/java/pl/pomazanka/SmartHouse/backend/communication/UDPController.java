@@ -342,12 +342,12 @@ public class UDPController {
 					System.out.println("ERROR wątku "+error.getMessage());
 					mongoDBController.saveError("MAIN ERROR", error.getMessage());
 				} catch (Exception exc) {
-					System.out.println("ERROR wątku "+exc.getMessage());
-					mongoDBController.saveError("MAIN EXCEPTION", exc.getMessage());
+					System.out.println("EXCEPTION wątku "+exc.toString());
+					mongoDBController.saveError("MAIN EXCEPTION", exc.toString());
 
 				} catch (Throwable throwable) {
 					throwable.printStackTrace();
-					System.out.println("BłAD WĄTKU"+throwable);;
+					System.out.println("THROWABLE WĄTKU "+throwable);;
 					mongoDBController.saveError("MAIN THROWABLE", throwable.getMessage());
 
 				}
