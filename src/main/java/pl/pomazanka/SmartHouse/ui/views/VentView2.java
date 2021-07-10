@@ -32,8 +32,11 @@ public class VentView2 extends View {
 	Section[] section = new Section[5];
 	Info[][][] info = new Info[4][5][4];
 
+	NumberField normalDelayTime;
 	NumberField humidityTriggerInt;
+	NumberField humidityDelayTime;
 	NumberField defrostTriggerInt;
+	NumberField defrostDelayTime;
 	NumberField minTempNumberField;
 
 	Button activeCoolingButton;
@@ -107,14 +110,17 @@ public class VentView2 extends View {
 
 		section[index].getTileDetailsContainer(2).add(info[index][2][0].getSource());
 		section[index].getTileDetailsContainer(2).add(info[index][2][1].getSource());
+		section[index].getTileDetailsContainer(2).add(normalDelayTime.getSource());
 
 		section[index].getTileDetailsContainer(3).add(info[index][3][0].getSource());
 		section[index].getTileDetailsContainer(3).add(info[index][3][1].getSource());
 		section[index].getTileDetailsContainer(3).add(humidityTriggerInt.getSource());
+		section[index].getTileDetailsContainer(3).add(humidityDelayTime.getSource());
 
 		section[index].getTileDetailsContainer(4).add(info[index][4][0].getSource());
 		section[index].getTileDetailsContainer(4).add(info[index][4][1].getSource());
 		section[index].getTileDetailsContainer(4).add(defrostTriggerInt.getSource());
+		section[index].getTileDetailsContainer(4).add(defrostDelayTime.getSource());
 
 		//Section 1
 		index = 1;
@@ -211,15 +217,29 @@ public class VentView2 extends View {
 		//NormaOn tryb
 		info[index][2][0] = new Info("trigger", true, (boolean) module_vent2.getNormalMode().getTrigger().getIsValue());
 		info[index][2][1] = new Info("czas do końca", "min", false, false, module_vent2.getNormalMode().getTimeLeft(), 0, 0, 0);
+		double val = (int) module_vent2.getNormalMode().getDelayTime().getIsValue();
+		normalDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		normalDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent2.getNormalMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(normalDelayTime.getSource());
+			module_vent2.setReqUpdateValues(true);
+		});
 
 		//HumidityAlert tryb
 		info[index][3][0] = new Info("trigger", true, (boolean) module_vent2.getHumidityAlertMode().getTrigger().getIsValue());
 		info[index][3][1] = new Info("czas do końca", "min", false, false, module_vent2.getHumidityAlertMode().getTimeLeft(), 0, 0, 0);
-		double val = (int) module_vent2.getHumidityAlertMode().getTriggerInt().getIsValue();
+		val = (int) module_vent2.getHumidityAlertMode().getTriggerInt().getIsValue();
 		humidityTriggerInt = new NumberField("próg załączenia [%]", val, 20, 100, 1);
 		humidityTriggerInt.getSource().addValueChangeListener(valueChangeEvent -> {
 			module_vent2.getHumidityAlertMode().getTriggerInt().setNewValue((int) Math.round(valueChangeEvent.getValue()));
 			setPendingColor(humidityTriggerInt.getSource());
+			module_vent2.setReqUpdateValues(true);
+		});
+		val = (int) module_vent2.getHumidityAlertMode().getDelayTime().getIsValue();
+		humidityDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		humidityDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent2.getHumidityAlertMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(humidityDelayTime.getSource());
 			module_vent2.setReqUpdateValues(true);
 		});
 
@@ -231,6 +251,13 @@ public class VentView2 extends View {
 		defrostTriggerInt.getSource().addValueChangeListener(valueChangeEvent -> {
 			module_vent2.getDefrostMode().getTriggerInt().setNewValue((int) Math.round(valueChangeEvent.getValue()));
 			setPendingColor(defrostTriggerInt.getSource());
+			module_vent2.setReqUpdateValues(true);
+		});
+		val = (int) module_vent2.getDefrostMode().getDelayTime().getIsValue();
+		defrostDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		defrostDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent2.getDefrostMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(defrostDelayTime.getSource());
 			module_vent2.setReqUpdateValues(true);
 		});
 	}
@@ -406,18 +433,21 @@ public class VentView2 extends View {
 		//NormaOn tryb
 		info[index][2][0].setValue((boolean) module_vent2.getNormalMode().getTrigger().getIsValue());
 		info[index][2][1].setValue(module_vent2.getNormalMode().getTimeLeft());
+		normalDelayTime.setNumberField((int)module_vent2.getNormalMode().getDelayTime().getIsValue(),(int)module_vent2.getNormalMode().getDelayTime().getNewValue());
 
 		//HumidityAlert tryb
 		info[index][3][0].setValue((boolean)module_vent2.getHumidityAlertMode().getTrigger().getIsValue());
 		info[index][3][1].setValue(module_vent2.getHumidityAlertMode().getTimeLeft());
 		double val = (int) module_vent2.getHumidityAlertMode().getTriggerInt().getIsValue();
 		humidityTriggerInt.setNumberField((int)module_vent2.getHumidityAlertMode().getTriggerInt().getIsValue(),(int)module_vent2.getHumidityAlertMode().getTriggerInt().getNewValue());
+		humidityDelayTime.setNumberField((int)module_vent2.getHumidityAlertMode().getDelayTime().getIsValue(),(int)module_vent2.getHumidityAlertMode().getDelayTime().getNewValue());
 
 		//Defrost tryb
 		info[index][4][0].setValue((boolean) module_vent2.getDefrostMode().getTrigger().getIsValue());
 		info[index][4][1].setValue(module_vent2.getDefrostMode().getTimeLeft());
 		val = (int) module_vent2.getDefrostMode().getTriggerInt().getIsValue();
 		defrostTriggerInt.setNumberField((int)module_vent2.getDefrostMode().getTriggerInt().getIsValue(), (int)module_vent2.getDefrostMode().getTriggerInt().getNewValue());
+		defrostDelayTime.setNumberField((int)module_vent2.getDefrostMode().getDelayTime().getIsValue(),(int)module_vent2.getDefrostMode().getDelayTime().getNewValue());
 
 		index=1;
 		activeCoolingButton.setButtonColor((boolean) module_vent2.getActiveCooling().getIsValue(), (boolean) module_vent2.getActiveCooling().getNewValue());

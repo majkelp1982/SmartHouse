@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.common.Logger;
 import pl.pomazanka.SmartHouse.backend.dataStruct.*;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.VentZones;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -185,6 +186,11 @@ public class UDPController {
 		buffer[3] = (byte) byteNo;
 		buffer[4] = (byte) newValue;
 		UDPSend(buffer);
+		try {
+			TimeUnit.MILLISECONDS.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//send Heating Module NV
@@ -237,26 +243,45 @@ public class UDPController {
 	}
 
 	private void sendVent2NV() {
-//		int[] hours = module_vent.getNVHour();
-//
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 1, hours[0]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 2, hours[1]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 3, hours[2]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[3]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[4]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[5]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[6]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[7]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[8]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[9]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[10]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[11]);
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 33, module_vent.getNVDefrostTrigger());
-//		sendData(moduleMain, module_vent.getModuleType(), 0, 35, module_vent.getNVHumidityTrigger());
+		int newValue;
+		newValue = (((boolean)module_vent2.getReqAutoDiagnosis().getNewValue()?1:0));
+		sendData(moduleMain, module_vent2.getModuleType(),0, 0, newValue);
+
+		newValue = ((((boolean)module_vent2.getActiveCooling().getNewValue()?1:0) << 6) | (((boolean)module_vent2.getActiveHeating().getNewValue()?1:0) << 5) |
+		(((boolean)module_vent2.getReqLazDol().getNewValue()?1:0) << 4) | (((boolean)module_vent2.getReqLazGora().getNewValue()?1:0) << 3) |
+		(((boolean)module_vent2.getReqKuchnia().getNewValue()?1:0) << 2));
+		sendData(moduleMain, module_vent2.getModuleType(),0, 1, newValue);
+
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 30, (int)module_vent2.getNormalMode().getDelayTime().getNewValue());
+
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 31, (int)module_vent2.getHumidityAlertMode().getTriggerInt().getNewValue());
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 32, (int)module_vent2.getHumidityAlertMode().getDelayTime().getNewValue());
+
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 33, (int)module_vent2.getDefrostMode().getTriggerInt().getNewValue());
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 34, (int)module_vent2.getDefrostMode().getDelayTime().getNewValue());
+
+		for (int i=35; i<=58; i++) {
+			VentZones ventZones = module_vent2.getActiveTempRegByHours()[i-35];
+			newValue = ((((boolean)ventZones.getSalon().getRequest().getNewValue()?1:0) << 7) | (((boolean)ventZones.getPralnia().getRequest().getNewValue()?1:0) << 6) |
+					(((boolean)ventZones.getLazDol().getRequest().getNewValue()?1:0) << 5) | (((boolean)ventZones.getRodzice().getRequest().getNewValue()?1:0) << 4) |
+					(((boolean)ventZones.getNatalia().getRequest().getNewValue()?1:0) << 3) | (((boolean)ventZones.getKarolina().getRequest().getNewValue()?1:0) << 2) |
+					(((boolean)ventZones.getLazGora().getRequest().getNewValue()?1:0) << 1));
+			sendData(moduleMain, module_vent2.getModuleType(), 0, i, newValue);
+		}
+
+		sendData(moduleMain, module_vent2.getModuleType(), 0, 59, (int)module_vent2.getMinTemp().getNewValue());
+
+		for (int i=60; i<=83; i++) {
+			VentZones ventZones = module_vent2.getNormalOnByHours()[i-60];
+			newValue = ((((boolean)ventZones.getSalon().getRequest().getNewValue()?1:0) << 7) | (((boolean)ventZones.getPralnia().getRequest().getNewValue()?1:0) << 6) |
+					(((boolean)ventZones.getLazDol().getRequest().getNewValue()?1:0) << 5) | (((boolean)ventZones.getRodzice().getRequest().getNewValue()?1:0) << 4) |
+					(((boolean)ventZones.getNatalia().getRequest().getNewValue()?1:0) << 3) | (((boolean)ventZones.getKarolina().getRequest().getNewValue()?1:0) << 2) |
+					(((boolean)ventZones.getLazGora().getRequest().getNewValue()?1:0) << 1));
+			sendData(moduleMain, module_vent2.getModuleType(), 0, i, newValue);
+		}
 	}
 
 	private void sendWeatherNV() {
-
 	}
 
 	private void sendSewageNV() {

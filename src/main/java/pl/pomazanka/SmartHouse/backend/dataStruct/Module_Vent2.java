@@ -199,6 +199,7 @@ public class Module_Vent2 extends Module implements Cloneable {
 		if (isUpToDate()) setUpToDate(reqKuchnia.isUpToDate());
 
 		if (isUpToDate()) setUpToDate(normalMode.getTriggerInt().isUpToDate());
+		if (isUpToDate()) setUpToDate(normalMode.getDelayTime().isUpToDate());
 		if (isUpToDate()) setUpToDate(humidityAlertMode.getTriggerInt().isUpToDate());
 		if (isUpToDate()) setUpToDate(humidityAlertMode.getDelayTime().isUpToDate());
 		if (isUpToDate()) setUpToDate(defrostMode.getTriggerInt().isUpToDate());
@@ -252,11 +253,11 @@ public class Module_Vent2 extends Module implements Cloneable {
 
 				//byte 1
 				normalOn = (bitStatus(data[1], 7));
-				activeCooling.setIsValue(bitStatus(data[0], 0));
-				activeHeating.setIsValue(bitStatus(data[0], 0));
-				reqLazDol.setIsValue(bitStatus(data[0], 0));
-				reqLazGora.setIsValue(bitStatus(data[0], 0));
-				reqKuchnia.setIsValue(bitStatus(data[0], 0));
+				activeCooling.setIsValue(bitStatus(data[1], 6));
+				activeHeating.setIsValue(bitStatus(data[1], 5));
+				reqLazDol.setIsValue(bitStatus(data[1], 4));
+				reqLazGora.setIsValue(bitStatus(data[1], 3));
+				reqKuchnia.setIsValue(bitStatus(data[1], 2));
 
 				//byte 2-17
 				for (int i = 0; i < 4; i++) {
