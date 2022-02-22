@@ -1,10 +1,10 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.BME280;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Equipment.Fan;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_Vent;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.VentZones;
+import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.Zone;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +31,25 @@ public class VentView extends View {
 
 	//Objects
 	Header header;
-	Section[] section = new Section[3];
-	Info[][][] info = new Info[2][4][4];
-	Grid<VentByHour> grid = new Grid<>();
-	List<VentByHour> actualDiagram = new ArrayList<>();
-	VentByHour[] ventByHour = new VentByHour[24];
-	NumberField defrostTrigger;
-	NumberField humidityTrigger;
+	Section[] section = new Section[5];
+	Info[][][] info = new Info[4][7][4];
+
+	NumberField normalDelayTime;
+	NumberField humidityTriggerInt;
+	NumberField humidityDelayTime;
+	NumberField defrostTriggerInt;
+	NumberField defrostDelayTime;
+	NumberField minTempNumberField;
+
+	Button activeCoolingButton;
+	Button activeHeatingButton;
+	Button reqLazDolButton;
+	Button reqLazGoraButton;
+	Button reqKuchniaButton;
+	Button reqAutoDiagnosisButton;
+
+	Grid<VentZonesByHour> activeRegGrid;
+	Grid<VentZonesByHour> normalModeGrid;
 
 	public VentView(Module_Vent module_vent) {
 		this.module_vent = module_vent;
@@ -49,53 +62,126 @@ public class VentView extends View {
 		section[0] = new Section();
 		section[1] = new Section();
 		section[2] = new Section();
+		section[3] = new Section();
+		section[4] = new Section();
 
-		//Section 0
-		section[0].createTile("fan.svg", "Status");
-		section[0].createTile("fan.svg", "Wentylatory");
-		section[0].createTile("fan.svg", "Odmrażanie");
+		//Section 0 Tryby
+		section[0].createTile("settings.svg", "Tryby");
+		section[0].createTile("status.svg", "Status");
+		section[0].createTile("fan.svg", "Normalny");
 		section[0].createTile("fan.svg", "Wilgoć");
+		section[0].createTile("fan.svg", "Odmrażanie");
 
-		//Section 1
-		section[1].createTile("thermometer.svg", "Czerpnia");
-		section[1].createTile("thermometer.svg", "Wyrzutnia");
-		section[1].createTile("thermometer.svg", "Nawiew");
-		section[1].createTile("thermometer.svg", "Wywiew");
+		//Section 1 Tryby
+		section[1].createTile("settings.svg", "Tryby");
+		section[1].createTile("settings.svg", "Wymuś");
+		section[1].createTile("thermometer.svg", "Wymiennik");
+		section[1].createTile("fan.svg", "Klapy nawiew");
+		section[1].createTile("fan.svg", "Klapy nawiew");
+		section[1].createTile("fan.svg", "Klapy wywiew");
+		section[1].createTile("fan.svg", "Klapy wywiew");
 
-		//Section 2
-		section[2].createTile("settings.svg", "Ustawienia");
+
+		//Section 2 BME i wentylatory
+		section[2].createTile("thermometer.svg", "Czerpnia");
+		section[2].createTile("thermometer.svg", "Wyrzutnia");
+		section[2].createTile("thermometer.svg", "Nawiew");
+		section[2].createTile("thermometer.svg", "Wywiew");
+		section[2].createTile("fan.svg", "Wentylatory");
+
+		//Section 3 ActiveTempMode
+		section[3].createTile("settings.svg", "ActiveTemp Mode");
+
+		//Section 2 NormalMode
+		section[4].createTile("settings.svg", "Normal Mode");
 
 		//Create sections info/buttons/number fields
 		createInfoSection0();
 		createInfoSection1();
 		createInfoSection2();
+		createInfoSection3();
+		createInfoSection4();
 
-		section[0].getTileDetailsContainer(0).add(info[0][0][0].getSource());
-		section[0].getTileDetailsContainer(0).add(info[0][0][1].getSource());
-		section[0].getTileDetailsContainer(0).add(info[0][0][2].getSource());
-		section[0].getTileDetailsContainer(0).add(info[0][0][3].getSource());
+		//Section 0
+		int index = 0;
+		section[index].getTileDetailsContainer(0).add(info[index][0][0].getSource());
+		section[index].getTileDetailsContainer(0).add(info[index][0][1].getSource());
+		section[index].getTileDetailsContainer(0).add(info[index][0][2].getSource());
+		section[index].getTileDetailsContainer(0).add(reqAutoDiagnosisButton.getSource());
 
-		section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
-		section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
-		section[0].getTileDetailsContainer(1).add(info[0][1][2].getSource());
+		section[index].getTileDetailsContainer(1).add(info[index][1][0].getSource());
+		section[index].getTileDetailsContainer(1).add(info[index][1][1].getSource());
+		section[index].getTileDetailsContainer(1).add(info[index][1][2].getSource());
+		section[index].getTileDetailsContainer(1).add(info[index][1][3].getSource());
 
-		section[0].getTileDetailsContainer(2).add(info[0][2][0].getSource());
-		section[0].getTileDetailsContainer(2).add(info[0][2][1].getSource());
-		section[0].getTileDetailsContainer(2).add(defrostTrigger.getSource());
+		section[index].getTileDetailsContainer(2).add(info[index][2][0].getSource());
+		section[index].getTileDetailsContainer(2).add(info[index][2][1].getSource());
+		section[index].getTileDetailsContainer(2).add(normalDelayTime.getSource());
 
-		section[0].getTileDetailsContainer(3).add(info[0][3][0].getSource());
-		section[0].getTileDetailsContainer(3).add(info[0][3][1].getSource());
-		section[0].getTileDetailsContainer(3).add(humidityTrigger.getSource());
+		section[index].getTileDetailsContainer(3).add(info[index][3][0].getSource());
+		section[index].getTileDetailsContainer(3).add(info[index][3][1].getSource());
+		section[index].getTileDetailsContainer(3).add(humidityTriggerInt.getSource());
+		section[index].getTileDetailsContainer(3).add(humidityDelayTime.getSource());
 
+		section[index].getTileDetailsContainer(4).add(info[index][4][0].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][1].getSource());
+		section[index].getTileDetailsContainer(4).add(defrostTriggerInt.getSource());
+		section[index].getTileDetailsContainer(4).add(defrostDelayTime.getSource());
+
+		//Section 1
+		index = 1;
+		section[index].getTileDetailsContainer(0).add(activeCoolingButton.getSource());
+		section[index].getTileDetailsContainer(0).add(activeHeatingButton.getSource());
+		section[index].getTileDetailsContainer(0).add(minTempNumberField.getSource());
+
+		section[index].getTileDetailsContainer(1).add(reqLazDolButton.getSource());
+		section[index].getTileDetailsContainer(1).add(reqLazGoraButton.getSource());
+		section[index].getTileDetailsContainer(1).add(reqKuchniaButton.getSource());
+		for (int i = 0; i < 4; i++)
+			section[index].getTileDetailsContainer(2).add(info[index][2][i].getSource());
+
+		section[index].getTileDetailsContainer(3).add(info[index][3][0].getSource());
+		section[index].getTileDetailsContainer(3).add(info[index][3][1].getSource());
+		section[index].getTileDetailsContainer(3).add(info[index][3][2].getSource());
+		section[index].getTileDetailsContainer(3).add(info[index][3][3].getSource());
+
+		section[index].getTileDetailsContainer(4).add(info[index][4][0].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][1].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][2].getSource());
+
+		section[index].getTileDetailsContainer(5).add(info[index][5][0].getSource());
+		section[index].getTileDetailsContainer(5).add(info[index][5][1].getSource());
+		section[index].getTileDetailsContainer(5).add(info[index][5][2].getSource());
+		section[index].getTileDetailsContainer(5).add(info[index][5][3].getSource());
+
+		section[index].getTileDetailsContainer(6).add(info[index][6][0].getSource());
+		section[index].getTileDetailsContainer(6).add(info[index][6][1].getSource());
+		section[index].getTileDetailsContainer(6).add(info[index][6][2].getSource());
+		section[index].getTileDetailsContainer(6).add(info[index][6][3].getSource());
+
+
+		//Section 2
+		index = 2;
 		for (int i = 0; i < 4; i++) {
-			section[1].getTileDetailsContainer(i).add(info[1][i][0].getSource());
-			section[1].getTileDetailsContainer(i).add(info[1][i][1].getSource());
-			section[1].getTileDetailsContainer(i).add(info[1][i][2].getSource());
+			section[index].getTileDetailsContainer(i).add(info[index][i][0].getSource());
+			section[index].getTileDetailsContainer(i).add(info[index][i][1].getSource());
+			section[index].getTileDetailsContainer(i).add(info[index][i][2].getSource());
 		}
+		section[index].getTileDetailsContainer(4).add(info[index][4][0].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][1].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][2].getSource());
+		section[index].getTileDetailsContainer(4).add(info[index][4][3].getSource());
 
-		section[2].getTileDetailsContainer(0).add(grid);
-		section[2].getTileDetailsContainer(0).setWidth("600px");
-		section[2].getTileDetailsContainer(0).setHeight("960px");
+		//Section 3
+		index = 3;
+		section[index].getTileDetailsContainer(0).add(activeRegGrid);
+		section[index].getTileDetailsContainer(0).setWidth("690px");
+		section[index].getTileDetailsContainer(0).setHeight("960px");
+		//Section 4
+		index = 4;
+		section[index].getTileDetailsContainer(0).add(normalModeGrid);
+		section[index].getTileDetailsContainer(0).setWidth("690px");
+		section[index].getTileDetailsContainer(0).setHeight("960px");
 
 		// Notification if user doesn't logged
 		Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
@@ -103,222 +189,299 @@ public class VentView extends View {
 			if (!isUserLoggedIn())
 				notification.open();
 		});
+		section[0].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
+		section[1].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
 		section[2].getSection().addClickListener(event -> {
 			if (!isUserLoggedIn())
 				notification.open();
 		});
-		section[0].getTileDetailsContainer(2).setEnabled(isUserLoggedIn());
+		section[3].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
+		section[4].getSection().addClickListener(event -> {
+			if (!isUserLoggedIn())
+				notification.open();
+		});
+
+		section[0].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
 		section[0].getTileDetailsContainer(3).setEnabled(isUserLoggedIn());
-		section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-		add(header.getHeader(), section[0].getSection(), section[1].getSection(), section[2].getSection());
+		section[0].getTileDetailsContainer(4).setEnabled(isUserLoggedIn());
+
+		section[1].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+		section[1].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
+
+		add(header.getHeader(), section[0].getSection(), section[1].getSection(),
+				section[2].getSection(), section[3].getSection(), section[4].getSection());
 	}
 
 	private void createInfoSection0() {
-		//Status
-		info[0][0][0] = new Info("normalON", true, module_vent.isNormalON());
-		info[0][0][1] = new Info("Wentylator", true, module_vent.isFanON());
-		info[0][0][2] = new Info("bypassOpen", true, module_vent.isBypassOpen());
-		info[0][0][3] = new Info("EFF", "%", module_vent.isFanON(), false, module_vent.getEfficiency(), 70, 1, 3);
-
-		Fan[] fans = module_vent.getFan();
-		info[0][1][0] = new Info("prędkość", "%", false, false, fans[0].getSpeed(), 0, 0, 0);
-		info[0][1][1] = new Info("obroty CZERPNIA", "min-1", false, false, fans[0].getRev(), 0, 0, 0);
-		info[0][1][2] = new Info("obroty WYRZUTNIA", "min-1", false, false, fans[1].getRev(), 0, 0, 0);
-
-		info[0][2][0] = new Info("odmrażanie", true, module_vent.isDefrost());
-		info[0][2][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(), 0, 0, 0);
-		defrostTrigger = new NumberField("min. EFF [%]", module_vent.getDefrostTrigger(), 20, 100, 1);
-		defrostTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_vent.setNVDefrostTrigger((int) Math.round(valueChangeEvent.getValue()));
-			setPendingColor(defrostTrigger.getSource());
+		int index = 0;
+		//Tryby
+		info[index][0][0] = new Info("normalON", true, module_vent.isNormalOn());
+		info[index][0][1] = new Info("humidityAlert", true, module_vent.isHumidityAlert());
+		info[index][0][2] = new Info("defrost", true, module_vent.isDefrostActive());
+		reqAutoDiagnosisButton = new Button("Autodiagnoza", true, (boolean) module_vent.getReqAutoDiagnosis().getIsValue());
+		reqAutoDiagnosisButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getReqAutoDiagnosis().setNewValue(!(boolean) module_vent.getReqAutoDiagnosis().getIsValue());
+			setPendingColor(reqAutoDiagnosisButton.getSource());
 			module_vent.setReqUpdateValues(true);
 		});
 
-		info[0][3][0] = new Info("wilgoć", true, module_vent.isDefrost());
-		info[0][3][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostTimeLeft(), 0, 0, 0);
-		humidityTrigger = new NumberField("próg załączenia [%]", module_vent.getHumidityTrigger(), 20, 100, 1);
-		humidityTrigger.getSource().addValueChangeListener(valueChangeEvent -> {
-			module_vent.setNVHumidityTrigger((int) Math.round(valueChangeEvent.getValue()));
-			setPendingColor(humidityTrigger.getSource());
+		//Status
+		info[index][1][0] = new Info("ByPass", true, module_vent.isBypassOpen());
+		info[index][1][1] = new Info("Pompa", true, module_vent.isCircuitPump());
+		info[index][1][2] = new Info("reqColdWater", true, module_vent.isReqPumpColdWater());
+		info[index][1][3] = new Info("reqHotWater", true, module_vent.isReqPumpHotWater());
+
+		//NormaOn tryb
+		info[index][2][0] = new Info("trigger", true, (boolean) module_vent.getNormalMode().getTrigger().getIsValue());
+		info[index][2][1] = new Info("czas do końca", "min", false, false, module_vent.getNormalMode().getTimeLeft(), 0, 0, 0);
+		double val = (int) module_vent.getNormalMode().getDelayTime().getIsValue();
+		normalDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		normalDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getNormalMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(normalDelayTime.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		//HumidityAlert tryb
+		info[index][3][0] = new Info("trigger", true, (boolean) module_vent.getHumidityAlertMode().getTrigger().getIsValue());
+		info[index][3][1] = new Info("czas do końca", "min", false, false, module_vent.getHumidityAlertMode().getTimeLeft(), 0, 0, 0);
+		val = (int) module_vent.getHumidityAlertMode().getTriggerInt().getIsValue();
+		humidityTriggerInt = new NumberField("próg załączenia [%]", val, 20, 100, 1);
+		humidityTriggerInt.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getHumidityAlertMode().getTriggerInt().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(humidityTriggerInt.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+		val = (int) module_vent.getHumidityAlertMode().getDelayTime().getIsValue();
+		humidityDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		humidityDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getHumidityAlertMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(humidityDelayTime.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		//Defrost tryb
+		info[index][4][0] = new Info("trigger", true, (boolean) module_vent.getDefrostMode().getTrigger().getIsValue());
+		info[index][4][1] = new Info("czas do końca", "min", false, false, module_vent.getDefrostMode().getTimeLeft(), 0, 0, 0);
+		val = (int) module_vent.getDefrostMode().getTriggerInt().getIsValue();
+		defrostTriggerInt = new NumberField("próg załączenia [hPa]", val, 20, 100, 1);
+		defrostTriggerInt.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getDefrostMode().getTriggerInt().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(defrostTriggerInt.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+		val = (int) module_vent.getDefrostMode().getDelayTime().getIsValue();
+		defrostDelayTime = new NumberField("czas podtrzymania [min]", val, 20, 100, 1);
+		defrostDelayTime.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getDefrostMode().getDelayTime().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(defrostDelayTime.getSource());
 			module_vent.setReqUpdateValues(true);
 		});
 	}
 
 	private void createInfoSection1() {
-		BME280[] bme280 = module_vent.getBme280();
-		for (int i = 0; i < 4; i++) {
-			info[1][i][0] = new Info("temp", "°C", false, false, bme280[i].getTemp(), 0, 0, 0);
-			info[1][i][1] = new Info("wilgotność", "%", false, false, bme280[i].getHumidity(), 0, 0, 0);
-			info[1][i][2] = new Info("ciśnienie", "hPa", false, false, bme280[i].getPressure(), 0, 0, 0);
-		}
+		int index = 1;
+		activeCoolingButton = new Button("chłodzenie", true, (boolean) module_vent.getActiveCooling().getIsValue());
+		activeCoolingButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getActiveCooling().setNewValue(!(boolean) module_vent.getActiveCooling().getIsValue());
+			setPendingColor(activeCoolingButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		activeHeatingButton = new Button("dogrzewanie", true, (boolean) module_vent.getActiveHeating().getIsValue());
+		activeHeatingButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getActiveHeating().setNewValue(!(boolean) module_vent.getActiveHeating().getIsValue());
+			setPendingColor(activeHeatingButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		minTempNumberField = new NumberField("histereza dogrzewania [°C]", (int) module_vent.getMinTemp().getIsValue(), 20, 100, 1);
+		minTempNumberField.getSource().addValueChangeListener(valueChangeEvent -> {
+			module_vent.getMinTemp().setNewValue((int) Math.round(valueChangeEvent.getValue()));
+			setPendingColor(minTempNumberField.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		reqLazDolButton = new Button("łazienka dół", true, (boolean) module_vent.getReqLazDol().getIsValue());
+		reqLazDolButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getReqLazDol().setNewValue(!(boolean) module_vent.getReqLazDol().getIsValue());
+			setPendingColor(reqLazDolButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		reqLazGoraButton = new Button("łazienka góra", true, (boolean) module_vent.getReqLazGora().getIsValue());
+		reqLazGoraButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getReqLazGora().setNewValue(!(boolean) module_vent.getReqLazGora().getIsValue());
+			setPendingColor(reqLazGoraButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		reqKuchniaButton = new Button("kuchnia", true, (boolean) module_vent.getReqKuchnia().getIsValue());
+		reqKuchniaButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getReqKuchnia().setNewValue(!(boolean) module_vent.getReqKuchnia().getIsValue());
+			setPendingColor(reqKuchniaButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+		reqKuchniaButton = new Button("kuchnia", true, (boolean) module_vent.getReqKuchnia().getIsValue());
+		reqKuchniaButton.getSource().addClickListener(buttonClickEvent -> {
+			module_vent.getReqKuchnia().setNewValue(!(boolean) module_vent.getReqKuchnia().getIsValue());
+			setPendingColor(reqKuchniaButton.getSource());
+			module_vent.setReqUpdateValues(true);
+		});
+
+
+		info[index][2][0] = new Info("woda wlot", "°C", false, false, module_vent.getHeatExchanger()[0], module_vent.getHeatExchanger()[0], 0.5, 1);
+		info[index][2][1] = new Info("woda wylot", "°C", false, false, module_vent.getHeatExchanger()[1], module_vent.getHeatExchanger()[1], 0.5, 1);
+		info[index][2][2] = new Info("powietrze wlot", "°C", false, false, module_vent.getHeatExchanger()[2], module_vent.getHeatExchanger()[2], 0.5, 1);
+		info[index][2][3] = new Info("powietrze wylot", "°C", false, false, module_vent.getHeatExchanger()[3], module_vent.getHeatExchanger()[3], 0.5, 1);
+
+		info[index][3][0] = new Info("salon1", true, module_vent.isSalon1());
+		info[index][3][1] = new Info("salon2", true, module_vent.isSalon2());
+		info[index][3][2] = new Info("gabinet", true, module_vent.isGabinet());
+		info[index][3][3] = new Info("warsztat", true, module_vent.isWarsztat());
+
+		info[index][4][0] = new Info("rodzice", true, module_vent.isRodzice());
+		info[index][4][1] = new Info("Natalia", true, module_vent.isNatalia());
+		info[index][4][2] = new Info("Karolina", true, module_vent.isKarolina());
+
+		info[index][5][0] = new Info("kuchnia", true, module_vent.isKuchnia());
+		info[index][5][1] = new Info("lazDol1", true, module_vent.isLazDol1());
+		info[index][5][2] = new Info("lazDol2", true, module_vent.isLazDol2());
+		info[index][5][3] = new Info("pralnia", true, module_vent.isPralnia());
+
+		info[index][6][0] = new Info("przedpokoj", true, module_vent.isPrzedpokoj());
+		info[index][6][1] = new Info("garderoba", true, module_vent.isGarderoba());
+		info[index][6][2] = new Info("lazGora1", true, module_vent.isLazGora1());
+		info[index][6][3] = new Info("lazGora2", true, module_vent.isLazGora2());
 	}
 
 	private void createInfoSection2() {
-		//Ustawienia
-		for (int i = 0; i < 24; i++)
-			ventByHour[i] = new VentByHour();
+		int index = 2;
+		BME280[] bme280 = module_vent.getBme280();
+		for (int i = 0; i < 4; i++) {
+			info[index][i][0] = new Info("temp", "°C", false, false, bme280[i].getTemp(), 0, 0, 0);
+			info[index][i][1] = new Info("wilgotność", "%", false, false, bme280[i].getHumidity(), 0, 0, 0);
+			info[index][i][2] = new Info("ciśnienie", "hPa", false, false, bme280[i].getPressure(), 0, 0, 0);
+		}
+		Fan[] fans = module_vent.getFan();
+		info[index][4][0] = new Info("prędkość CZERPNIA", "%", false, false, fans[0].getSpeed(), 0, 0, 0);
+		info[index][4][1] = new Info("obroty CZERPNIA", "min-1", false, false, fans[0].getRev(), 0, 0, 0);
+		info[index][4][2] = new Info("prędkość WYRZUTNIA", "%", false, false, fans[1].getSpeed(), 0, 0, 0);
+		info[index][4][3] = new Info("obroty WYRZUTNIA", "min-1", false, false, fans[1].getRev(), 0, 0, 0);
+	}
 
-		actualDiagram = getActualDiagram();
-		grid.addColumn(VentByHour::getHour).setHeader("Godzina");
+	private void createInfoSection3() {
+		int index = 3;
+		activeRegGrid = prepareGrid(module_vent.getActiveTempRegByHours());
+		activeRegGrid.setItems(getDiagram(module_vent.getActiveTempRegByHours()));
+	}
 
-		grid.addColumn(new ComponentRenderer<>(VentActive -> {
-			int quarterNo = 0;
-			boolean result = VentActive.getQuarterStatus(quarterNo);
-			String text = result ? "❶" : "⓿";
-			Info info = new Info(text, true, result);
-			info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
-			info.setValue(result);
-			if (VentActive.getQuarterActive(quarterNo))
-				info.getNameLabel().getStyle().set("color", "white");
-			if (VentActive.getQuarterPending(quarterNo))
-				info.getNameLabel().getStyle().set("color", "orange");
-			return info.getSource();
-		})).setHeader("0-14");
+	private void createInfoSection4() {
+		int index = 4;
+		normalModeGrid = prepareGrid(module_vent.getNormalOnByHours());
+		normalModeGrid.setItems(getDiagram(module_vent.getNormalOnByHours()));
+	}
 
-		grid.addColumn(new ComponentRenderer<>(VentActive -> {
-			int quarterNo = 1;
-			boolean result = VentActive.getQuarterStatus(quarterNo);
-			String text = result ? "❶" : "⓿";
-			Info info = new Info(text, true, result);
-			info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
-			info.setValue(result);
-			if (VentActive.getQuarterActive(quarterNo))
-				info.getNameLabel().getStyle().set("color", "white");
-			if (VentActive.getQuarterPending(quarterNo))
-				info.getNameLabel().getStyle().set("color", "orange");
-			return info.getSource();
-		})).setHeader("15-29");
+	private Grid prepareGrid(VentZones[] ventZonesArr) {
+		Grid<VentZonesByHour> grid = new Grid<>();
+//		grid.addColumn(VentZonesByHour::getHour).setHeader("Godzina");
 
-		grid.addColumn(new ComponentRenderer<>(VentActive -> {
-			int quarterNo = 2;
-			boolean result = VentActive.getQuarterStatus(quarterNo);
-			String text = result ? "❶" : "⓿";
-			Info info = new Info(text, true, result);
-			info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
-			info.setValue(result);
-			if (VentActive.getQuarterActive(quarterNo))
-				info.getNameLabel().getStyle().set("color", "white");
-			if (VentActive.getQuarterPending(quarterNo))
-				info.getNameLabel().getStyle().set("color", "orange");
-			return info.getSource();
-		})).setHeader("30-44");
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			HorizontalLayout layout = new HorizontalLayout();
+			Label label = new Label(""+cell.getHour());
+			layout.add(label);
+			layout.addClickListener(horizontalLayoutClickEvent -> {
+				gridListnerRow(ventZonesArr[cell.getHour()]);
+			});
+			return layout;
+//		})).setHeader("Godzina");
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>Godzina</div>"));
 
-		grid.addColumn(new ComponentRenderer<>(VentActive -> {
-			int quarterNo = 3;
-			boolean result = VentActive.getQuarterStatus(quarterNo);
-			String text = result ? "❶" : "⓿";
-			Info info = new Info(text, true, result);
-			info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(VentActive.getHour(), quarterNo));
-			info.setValue(result);
-			if (VentActive.getQuarterActive(quarterNo))
-				info.getNameLabel().getStyle().set("color", "white");
-			if (VentActive.getQuarterPending(quarterNo))
-				info.getNameLabel().getStyle().set("color", "orange");
-			return info.getSource();
-		})).setHeader("45-59");
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getSalon());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>Salon</div>"));
 
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getPralnia());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>Pralnia</div>"));
+
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getLazDol());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>łaź.dół</div>"));
+
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getRodzice());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>rodzice</div>"));
+
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getNatalia());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>Natalia</div>"));
+
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getKarolina());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>Karolina</div>"));
+
+		grid.addColumn(new ComponentRenderer<>(cell -> {
+			return setCell(cell.getVentZones().getLazGora());
+		})).setHeader(new Html("<div style='text-orientation: mixed;writing-mode: vertical-rl;'>łaź.góra</div>"));
 		grid.getColumns().forEach(ventByHourColumn -> ventByHourColumn.setAutoWidth(true));
-		grid.setItems(actualDiagram);
+
+		grid.getStyle().set("font-size", "15px");
+		return grid;
 	}
 
-	@SuppressWarnings("deprecation")
-	private List<VentByHour> getActualDiagram() {
-		int[] hours = module_vent.getHour();
-		actualDiagram.clear();
-		for (int i = 0; i < 12; i++) {
-			ventByHour[i * 2].setHour(i * 2);
-			ventByHour[i * 2].setQuarterStatus(0, bitStatus(hours[i], 7));
-			ventByHour[i * 2].setQuarterStatus(1, bitStatus(hours[i], 6));
-			ventByHour[i * 2].setQuarterStatus(2, bitStatus(hours[i], 5));
-			ventByHour[i * 2].setQuarterStatus(3, bitStatus(hours[i], 4));
-			actualDiagram.add(ventByHour[i * 2]);
-			ventByHour[i * 2 + 1].setHour(i * 2 + 1);
-			ventByHour[i * 2 + 1].setQuarterStatus(0, bitStatus(hours[i], 3));
-			ventByHour[i * 2 + 1].setQuarterStatus(1, bitStatus(hours[i], 2));
-			ventByHour[i * 2 + 1].setQuarterStatus(2, bitStatus(hours[i], 1));
-			ventByHour[i * 2 + 1].setQuarterStatus(3, bitStatus(hours[i], 0));
-			actualDiagram.add(ventByHour[i * 2 + 1]);
+	private HorizontalLayout setCell(Zone zone) {
+		boolean result = (boolean) zone.getRequest().getIsValue();
+		String text = result ? "❶" : "⓿";
+//		String text = result ? "●" : "◦";
+		Info info = new Info(text, true, result);
+		info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(zone));
+		info.setValue(result);
+		if (!zone.getRequest().isUpToDate())
+		info.getNameLabel().getStyle().set("color", "orange");
+		return info.getSource();
+	}
+
+	private List<VentZonesByHour> getDiagram(VentZones[] ventZones) {
+		ArrayList<VentZonesByHour> list = new ArrayList<>();
+		for (int i = 0; i < 24; i++) {
+			VentZonesByHour ventZonesByHour = new VentZonesByHour();
+			ventZonesByHour.setHour(i);
+			ventZonesByHour.setVentZones(ventZones[i]);
+			list.add(ventZonesByHour);
 		}
-
-		if (module_vent.isAllUpToDate()) {
-			for (int i = 0; i < 12; i++)
-				for (int j = 0; j < 4; j++) {
-					ventByHour[i * 2].setQuarterPending(j, false);
-					ventByHour[i * 2 + 1].setQuarterPending(j, false);
-				}
-		}
-
-		LocalDateTime currentDate = LocalDateTime.now();
-		int quarterActive;
-		if (currentDate.getMinute() < 15) quarterActive = 0;
-		else if (currentDate.getMinute() < 30) quarterActive = 1;
-		else if (currentDate.getMinute() < 45) quarterActive = 2;
-		else quarterActive = 3;
-		ventByHour[currentDate.getHour()].setQuarterActive(quarterActive, true);
-		return actualDiagram;
+		return list;
 	}
 
-	private int changeBitStatus(int data, int bitPos) {
-		int value = 1;
-		for (int i = 0; i < bitPos; i++)
-			value = value << 1;
-		if (((data >> bitPos) & 1) == 1)
-			data -= value;
-		else data += value;
-		return (data);
-	}
 
-	// return bit status from corresponding byte according to position in byte
-	private boolean bitStatus(int data, int bytePos) {
-		return (((data >> bytePos) & 1) == 1);
-	}
-
-	private void gridListener(int hour, int quarter) {
+	private void gridListener(Zone zone) {
 		if (!isUserLoggedIn()) return;
-		actualDiagram.get(hour).setQuarterPending(quarter, true);
-		int[] hours = module_vent.getNVHour();
-		if ((hour % 2) > 0) quarter += 4;
-		quarter = 7 - quarter;
-		hour = (int) (hour / 2);
-		switch (hour) {
-			case 0:
-				module_vent.setNVHour01(changeBitStatus(hours[hour], quarter));
-				break;
-			case 1:
-				module_vent.setNVHour23(changeBitStatus(hours[hour], quarter));
-				break;
-			case 2:
-				module_vent.setNVHour45(changeBitStatus(hours[hour], quarter));
-				break;
-			case 3:
-				module_vent.setNVHour67(changeBitStatus(hours[hour], quarter));
-				break;
-			case 4:
-				module_vent.setNVHour89(changeBitStatus(hours[hour], quarter));
-				break;
-			case 5:
-				module_vent.setNVHour1011(changeBitStatus(hours[hour], quarter));
-				break;
-			case 6:
-				module_vent.setNVHour1213(changeBitStatus(hours[hour], quarter));
-				break;
-			case 7:
-				module_vent.setNVHour1415(changeBitStatus(hours[hour], quarter));
-				break;
-			case 8:
-				module_vent.setNVHour1617(changeBitStatus(hours[hour], quarter));
-				break;
-			case 9:
-				module_vent.setNVHour1819(changeBitStatus(hours[hour], quarter));
-				break;
-			case 10:
-				module_vent.setNVHour2021(changeBitStatus(hours[hour], quarter));
-				break;
-			case 11:
-				module_vent.setNVHour2223(changeBitStatus(hours[hour], quarter));
-				break;
-		}
+		zone.getRequest().setNewValue(!(boolean)zone.getRequest().getIsValue());
 		module_vent.setReqUpdateValues(true);
+	}
+
+	private void gridListnerRow(VentZones ventZones) {
+		if (!isUserLoggedIn()) return;
+		boolean status = !(boolean)ventZones.getSalon().getRequest().getIsValue();
+		ventZones.getSalon().getRequest().setNewValue(status);
+		ventZones.getPralnia().getRequest().setNewValue(status);
+		ventZones.getLazDol().getRequest().setNewValue(status);
+		ventZones.getRodzice().getRequest().setNewValue(status);
+		ventZones.getNatalia().getRequest().setNewValue(status);
+		ventZones.getKarolina().getRequest().setNewValue(status);
+		ventZones.getLazGora().getRequest().setNewValue(status);
+		module_vent.setReqUpdateValues(true);
+
 	}
 
 	void update() {
@@ -326,73 +489,96 @@ public class VentView extends View {
 		header.setLastUpdate(module_vent.getFrameLastUpdate());
 		header.setDiagnoseUpdate(module_vent.getDiagnosticLastUpdate());
 
-		//Section 0 Status
-		info[0][0][0].setValue(module_vent.isNormalON());
-		info[0][0][1].setValue(module_vent.isFanON());
-		info[0][0][2].setValue(module_vent.isBypassOpen());
+		int index = 0;
+		//Tryby
+		info[index][0][0].setValue(module_vent.isNormalOn());
+		info[index][0][1].setValue(module_vent.isHumidityAlert());
+		info[index][0][2].setValue(module_vent.isDefrostActive());
+		reqAutoDiagnosisButton.setButtonColor((boolean) module_vent.getReqAutoDiagnosis().getIsValue(), (boolean) module_vent.getReqAutoDiagnosis().getNewValue());
 
-		Fan[] fans = module_vent.getFan();
-		info[0][1][0].setValue(fans[0].getSpeed());
-		info[0][1][1].setValue(fans[0].getRev());
-		info[0][1][2].setValue(fans[1].getRev());
+		//Status
+		info[index][1][0].setValue(module_vent.isBypassOpen());
+		info[index][1][1].setValue(module_vent.isCircuitPump());
+		info[index][1][2].setValue(module_vent.isReqPumpColdWater());
+		info[index][1][3].setValue(module_vent.isReqPumpHotWater());
 
-		info[0][2][0].setValue(module_vent.isDefrost());
-		info[0][2][1].setValue(module_vent.getDefrostTimeLeft());
-		defrostTrigger.setNumberField(module_vent.getDefrostTrigger(), module_vent.getNVDefrostTrigger());
+		//NormaOn tryb
+		info[index][2][0].setValue((boolean) module_vent.getNormalMode().getTrigger().getIsValue());
+		info[index][2][1].setValue(module_vent.getNormalMode().getTimeLeft());
+		normalDelayTime.setNumberField((int) module_vent.getNormalMode().getDelayTime().getIsValue(),(int) module_vent.getNormalMode().getDelayTime().getNewValue());
 
-		info[0][3][0].setValue(module_vent.isHumidityAlert());
-		info[0][3][1].setValue(module_vent.getHumidityTimeLeft());
-		humidityTrigger.setNumberField(module_vent.getHumidityTrigger(), module_vent.getNVHumidityTrigger());
+		//HumidityAlert tryb
+		info[index][3][0].setValue((boolean) module_vent.getHumidityAlertMode().getTrigger().getIsValue());
+		info[index][3][1].setValue(module_vent.getHumidityAlertMode().getTimeLeft());
+		double val = (int) module_vent.getHumidityAlertMode().getTriggerInt().getIsValue();
+		humidityTriggerInt.setNumberField((int) module_vent.getHumidityAlertMode().getTriggerInt().getIsValue(),(int) module_vent.getHumidityAlertMode().getTriggerInt().getNewValue());
+		humidityDelayTime.setNumberField((int) module_vent.getHumidityAlertMode().getDelayTime().getIsValue(),(int) module_vent.getHumidityAlertMode().getDelayTime().getNewValue());
 
+		//Defrost tryb
+		info[index][4][0].setValue((boolean) module_vent.getDefrostMode().getTrigger().getIsValue());
+		info[index][4][1].setValue(module_vent.getDefrostMode().getTimeLeft());
+		val = (int) module_vent.getDefrostMode().getTriggerInt().getIsValue();
+		defrostTriggerInt.setNumberField((int) module_vent.getDefrostMode().getTriggerInt().getIsValue(), (int) module_vent.getDefrostMode().getTriggerInt().getNewValue());
+		defrostDelayTime.setNumberField((int) module_vent.getDefrostMode().getDelayTime().getIsValue(),(int) module_vent.getDefrostMode().getDelayTime().getNewValue());
+
+		index=1;
+		activeCoolingButton.setButtonColor((boolean) module_vent.getActiveCooling().getIsValue(), (boolean) module_vent.getActiveCooling().getNewValue());
+		activeHeatingButton.setButtonColor((boolean) module_vent.getActiveHeating().getIsValue(), (boolean) module_vent.getActiveHeating().getNewValue());
+
+		minTempNumberField.setNumberField((int) module_vent.getMinTemp().getIsValue(),(int) module_vent.getMinTemp().getNewValue());
+		reqLazDolButton.setButtonColor((boolean) module_vent.getReqLazDol().getIsValue(), (boolean) module_vent.getReqLazDol().getNewValue());
+		reqLazGoraButton.setButtonColor((boolean) module_vent.getReqLazGora().getIsValue(), (boolean) module_vent.getReqLazGora().getNewValue());
+		reqKuchniaButton.setButtonColor((boolean) module_vent.getReqKuchnia().getIsValue(), (boolean) module_vent.getReqKuchnia().getNewValue());
+
+
+		info[index][2][0].setValue(module_vent.getHeatExchanger()[0]);
+		info[index][2][1].setValue(module_vent.getHeatExchanger()[1]);
+		info[index][2][2].setValue(module_vent.getHeatExchanger()[2]);
+		info[index][2][3].setValue(module_vent.getHeatExchanger()[3]);
+
+		info[index][3][0].setValue(module_vent.isSalon1());
+		info[index][3][0].setValue(module_vent.isSalon2());
+		info[index][3][1].setValue(module_vent.isSalon2());
+		info[index][3][2].setValue(module_vent.isGabinet());
+		info[index][3][3].setValue(module_vent.isWarsztat());
+
+		info[index][4][0].setValue(module_vent.isRodzice());
+		info[index][4][1].setValue(module_vent.isNatalia());
+		info[index][4][2].setValue(module_vent.isKarolina());
+
+		info[index][5][0].setValue(module_vent.isKuchnia());
+		info[index][5][1].setValue(module_vent.isLazDol1());
+		info[index][5][2].setValue(module_vent.isLazDol2());
+		info[index][5][3].setValue(module_vent.isPralnia());
+
+		info[index][6][0].setValue(module_vent.isPrzedpokoj());
+		info[index][6][1].setValue(module_vent.isGarderoba());
+		info[index][6][2].setValue(module_vent.isLazGora1());
+		info[index][6][3].setValue(module_vent.isLazGora2());
+
+		index = 2;
 		BME280[] bme280 = module_vent.getBme280();
 		for (int i = 0; i < 4; i++) {
-			info[1][i][0].setValue(bme280[i].getTemp());
-			info[1][i][1].setValue(bme280[i].getHumidity());
-			info[1][i][2].setValue(bme280[i].getPressure());
+			info[index][i][0].setValue(bme280[i].getTemp());
+			info[index][i][1].setValue(bme280[i].getHumidity());
+			info[index][i][2].setValue(bme280[i].getPressure());
 		}
 
-		//Grid
-		actualDiagram = getActualDiagram();
-		grid.setItems(actualDiagram);
+		Fan[] fans = module_vent.getFan();
+		info[index][4][0].setValue(fans[0].getSpeed());
+		info[index][4][1].setValue(fans[0].getRev());
+		info[index][4][2].setValue(fans[1].getSpeed());
+		info[index][4][3].setValue(fans[1].getRev());
+
+		activeRegGrid.setItems(getDiagram(module_vent.getActiveTempRegByHours()));
+		normalModeGrid.setItems(getDiagram(module_vent.getNormalOnByHours()));
 	}
 
-	private static class Quarter {
-		private boolean quarter;
-		private boolean pending;
-		private boolean active;
-
-		public boolean isQuarter() {
-			return quarter;
-		}
-
-		public void setQuarter(boolean quarter) {
-			this.quarter = quarter;
-		}
-
-		public boolean isPending() {
-			return pending;
-		}
-
-		public void setPending(boolean pending) {
-			this.pending = pending;
-		}
-
-		public boolean isActive() {
-			return active;
-		}
-
-		public void setActive(boolean active) {
-			this.active = active;
-		}
-	}
-
-	private static class VentByHour {
+	private static class VentZonesByHour {
 		private int hour;
-		private Quarter[] quarter = new Quarter[4];
+		private VentZones ventZones;
 
-		public VentByHour() {
-			for (int i = 0; i < 4; i++)
-				quarter[i] = new Quarter();
+		public VentZonesByHour() {
 		}
 
 		public int getHour() {
@@ -403,29 +589,12 @@ public class VentView extends View {
 			this.hour = hour;
 		}
 
-		public boolean getQuarterStatus(int quarterNo) {
-			return quarter[quarterNo].isQuarter();
+		public VentZones getVentZones() {
+			return ventZones;
 		}
 
-		public void setQuarterStatus(int quarterNo, boolean status) {
-			this.quarter[quarterNo].setActive(false);
-			this.quarter[quarterNo].setQuarter(status);
-		}
-
-		public boolean getQuarterPending(int quarterNo) {
-			return quarter[quarterNo].isPending();
-		}
-
-		public void setQuarterPending(int quarterNo, boolean status) {
-			this.quarter[quarterNo].setPending(status);
-		}
-
-		public boolean getQuarterActive(int quarterNo) {
-			return quarter[quarterNo].isActive();
-		}
-
-		public void setQuarterActive(int quarterNo, boolean status) {
-			this.quarter[quarterNo].setActive(status);
+		public void setVentZones(VentZones ventZones) {
+			this.ventZones = ventZones;
 		}
 	}
 }

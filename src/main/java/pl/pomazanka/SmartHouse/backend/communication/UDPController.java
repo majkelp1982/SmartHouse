@@ -11,8 +11,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -28,11 +26,8 @@ public class UDPController {
 	private static final int PACKET_SIZE_MODULE_11_DIAG = 8;                // length of UDP diagnose from module 11 "pogoda"
 	private static final int PACKET_SIZE_MODULE_12 = 9;                        // length of UDP data from module 12 "oczyszczalnia"
 	private static final int PACKET_SIZE_MODULE_12_DIAG = 8;                // length of UDP diagnose from module 12 "oczyszczalnia"
-	private static final int PACKET_SIZE_MODULE_13 = 40;                    // length of UDP data from module 3 "wentylacja"
-	private static final int PACKET_SIZE_MODULE_13_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
-	//FIXME tymczasowe dodane 0
-	public static final int PACKET_SIZE_MODULE_130 = 90;                    // length of UDP data from module 3 "wentylacja"
-	private static final int PACKET_SIZE_MODULE_130_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
+	public static final int PACKET_SIZE_MODULE_13 = 92;                    // length of UDP data from module 3 "wentylacja"
+	public static final int PACKET_SIZE_MODULE_13_DIAG = 8;                // length of UDP diagnose from module 3 "wentylacja"
 	private static final int PACKET_SIZE_MODULE_14 = 22;                    // length of UDP data from module 14 "Ogrzewanie"
 	private static final int PACKET_SIZE_MODULE_14_DIAG = 8;                // length of UDP diagnose from module 14 "Ogrzewanie"
 	private static final int PACKET_SIZE_MODULE_16 = 19;                    // length of UDP data from module 16 "Oświetlenie zewnętrzne"
@@ -50,8 +45,6 @@ public class UDPController {
 	Module_Comfort module_comfort;
 	@Autowired
 	Module_Vent module_vent;
-	@Autowired
-	Module_Vent2 module_vent2;
 	@Autowired
 	Module_Weather module_weather;
 	@Autowired
@@ -92,9 +85,6 @@ public class UDPController {
 				case 13:
 					if (packetLength == PACKET_SIZE_MODULE_13_DIAG) packetCorrect = true;
 					break;
-				case 130:
-					if (packetLength == PACKET_SIZE_MODULE_130_DIAG) packetCorrect = true;
-					break;
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14_DIAG) packetCorrect = true;
 					break;
@@ -120,9 +110,6 @@ public class UDPController {
 					break;
 				case 13:
 					if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;
-					break;
-				case 130:
-					if (packetLength == PACKET_SIZE_MODULE_130) packetCorrect = true;
 					break;
 				case 14:
 					if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;
@@ -222,62 +209,62 @@ public class UDPController {
 		sendData(moduleMain, module_comfort.getModuleType(), 0, 26, (int) (zone[6].NVReqTemp * 2));
 	}
 
-	//send Vent Module NV
 	private void sendVentNV() {
-		int[] hours = module_vent.getNVHour();
-
-		sendData(moduleMain, module_vent.getModuleType(), 0, 1, hours[0]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 2, hours[1]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 3, hours[2]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 4, hours[3]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 5, hours[4]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 6, hours[5]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 7, hours[6]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 8, hours[7]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 9, hours[8]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 10, hours[9]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 11, hours[10]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 12, hours[11]);
-		sendData(moduleMain, module_vent.getModuleType(), 0, 33, module_vent.getNVDefrostTrigger());
-		sendData(moduleMain, module_vent.getModuleType(), 0, 35, module_vent.getNVHumidityTrigger());
-	}
-
-	private void sendVent2NV() {
 		int newValue;
-		newValue = (((boolean)module_vent2.getReqAutoDiagnosis().getNewValue()?1:0));
-		sendData(moduleMain, module_vent2.getModuleType(),0, 0, newValue);
 
-		newValue = ((((boolean)module_vent2.getActiveCooling().getNewValue()?1:0) << 6) | (((boolean)module_vent2.getActiveHeating().getNewValue()?1:0) << 5) |
-		(((boolean)module_vent2.getReqLazDol().getNewValue()?1:0) << 4) | (((boolean)module_vent2.getReqLazGora().getNewValue()?1:0) << 3) |
-		(((boolean)module_vent2.getReqKuchnia().getNewValue()?1:0) << 2));
-		sendData(moduleMain, module_vent2.getModuleType(),0, 1, newValue);
-
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 30, (int)module_vent2.getNormalMode().getDelayTime().getNewValue());
-
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 31, (int)module_vent2.getHumidityAlertMode().getTriggerInt().getNewValue());
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 32, (int)module_vent2.getHumidityAlertMode().getDelayTime().getNewValue());
-
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 33, (int)module_vent2.getDefrostMode().getTriggerInt().getNewValue());
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 34, (int)module_vent2.getDefrostMode().getDelayTime().getNewValue());
-
-		for (int i=35; i<=58; i++) {
-			VentZones ventZones = module_vent2.getActiveTempRegByHours()[i-35];
-			newValue = ((((boolean)ventZones.getSalon().getRequest().getNewValue()?1:0) << 7) | (((boolean)ventZones.getPralnia().getRequest().getNewValue()?1:0) << 6) |
-					(((boolean)ventZones.getLazDol().getRequest().getNewValue()?1:0) << 5) | (((boolean)ventZones.getRodzice().getRequest().getNewValue()?1:0) << 4) |
-					(((boolean)ventZones.getNatalia().getRequest().getNewValue()?1:0) << 3) | (((boolean)ventZones.getKarolina().getRequest().getNewValue()?1:0) << 2) |
-					(((boolean)ventZones.getLazGora().getRequest().getNewValue()?1:0) << 1));
-			sendData(moduleMain, module_vent2.getModuleType(), 0, i, newValue);
+		if (!module_vent.getReqAutoDiagnosis().isUpToDate()) {
+			newValue = (((boolean) module_vent.getReqAutoDiagnosis().getNewValue()?1:0));
+			sendData(moduleMain, module_vent.getModuleType(),0, 0, newValue);
 		}
 
-		sendData(moduleMain, module_vent2.getModuleType(), 0, 59, (int)module_vent2.getMinTemp().getNewValue());
+		if (!module_vent.getActiveCooling().isUpToDate() || !module_vent.getActiveHeating().isUpToDate() ||
+				!module_vent.getReqLazDol().isUpToDate() || !module_vent.getReqLazGora().isUpToDate() || !module_vent.getReqKuchnia().isUpToDate()) {
+			newValue = ((((boolean) module_vent.getActiveCooling().getNewValue()?1:0) << 6) | (((boolean) module_vent.getActiveHeating().getNewValue()?1:0) << 5) |
+					(((boolean) module_vent.getReqLazDol().getNewValue()?1:0) << 4) | (((boolean) module_vent.getReqLazGora().getNewValue()?1:0) << 3) |
+					(((boolean) module_vent.getReqKuchnia().getNewValue()?1:0) << 2));
+			sendData(moduleMain, module_vent.getModuleType(),0, 1, newValue);
+		}
+
+		if (!module_vent.getNormalMode().getDelayTime().isUpToDate())
+			sendData(moduleMain, module_vent.getModuleType(), 0, 30, (int) module_vent.getNormalMode().getDelayTime().getNewValue());
+
+		if (!module_vent.getHumidityAlertMode().getTriggerInt().isUpToDate())
+			sendData(moduleMain, module_vent.getModuleType(), 0, 31, (int) module_vent.getHumidityAlertMode().getTriggerInt().getNewValue());
+		if (!module_vent.getHumidityAlertMode().getDelayTime().isUpToDate())
+			sendData(moduleMain, module_vent.getModuleType(), 0, 32, (int) module_vent.getHumidityAlertMode().getDelayTime().getNewValue());
+
+		if (!module_vent.getDefrostMode().getTriggerInt().isUpToDate())
+		sendData(moduleMain, module_vent.getModuleType(), 0, 33, (int) module_vent.getDefrostMode().getTriggerInt().getNewValue());
+		if (!module_vent.getDefrostMode().getDelayTime().isUpToDate())
+		sendData(moduleMain, module_vent.getModuleType(), 0, 34, (int) module_vent.getDefrostMode().getDelayTime().getNewValue());
+
+		for (int i=35; i<=58; i++) {
+			VentZones ventZones = module_vent.getActiveTempRegByHours()[i-35];
+			if (!ventZones.getSalon().getRequest().isUpToDate() || !ventZones.getPralnia().getRequest().isUpToDate() || !ventZones.getLazDol().getRequest().isUpToDate()
+					|| !ventZones.getRodzice().getRequest().isUpToDate() || !ventZones.getNatalia().getRequest().isUpToDate() || !ventZones.getKarolina().getRequest().isUpToDate()
+					|| !ventZones.getLazGora().getRequest().isUpToDate()) {
+				newValue = ((((boolean) ventZones.getSalon().getRequest().getNewValue() ? 1 : 0) << 7) | (((boolean) ventZones.getPralnia().getRequest().getNewValue() ? 1 : 0) << 6) |
+						(((boolean) ventZones.getLazDol().getRequest().getNewValue() ? 1 : 0) << 5) | (((boolean) ventZones.getRodzice().getRequest().getNewValue() ? 1 : 0) << 4) |
+						(((boolean) ventZones.getNatalia().getRequest().getNewValue() ? 1 : 0) << 3) | (((boolean) ventZones.getKarolina().getRequest().getNewValue() ? 1 : 0) << 2) |
+						(((boolean) ventZones.getLazGora().getRequest().getNewValue() ? 1 : 0) << 1));
+				sendData(moduleMain, module_vent.getModuleType(), 0, i, newValue);
+			}
+		}
+
+		if (!module_vent.getMinTemp().isUpToDate())
+		sendData(moduleMain, module_vent.getModuleType(), 0, 59, (int) module_vent.getMinTemp().getNewValue());
 
 		for (int i=60; i<=83; i++) {
-			VentZones ventZones = module_vent2.getNormalOnByHours()[i-60];
-			newValue = ((((boolean)ventZones.getSalon().getRequest().getNewValue()?1:0) << 7) | (((boolean)ventZones.getPralnia().getRequest().getNewValue()?1:0) << 6) |
-					(((boolean)ventZones.getLazDol().getRequest().getNewValue()?1:0) << 5) | (((boolean)ventZones.getRodzice().getRequest().getNewValue()?1:0) << 4) |
-					(((boolean)ventZones.getNatalia().getRequest().getNewValue()?1:0) << 3) | (((boolean)ventZones.getKarolina().getRequest().getNewValue()?1:0) << 2) |
-					(((boolean)ventZones.getLazGora().getRequest().getNewValue()?1:0) << 1));
-			sendData(moduleMain, module_vent2.getModuleType(), 0, i, newValue);
+			VentZones ventZones = module_vent.getNormalOnByHours()[i-60];
+			if (!ventZones.getSalon().getRequest().isUpToDate() || !ventZones.getPralnia().getRequest().isUpToDate() || !ventZones.getLazDol().getRequest().isUpToDate()
+					|| !ventZones.getRodzice().getRequest().isUpToDate() || !ventZones.getNatalia().getRequest().isUpToDate() || !ventZones.getKarolina().getRequest().isUpToDate()
+					|| !ventZones.getLazGora().getRequest().isUpToDate()) {
+				newValue = ((((boolean) ventZones.getSalon().getRequest().getNewValue() ? 1 : 0) << 7) | (((boolean) ventZones.getPralnia().getRequest().getNewValue() ? 1 : 0) << 6) |
+						(((boolean) ventZones.getLazDol().getRequest().getNewValue() ? 1 : 0) << 5) | (((boolean) ventZones.getRodzice().getRequest().getNewValue() ? 1 : 0) << 4) |
+						(((boolean) ventZones.getNatalia().getRequest().getNewValue() ? 1 : 0) << 3) | (((boolean) ventZones.getKarolina().getRequest().getNewValue() ? 1 : 0) << 2) |
+						(((boolean) ventZones.getLazGora().getRequest().getNewValue() ? 1 : 0) << 1));
+				sendData(moduleMain, module_vent.getModuleType(), 0, i, newValue);
+			}
 		}
 	}
 
@@ -347,7 +334,7 @@ public class UDPController {
 						String message="UDP=";
 						for (int i = 0; i < packet.getLength(); i++)
 							message+="[" + packetData[i] + "]";
-						Logger.debug(message);
+						Logger.info(message);
 					}
 					if (packetDataCorrect(packetData, packet.getLength())) {
 						try {
@@ -405,7 +392,6 @@ public class UDPController {
 				if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) sendHeatingNV();
 				if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) sendComfortNV();
 				if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
-				if ((module_vent2.isReqUpdateValues()) && (!module_vent2.isAllUpToDate())) sendVent2NV();
 				if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) sendWeatherNV();
 				if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
 				if ((module_extLights.isReqUpdateValues()) && (!module_extLights.isAllUpToDate())) sendExtLightNV();
