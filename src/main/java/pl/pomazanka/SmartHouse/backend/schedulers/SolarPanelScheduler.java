@@ -22,7 +22,7 @@ public class SolarPanelScheduler {
   @Autowired MongoDBController mongoDBController;
   private Module_SolarPanels module_solarPanelsLastSaved;
 
-  @Scheduled(fixedDelay = 60000)
+  @Scheduled(initialDelay = 20, fixedDelay = 60000)
   public void solarPanelsScheduler() throws CloneNotSupportedException {
     log.info("Scheduler triggered");
     solarPanels.saveWebData();

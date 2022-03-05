@@ -26,7 +26,6 @@ public class Module_ExtLights extends Module implements Cloneable {
       lightDimmer[i] = new LightDimmer();
       NVLightDimmer[i] = new LightDimmer();
     }
-    faultListInit();
   }
 
   public int getStartLightLevel() {

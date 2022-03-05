@@ -14,8 +14,6 @@ public class Module_Comfort extends Module implements Cloneable {
     for (int i = 0; i < 7; i++) {
       zone[i] = new Zone();
     }
-
-    faultListInit();
   }
 
   public Zone[] getZone() {

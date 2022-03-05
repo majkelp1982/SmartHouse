@@ -49,7 +49,6 @@ public class Module_Heating extends Module implements Cloneable {
 
   public Module_Heating() throws Exception {
     super(MODULE_TYPE, "Ogrzewanie", "module_heating");
-    faultListInit();
   }
 
   public int getHeatSourceActive() {
@@ -303,7 +302,7 @@ public class Module_Heating extends Module implements Cloneable {
   @Override
   void faultListInit() throws Exception {
     setFaultText(0, "Pompa ciepła przestała grzać");
-    setFaultText(1, "Pompa ciepla osiągnęła nastawioną graniczną temperaturę");
+    setFaultText(1, "Pompa ciepła osiągnęła nastawioną graniczną temperaturę");
     setFaultText(2, "T[tBufferCOLow] błąd odczytu");
     setFaultText(3, "T[tBufferCOMid] błąd odczytu");
     setFaultText(4, "T[tBufferCOHigh] błąd odczytu");

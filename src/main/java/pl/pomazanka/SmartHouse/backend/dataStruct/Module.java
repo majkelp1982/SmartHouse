@@ -36,6 +36,7 @@ public abstract class Module {
   @PostConstruct
   public void postConstructor() throws Exception {
     diagnostic.addModule(moduleType, moduleName, moduleStructureName);
+    faultListInit();
   }
 
   // Abstract declaration
@@ -224,7 +225,7 @@ public abstract class Module {
 
   public boolean isTooLongWithoutSave() {
     final long lastTime = ChronoUnit.MINUTES.between(lastSaveDateTime, getCurrentDate());
-    if (lastTime > 10) {
+    if (lastTime >= 10) {
       return true;
     }
     return false;

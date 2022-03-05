@@ -35,6 +35,7 @@ public class Diagnostic extends Module {
     addModule(MODULE_TYPE, "Główny", "module_main");
     globalFaultsList = new ArrayList<>();
     faultListInit();
+    globalFaultsListGroupByFault = true;
   }
 
   @Override
@@ -93,6 +94,10 @@ public class Diagnostic extends Module {
 
   public boolean isGlobalFaultsListGroupByFault() {
     return globalFaultsListGroupByFault;
+  }
+
+  public void setGlobalFaultsListGroupByFault(final boolean globalFaultsListGroupByFault) {
+    this.globalFaultsListGroupByFault = globalFaultsListGroupByFault;
   }
 
   public void addModule(final int moduleType, final String moduleName, final String structureName)

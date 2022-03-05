@@ -1,6 +1,7 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.common.Logger;
@@ -14,11 +15,15 @@ import java.net.URLConnection;
 
 @Controller
 @Getter
+@Setter
 public class Module_SolarPanels extends Module implements Cloneable {
 
   // Module heating type
   private static final byte MODULE_TYPE = 99;
   @Autowired Module_Heating module_heating;
+  int powerEnableLimit;
+  int powerResetLimit;
+  double reqHeatTempCO;
   // Values only to read
   //	private String webdata_sn = "SF4ES006M7S394  ";
   //	private String webdata_msvn = "G310";
@@ -50,20 +55,14 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   Module_SolarPanels() throws Exception {
     super(MODULE_TYPE, "Fotowoltaika", "module_solarPanels");
-    faultListInit();
-    oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
   }
 
   public void autoConsumption() {
     isAutoconsumption = !isAutoconsumption;
-    if (!isAutoconsumption) {
-    } else {
-      module_heating.setNVReqTempBufferCO(52);
-      module_heating.setReqUpdateValues(true);
-    }
   }
 
   public void saveWebData() {
+    isAllUpToDate();
     final StringBuilder source = new StringBuilder();
     try {
       Authenticator.setDefault(
@@ -91,7 +90,6 @@ public class Module_SolarPanels extends Module implements Cloneable {
       cover_sta_rssi = extractValue("cover_sta_rssi", source.toString());
       setFrameLastUpdate(getCurrentDate());
       setDiagnosticLastUpdate(getCurrentDate());
-
     } catch (final Exception e) {
       webdata_now_p = -100.00;
       Logger.error("Wyjątek przy pobraniu danych z fotowoltaiki: " + e);
@@ -102,14 +100,19 @@ public class Module_SolarPanels extends Module implements Cloneable {
     if (!isAutoconsumption) {
       oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
     }
+
+    if (isAutoconsumption && (getWebdata_now_p() >= powerEnableLimit)) {
+      module_heating.setNVCheapTariffOnly(false);
+      module_heating.setNVReqTempBufferCO(reqHeatTempCO);
+      module_heating.setReqUpdateValues(true);
+    } else if (!isAutoconsumption || getWebdata_now_p() < powerResetLimit) {
+      module_heating.setNVCheapTariffOnly(true);
+      module_heating.setNVReqTempBufferCO(oldReqTempBufferC0);
+      module_heating.setReqUpdateValues(true);
+    }
+
     setUpToDate(true);
     return isUpToDate();
-  }
-
-  // Parser for data package coming via UDP
-  @Override
-  public void dataParser(final int[] packetData) {
-    super.dataParser(packetData);
   }
 
   @Override
@@ -117,9 +120,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   @Override
   void faultListInit() throws Exception {
-    //		setFaultText(0, "Pompa wody przestała działać");
-    //		setFaultText(1, "Poziom wody przekroczony!!!");
-    //		setFaultText(2, "Sensor limitu poziomu wody aktywny!!!");
+    setFaultText(0, "Alarm falownika fotowoltaiki");
   }
 
   @Override
@@ -127,9 +128,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
     // Clear previous faults status
     resetFaultPresent();
 
-    // Fault check list
-    // TODO
-    //		setFaultPresent(2, limitSensor);
+    setFaultPresent(0, getWebdata_alarm().length() > 0);
 
     updateGlobalFaultList();
   }

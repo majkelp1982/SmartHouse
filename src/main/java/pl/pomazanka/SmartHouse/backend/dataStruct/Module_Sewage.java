@@ -25,7 +25,6 @@ public class Module_Sewage extends Module implements Cloneable {
 
   public Module_Sewage() throws Exception {
     super(MODULE_TYPE, "Oczyszczalnia", "module_sewage");
-    faultListInit();
   }
 
   public boolean isAirPump() {
