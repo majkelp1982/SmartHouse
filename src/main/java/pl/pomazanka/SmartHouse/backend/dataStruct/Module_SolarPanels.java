@@ -1,9 +1,9 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.common.Logger;
-import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,21 +13,28 @@ import java.net.URL;
 import java.net.URLConnection;
 
 @Controller
+@Getter
 public class Module_SolarPanels extends Module implements Cloneable {
 
   // Module heating type
   private static final byte MODULE_TYPE = 99;
-  @Autowired MongoDBController mongoDBController;
+  @Autowired Module_Heating module_heating;
   // Values only to read
   //	private String webdata_sn = "SF4ES006M7S394  ";
   //	private String webdata_msvn = "G310";
   //	private String webdata_ssvn = "";
   //	private String webdata_pv_type = "SF4ES006";
   //	private String webdata_rate_p = "";
-  private String webdata_now_p = "740";
-  private String webdata_today_e = "0.48";
-  private String webdata_total_e = "50.0";
+  private double webdata_now_p; // = "740";
+  private double webdata_today_e; // = "0.48";
+  private double webdata_total_e; // = "50.0";
   private String webdata_alarm = "";
+  private boolean isAutoconsumption;
+  //	private String cover_sta_ip = "192.168.0.220";
+  //	private String cover_sta_mac = "34:EA:E7:EC:96:CA";
+  //	private String status_a = "1";
+  //	private String status_b = "0";
+  //	private String status_c = "0";
   //	private String webdata_utime = "0";
   //	private String cover_mid = "2300094760";
   //	private String cover_ver = "LSW3_15_FFFF_1.0.57";
@@ -36,19 +43,27 @@ public class Module_SolarPanels extends Module implements Cloneable {
   //	private String cover_ap_ip = "10.10.100.254";
   //	private String cover_ap_mac = "30:EA:E7:EC:96:CA";
   //	private String cover_sta_ssid = "Majkel";
-  private String cover_sta_rssi = "49%";
-  //	private String cover_sta_ip = "192.168.0.220";
-  //	private String cover_sta_mac = "34:EA:E7:EC:96:CA";
-  //	private String status_a = "1";
-  //	private String status_b = "0";
-  //	private String status_c = "0";
+  private String cover_sta_rssi;
+  // = "49%";
 
-  public Module_SolarPanels() throws Exception {
+  private transient float oldReqTempBufferC0;
+
+  Module_SolarPanels() throws Exception {
     super(MODULE_TYPE, "Fotowoltaika", "module_solarPanels");
     faultListInit();
+    oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
   }
 
-  public void saveWebPageData() {
+  public void autoConsumption() {
+    isAutoconsumption = !isAutoconsumption;
+    if (!isAutoconsumption) {
+    } else {
+      module_heating.setNVReqTempBufferCO(52);
+      module_heating.setReqUpdateValues(true);
+    }
+  }
+
+  public void saveWebData() {
     final StringBuilder source = new StringBuilder();
     try {
       Authenticator.setDefault(
@@ -69,20 +84,24 @@ public class Module_SolarPanels extends Module implements Cloneable {
         line = in.readLine();
         source.append(line);
       } while (line != null);
+      webdata_now_p = Double.valueOf(extractValue("webdata_now_p", source.toString()));
+      webdata_today_e = Double.valueOf(extractValue("webdata_today_e", source.toString()));
+      webdata_total_e = Double.valueOf(extractValue("webdata_total_e", source.toString()));
+      webdata_alarm = extractValue("webdata_alarm", source.toString());
+      cover_sta_rssi = extractValue("cover_sta_rssi", source.toString());
       setFrameLastUpdate(getCurrentDate());
       setDiagnosticLastUpdate(getCurrentDate());
 
     } catch (final Exception e) {
+      webdata_now_p = -100.00;
       Logger.error("Wyjątek przy pobraniu danych z fotowoltaiki: " + e);
     }
-    webdata_now_p = extractValue("webdata_now_p", source.toString());
-    webdata_today_e = extractValue("webdata_today_e", source.toString());
-    webdata_total_e = extractValue("webdata_total_e", source.toString());
-    webdata_alarm = extractValue("webdata_alarm", source.toString());
-    cover_sta_rssi = extractValue("cover_sta_rssi", source.toString());
   }
 
   public boolean isAllUpToDate() {
+    if (!isAutoconsumption) {
+      oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
+    }
     setUpToDate(true);
     return isUpToDate();
   }
@@ -116,22 +135,17 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   // compare data : last save status with new set
-  public boolean compare(final Module_SolarPanels module_sewage) {
-    if (module_sewage == null) {
+  public boolean compare(final Module_SolarPanels module_solarPanels) {
+    if (module_solarPanels == null) {
       return false;
     }
-    final boolean result = true;
-    //		if (result) result = cmp(module_sewage.airPump, airPump);
-    //		if (result) result = cmp(module_sewage.waterPump, waterPump);
-    //		if (result) result = cmp(module_sewage.limitSensor, limitSensor);
-    //
-    //		if (result) result = cmp(module_sewage.isWaterLevel, isWaterLevel, 1);
-    //		if (result) result = cmp(module_sewage.maxWaterLevel, maxWaterLevel, 0);
-    //		if (result) result = cmp(module_sewage.minWaterLevel, minWaterLevel, 0);
-    //		if (result) result = cmp(module_sewage.zeroRefWaterLevel, zeroRefWaterLevel, 0);
-    //		if (result) result = cmp(module_sewage.intervalAirPump, intervalAirPump, 0);
-    //		if (isTooLongWithoutSave())
-    //			result = false;
+    boolean result = true;
+    if (result) {
+      result = cmp(module_solarPanels.webdata_now_p, webdata_now_p, 300);
+    }
+    if (isTooLongWithoutSave()) {
+      result = false;
+    }
     return result;
   }
 

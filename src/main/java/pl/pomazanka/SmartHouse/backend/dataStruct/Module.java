@@ -51,6 +51,10 @@ public abstract class Module {
     return moduleName;
   }
 
+  public String getModuleStructureName() {
+    return moduleStructureName;
+  }
+
   public int[] getIP() {
     return IP;
   }
