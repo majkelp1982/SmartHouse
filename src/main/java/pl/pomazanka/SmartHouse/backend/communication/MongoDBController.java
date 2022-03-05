@@ -41,7 +41,7 @@ public class MongoDBController {
 	@Autowired
 	Diagnostic diagnostic;
 	//MongoDB
-	private MongoClient mongoClient = new MongoClient("localhost", 27017);
+	private MongoClient mongoClient = new MongoClient("192.168.0.200", 27017);
 	private MongoDatabase mongoDatabase = mongoClient.getDatabase("house");
 
 	private Module_Comfort module_comfortLastSaved;

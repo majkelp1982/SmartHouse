@@ -34,7 +34,7 @@ public class Charts {
 		for (Data temp : list) {
 			LocalDateTime timeStamp = temp.getTimeStamp();
 			//Add offset
-			LocalDateTime timeWithOffset = timeStamp.plusHours(1);
+			LocalDateTime timeWithOffset = timeStamp.plusHours(0);
 			if (temp.isNumber) {
 				serie[i] = new Coordinate<>(timeWithOffset.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), temp.getDouble());
 			}
