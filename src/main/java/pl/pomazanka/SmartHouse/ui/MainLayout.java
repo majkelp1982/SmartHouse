@@ -23,71 +23,85 @@ import pl.pomazanka.SmartHouse.ui.views.*;
 @Push
 public class MainLayout extends AppLayout {
 
-	public MainLayout() {
-		createHeader();
-		createDrawer();
-	}
+  public MainLayout() {
+    createHeader();
+    createDrawer();
+  }
 
-	private void createHeader() {
-		HorizontalLayout header = new HorizontalLayout();
-		header.addClassName("appLayout-header");
+  private void createHeader() {
+    HorizontalLayout header = new HorizontalLayout();
+    header.addClassName("appLayout-header");
 
-		H1 logo = new H1("Smart House");
-		Button loginButton = new Button("Zaloguj");
-		loginButton.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
-		if (View.isUserLoggedIn()) {
-			loginButton.setVisible(false);
-		}
-		header.add(new DrawerToggle(), logo, loginButton);
-		header.setSizeFull();
-		header.setMinWidth("1000px");
-		header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-		final boolean touchOptimized = true;
-		addToNavbar(touchOptimized, header);
-	}
+    H1 logo = new H1("Smart House");
+    Button loginButton = new Button("Zaloguj");
+    loginButton.addClickListener(
+        buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
+    if (View.isUserLoggedIn()) {
+      loginButton.setVisible(false);
+    }
+    header.add(new DrawerToggle(), logo, loginButton);
+    header.setSizeFull();
+    header.setMinWidth("1000px");
+    header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+    final boolean touchOptimized = true;
+    addToNavbar(touchOptimized, header);
+  }
 
-	private void createDrawer() {
-		VerticalLayout drawer = new VerticalLayout();
-		drawer.setWidth("100%");
-		drawer.addClassName("appLayout-drawer");
+  private void createDrawer() {
+    VerticalLayout drawer = new VerticalLayout();
+    drawer.setWidth("100%");
+    drawer.addClassName("appLayout-drawer");
 
-		//prepare links
-		RouterLink weatherViewLink = createDrawerElement("cloud.svg", "Powietrze", WeatherView.class);
-		RouterLink ventViewLink = createDrawerElement("recu.svg", "Wentylacja", VentView.class);
-		RouterLink comfortViewLink = createDrawerElement("comfort.svg", "Komfort", ComfortView.class);
-		RouterLink heatingViewLink = createDrawerElement("thermometer.svg", "Ogrzewanie", HeatingView.class);
-		RouterLink sewageViewLink = createDrawerElement("sewage.svg", "Oczyszczalnia", SewageView.class);
-		RouterLink extLightViewLink = createDrawerElement("light-bulb.svg", "Oswietlenie", ExtLightsView.class);
-		RouterLink solarViewLink = createDrawerElement("solar.svg", "Solar", SolarView.class);
-		RouterLink chartsViewLink = createDrawerElement("graph.svg", "Wykresy", ChartsView.class);
-		RouterLink errorsViewLink = createDrawerElement("support.svg", "Diagnostyka", DiagnosticView.class);
+    // prepare links
+    RouterLink weatherViewLink = createDrawerElement("cloud.svg", "Powietrze", WeatherView.class);
+    RouterLink ventViewLink = createDrawerElement("recu.svg", "Wentylacja", VentView.class);
+    RouterLink comfortViewLink = createDrawerElement("comfort.svg", "Komfort", ComfortView.class);
+    RouterLink heatingViewLink =
+        createDrawerElement("thermometer.svg", "Ogrzewanie", HeatingView.class);
+    RouterLink sewageViewLink =
+        createDrawerElement("sewage.svg", "Oczyszczalnia", SewageView.class);
+    RouterLink extLightViewLink =
+        createDrawerElement("light-bulb.svg", "Oswietlenie", ExtLightsView.class);
+    RouterLink solarViewLink = createDrawerElement("solar.svg", "Solar", SolarView.class);
+    RouterLink chartsViewLink = createDrawerElement("graph.svg", "Wykresy", ChartsView.class);
+    RouterLink errorsViewLink =
+        createDrawerElement("support.svg", "Diagnostyka", DiagnosticView.class);
 
-		drawer.add(weatherViewLink, ventViewLink, comfortViewLink, heatingViewLink, sewageViewLink, extLightViewLink,
-				solarViewLink, chartsViewLink, errorsViewLink);
-		drawer.setSizeFull();
-		drawer.setAlignItems(FlexComponent.Alignment.START);
+    drawer.add(
+        weatherViewLink,
+        ventViewLink,
+        comfortViewLink,
+        heatingViewLink,
+        sewageViewLink,
+        extLightViewLink,
+        solarViewLink,
+        chartsViewLink,
+        errorsViewLink);
+    drawer.setSizeFull();
+    drawer.setAlignItems(FlexComponent.Alignment.START);
 
-		addToDrawer(drawer);
-	}
+    addToDrawer(drawer);
+  }
 
-	public RouterLink createDrawerElement(String imageName, String name, Class<? extends Component> navigationTarget) {
-		//create container for elements
-		HorizontalLayout element = new HorizontalLayout();
-		element.setAlignItems(FlexComponent.Alignment.CENTER);
+  public RouterLink createDrawerElement(
+      String imageName, String name, Class<? extends Component> navigationTarget) {
+    // create container for elements
+    HorizontalLayout element = new HorizontalLayout();
+    element.setAlignItems(FlexComponent.Alignment.CENTER);
 
-		//create elements
-		Image image = new Image(imageName, imageName);
-		image.setHeight("50px");
-		Label label = new Label(name);
-		label.getStyle().set("color", "grey");
+    // create elements
+    Image image = new Image(imageName, imageName);
+    image.setHeight("50px");
+    Label label = new Label(name);
+    label.getStyle().set("color", "grey");
 
-		//add to horizontal layout
-		element.add(image, label);
+    // add to horizontal layout
+    element.add(image, label);
 
-		//create link
-		RouterLink routerLink = new RouterLink("", navigationTarget);
-		routerLink.getElement().appendChild(element.getElement());
+    // create link
+    RouterLink routerLink = new RouterLink("", navigationTarget);
+    routerLink.getElement().appendChild(element.getElement());
 
-		return routerLink;
-	}
+    return routerLink;
+  }
 }

@@ -13,11 +13,10 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Module_SolarPanels;
 @AllArgsConstructor
 @Service
 public class SolarPanelScheduler {
-	@Autowired
-	Module_SolarPanels solarPanels;
+  @Autowired Module_SolarPanels solarPanels;
 
-	@Scheduled(fixedDelay = 60000)
-	public void solarPanelsScheduler() {
-		solarPanels.getWebPageData();
-	}
+  @Scheduled(fixedDelay = 60000)
+  public void solarPanelsScheduler() {
+    solarPanels.saveWebPageData();
+  }
 }

@@ -15,27 +15,23 @@ import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	MongoDBController mongoDBController;
+  @Autowired MongoDBController mongoDBController;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		UserDetails user = mongoDBController.getUser();
+  @Bean
+  public UserDetailsService userDetailsService() {
+    UserDetails user = mongoDBController.getUser();
 
-		return new InMemoryUserDetailsManager(user);
-	}
+    return new InMemoryUserDetailsManager(user);
+  }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.authorizeRequests()
-				.anyRequest().permitAll()
-				.and()
-				.formLogin().permitAll();
-	}
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable();
+    http.authorizeRequests().anyRequest().permitAll().and().formLogin().permitAll();
+  }
 }

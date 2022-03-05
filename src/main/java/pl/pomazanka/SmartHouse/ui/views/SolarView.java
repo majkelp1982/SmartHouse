@@ -11,60 +11,66 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 @Route(value = "Solar", layout = MainLayout.class)
 public class SolarView extends View {
 
-	@Autowired
-	Module_SolarPanels module_solarPanels;
+  @Autowired Module_SolarPanels module_solarPanels;
 
-	//Update thread
-	Thread thread;
+  // Update thread
+  Thread thread;
 
-	//Objects
-	Header header;
-	Section[] section = new Section[1];
-	Info[][][] info = new Info[1][2][4];
-	Button tempButton;
+  // Objects
+  Header header;
+  Section[] section = new Section[1];
+  Info[][][] info = new Info[1][2][4];
+  Button tempButton;
 
+  public SolarView(Module_SolarPanels module_solarPanels) {
+    this.module_solarPanels = module_solarPanels;
 
-	public SolarView(Module_SolarPanels module_solarPanels) {
-		this.module_solarPanels = module_solarPanels;
+    // Header
+    header = new Header(module_solarPanels, "sewage.svg");
+    header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
+    header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
 
-		//Header
-		header = new Header(module_solarPanels, "sewage.svg");
-		header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
-		header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
+    // Sections
+    section[0] = new Section();
 
-		//Sections
-		section[0] = new Section();
+    // Create tile for sections
+    // Section 0
+    section[0].createTile("solar.svg", "Solar");
 
-		//Create tile for sections
-		//Section 0
-		section[0].createTile("solar.svg", "Solar");
+    // Create sections info/buttons/number fields
+    createInfoSection0();
 
-		//Create sections info/buttons/number fields
-		createInfoSection0();
+    section[0].getTileDetailsContainer(0).add(tempButton.getSource());
 
-		section[0].getTileDetailsContainer(0).add(tempButton.getSource());
+    Notification notification =
+        new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+    section[0]
+        .getSection()
+        .addClickListener(
+            event -> {
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
+            });
+    section[0].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+    add(header.getHeader(), section[0].getSection());
+  }
 
-		Notification notification = new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-		section[0].getSection().addClickListener(event -> {
-			if (!isUserLoggedIn())
-				notification.open();
-		});
-		section[0].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-		add(header.getHeader(), section[0].getSection());
-	}
+  private void createInfoSection0() {
+    // Status
+    tempButton = new Button("test", false, false);
+    tempButton
+        .getSource()
+        .addClickListener(
+            buttonClickEvent -> {
+              module_solarPanels.saveWebPageData();
+            });
+  }
 
-	private void createInfoSection0() {
-		//Status
-		tempButton = new Button("test", false, false);
-		tempButton.getSource().addClickListener(buttonClickEvent -> {
-			module_solarPanels.getWebPageData();
-		});
-	}
-
-	void update() {
-		//Header
-		header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
-		header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
-	}
+  @Override
+  void update() {
+    // Header
+    header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
+    header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
+  }
 }
-
