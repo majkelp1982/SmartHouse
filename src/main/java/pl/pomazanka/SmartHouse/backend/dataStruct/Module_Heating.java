@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 @Controller
 public class Module_Heating extends Module implements Cloneable {
   // Module heating type
-  private static byte MODULE_TYPE = 14;
+  private static final byte MODULE_TYPE = 14;
   private LocalDateTime reqPCStartTime = null;
 
   // Values only to read
@@ -160,7 +160,7 @@ public class Module_Heating extends Module implements Cloneable {
     return NVCheapTariffOnly;
   }
 
-  public void setNVCheapTariffOnly(boolean NVCheapTariffOnly) {
+  public void setNVCheapTariffOnly(final boolean NVCheapTariffOnly) {
     this.NVCheapTariffOnly = NVCheapTariffOnly;
     setUpToDate(false);
   }
@@ -169,7 +169,7 @@ public class Module_Heating extends Module implements Cloneable {
     return NVHeatingActivated;
   }
 
-  public void setNVHeatingActivated(boolean NVHeatingActivated) {
+  public void setNVHeatingActivated(final boolean NVHeatingActivated) {
     this.NVHeatingActivated = NVHeatingActivated;
     setUpToDate(false);
   }
@@ -178,7 +178,7 @@ public class Module_Heating extends Module implements Cloneable {
     return NVWaterSuperheat;
   }
 
-  public void setNVWaterSuperheat(boolean NVWaterSuperheat) {
+  public void setNVWaterSuperheat(final boolean NVWaterSuperheat) {
     this.NVWaterSuperheat = NVWaterSuperheat;
     setUpToDate(false);
   }
@@ -187,7 +187,7 @@ public class Module_Heating extends Module implements Cloneable {
     return NVReqTempBufferCO;
   }
 
-  public void setNVReqTempBufferCO(double NVReqTempBufferCO) {
+  public void setNVReqTempBufferCO(final double NVReqTempBufferCO) {
     this.NVReqTempBufferCO = NVReqTempBufferCO;
     setUpToDate(false);
   }
@@ -196,7 +196,7 @@ public class Module_Heating extends Module implements Cloneable {
     return NVReqTempBufferCWU;
   }
 
-  public void setNVReqTempBufferCWU(double NVReqTempBufferCWU) {
+  public void setNVReqTempBufferCWU(final double NVReqTempBufferCWU) {
     this.NVReqTempBufferCWU = NVReqTempBufferCWU;
     setUpToDate(false);
   }
@@ -205,19 +205,31 @@ public class Module_Heating extends Module implements Cloneable {
     return NVHeatPumpAlarmTemp;
   }
 
-  public void setNVHeatPumpAlarmTemp(int NVHeatPumpAlarmTemp) {
+  public void setNVHeatPumpAlarmTemp(final int NVHeatPumpAlarmTemp) {
     this.NVHeatPumpAlarmTemp = NVHeatPumpAlarmTemp;
     setUpToDate(false);
   }
 
   public boolean isAllUpToDate() {
     setUpToDate(true);
-    if (isUpToDate()) setUpToDate(NVCheapTariffOnly == cheapTariffOnly);
-    if (isUpToDate()) setUpToDate(NVHeatingActivated == heatingActivated);
-    if (isUpToDate()) setUpToDate(NVWaterSuperheat == waterSuperheat);
-    if (isUpToDate()) setUpToDate(NVReqTempBufferCO == reqTempBufferCO);
-    if (isUpToDate()) setUpToDate(NVReqTempBufferCWU == reqTempBufferCWU);
-    if (isUpToDate()) setUpToDate(NVHeatPumpAlarmTemp == heatPumpAlarmTemp);
+    if (isUpToDate()) {
+      setUpToDate(NVCheapTariffOnly == cheapTariffOnly);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVHeatingActivated == heatingActivated);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVWaterSuperheat == waterSuperheat);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVReqTempBufferCO == reqTempBufferCO);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVReqTempBufferCWU == reqTempBufferCWU);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVHeatPumpAlarmTemp == heatPumpAlarmTemp);
+    }
 
     setReqUpdateValues(!isUpToDate());
 
@@ -225,8 +237,9 @@ public class Module_Heating extends Module implements Cloneable {
   }
 
   // Parser for data package coming via UDP
-  public void dataParser(int[] packetData) {
-    int controllerFrameNumber = packetData[2];
+  @Override
+  public void dataParser(final int[] packetData) {
+    final int controllerFrameNumber = packetData[2];
 
     switch (controllerFrameNumber) {
       case 0: // standard frame 0
@@ -239,7 +252,7 @@ public class Module_Heating extends Module implements Cloneable {
         waterSuperheat = bitStatus(packetData[3], 0);
 
         valve_3way = packetData[4] >> 6;
-        int tmp = packetData[4] >> 6;
+        final int tmp = packetData[4] >> 6;
         valve_bypass = (packetData[4] - (tmp << 6));
 
         zone[0] = bitStatus(packetData[5], 7);
@@ -278,7 +291,7 @@ public class Module_Heating extends Module implements Cloneable {
   }
 
   @Override
-  protected void assignNV(Object object) throws Exception {
+  protected void assignNV(final Object object) throws Exception {
     NVCheapTariffOnly = cheapTariffOnly;
     NVHeatingActivated = heatingActivated;
     NVWaterSuperheat = waterSuperheat;
@@ -315,75 +328,174 @@ public class Module_Heating extends Module implements Cloneable {
     // check if after 60s heating request PC is working continuously till no request
     if (reqPCStartTime != null) {
       if ((ChronoUnit.SECONDS.between(reqPCStartTime, LocalDateTime.now()) > 90)
-          && (tSupply < (tReturn + 2))) setFaultPresent(0, true);
+          && (tSupply < (tReturn + 2))) {
+        setFaultPresent(0, true);
+      }
     }
-    if (tSupply >= heatPumpAlarmTemp) setFaultPresent(1, true);
-    if (tBufferCOLow == 100) setFaultPresent(2, true);
-    if (tBufferCOMid == 100) setFaultPresent(3, true);
-    if (tBufferCOHigh == 100) setFaultPresent(4, true);
-    if (tBufferCWULow == 100) setFaultPresent(5, true);
-    if (tBufferCWUMid == 100) setFaultPresent(6, true);
-    if (tBufferCWUHigh == 100) setFaultPresent(7, true);
-    if (tSupply == 100) setFaultPresent(8, true);
-    if (tReturn == 100) setFaultPresent(9, true);
-    if (tGroundSource == 100) setFaultPresent(10, true);
-    if (tFirePlace == 100) setFaultPresent(11, true);
-    if (tManifold == 100) setFaultPresent(12, true);
-    if (tReturnGroundFloor == 100) setFaultPresent(13, true);
-    if (tReturnLoft == 100) setFaultPresent(14, true);
+    if (tSupply >= heatPumpAlarmTemp) {
+      setFaultPresent(1, true);
+    }
+    if (tBufferCOLow == 100) {
+      setFaultPresent(2, true);
+    }
+    if (tBufferCOMid == 100) {
+      setFaultPresent(3, true);
+    }
+    if (tBufferCOHigh == 100) {
+      setFaultPresent(4, true);
+    }
+    if (tBufferCWULow == 100) {
+      setFaultPresent(5, true);
+    }
+    if (tBufferCWUMid == 100) {
+      setFaultPresent(6, true);
+    }
+    if (tBufferCWUHigh == 100) {
+      setFaultPresent(7, true);
+    }
+    if (tSupply == 100) {
+      setFaultPresent(8, true);
+    }
+    if (tReturn == 100) {
+      setFaultPresent(9, true);
+    }
+    if (tGroundSource == 100) {
+      setFaultPresent(10, true);
+    }
+    if (tFirePlace == 100) {
+      setFaultPresent(11, true);
+    }
+    if (tManifold == 100) {
+      setFaultPresent(12, true);
+    }
+    if (tReturnGroundFloor == 100) {
+      setFaultPresent(13, true);
+    }
+    if (tReturnLoft == 100) {
+      setFaultPresent(14, true);
+    }
 
     updateGlobalFaultList();
   }
 
   // compare data : last save status with new set
-  public boolean compare(Module_Heating module_Heating) {
-    if (module_Heating == null) return false;
+  public boolean compare(final Module_Heating module_Heating) {
+    if (module_Heating == null) {
+      return false;
+    }
     boolean result = true;
-    if (result) result = cmp(module_Heating.heatSourceActive, heatSourceActive);
-    if (result) result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
-    if (result) result = cmp(module_Heating.pump_UnderGround, pump_UnderGround);
+    if (result) {
+      result = cmp(module_Heating.heatSourceActive, heatSourceActive);
+    }
+    if (result) {
+      result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
+    }
+    if (result) {
+      result = cmp(module_Heating.pump_UnderGround, pump_UnderGround);
+    }
     if (result) {
       result = cmp(module_Heating.reqHeatingPumpOn, reqHeatingPumpOn);
       // Save time when heating pump requested
-      if ((!module_Heating.reqHeatingPumpOn) && (reqHeatingPumpOn))
+      if ((!module_Heating.reqHeatingPumpOn) && (reqHeatingPumpOn)) {
         reqPCStartTime = LocalDateTime.now();
-      if (!reqHeatingPumpOn) reqPCStartTime = null;
+      }
+      if (!reqHeatingPumpOn) {
+        reqPCStartTime = null;
+      }
     }
-    if (result) result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
-    if (result) result = cmp(module_Heating.heatingActivated, heatingActivated);
-    if (result) result = cmp(module_Heating.waterSuperheat, waterSuperheat);
-    if (result) result = cmp(module_Heating.valve_3way, valve_3way);
-    if (result) result = cmp(module_Heating.valve_bypass, valve_bypass);
-    if (result) result = cmp(module_Heating.zone[0], zone[0]);
-    if (result) result = cmp(module_Heating.zone[1], zone[1]);
-    if (result) result = cmp(module_Heating.zone[2], zone[2]);
-    if (result) result = cmp(module_Heating.zone[3], zone[3]);
-    if (result) result = cmp(module_Heating.zone[4], zone[4]);
-    if (result) result = cmp(module_Heating.zone[5], zone[5]);
-    if (result) result = cmp(module_Heating.zone[6], zone[6]);
-    if (result) result = cmp(module_Heating.reqTempBufferCO, reqTempBufferCO, 0);
-    if (result) result = cmp(module_Heating.reqTempBufferCWU, reqTempBufferCWU, 0);
-    if (result) result = cmp(module_Heating.tBufferCOLow, tBufferCOLow, 2);
-    if (result) result = cmp(module_Heating.tBufferCOMid, tBufferCOMid, 2);
-    if (result) result = cmp(module_Heating.tBufferCOHigh, tBufferCOHigh, 2);
-    if (result) result = cmp(module_Heating.tBufferCWULow, tBufferCWULow, 2);
-    if (result) result = cmp(module_Heating.tBufferCWUMid, tBufferCWUMid, 2);
-    if (result) result = cmp(module_Heating.tBufferCWUHigh, tBufferCWUHigh, 2);
-    if (result) result = cmp(module_Heating.tSupply, tSupply, 1);
-    if (result) result = cmp(module_Heating.tReturn, tReturn, 1);
-    if (result) result = cmp(module_Heating.tGroundSource, tGroundSource, 1);
-    if (result) result = cmp(module_Heating.tFirePlace, tFirePlace, 1);
-    if (result) result = cmp(module_Heating.tManifold, tManifold, 1);
-    if (result) result = cmp(module_Heating.tReturnGroundFloor, tReturnGroundFloor, 1);
-    if (result) result = cmp(module_Heating.tReturnLoft, tReturnLoft, 1);
-    if (result) result = cmp(module_Heating.heatPumpAlarmTemp, heatPumpAlarmTemp, 0);
-    if (isTooLongWithoutSave()) result = false;
+    if (result) {
+      result = cmp(module_Heating.cheapTariffOnly, cheapTariffOnly);
+    }
+    if (result) {
+      result = cmp(module_Heating.heatingActivated, heatingActivated);
+    }
+    if (result) {
+      result = cmp(module_Heating.waterSuperheat, waterSuperheat);
+    }
+    if (result) {
+      result = cmp(module_Heating.valve_3way, valve_3way);
+    }
+    if (result) {
+      result = cmp(module_Heating.valve_bypass, valve_bypass);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[0], zone[0]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[1], zone[1]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[2], zone[2]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[3], zone[3]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[4], zone[4]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[5], zone[5]);
+    }
+    if (result) {
+      result = cmp(module_Heating.zone[6], zone[6]);
+    }
+    if (result) {
+      result = cmp(module_Heating.reqTempBufferCO, reqTempBufferCO, 0);
+    }
+    if (result) {
+      result = cmp(module_Heating.reqTempBufferCWU, reqTempBufferCWU, 0);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCOLow, tBufferCOLow, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCOMid, tBufferCOMid, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCOHigh, tBufferCOHigh, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCWULow, tBufferCWULow, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCWUMid, tBufferCWUMid, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tBufferCWUHigh, tBufferCWUHigh, 2);
+    }
+    if (result) {
+      result = cmp(module_Heating.tSupply, tSupply, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tReturn, tReturn, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tGroundSource, tGroundSource, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tFirePlace, tFirePlace, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tManifold, tManifold, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tReturnGroundFloor, tReturnGroundFloor, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.tReturnLoft, tReturnLoft, 1);
+    }
+    if (result) {
+      result = cmp(module_Heating.heatPumpAlarmTemp, heatPumpAlarmTemp, 0);
+    }
+    if (isTooLongWithoutSave()) {
+      result = false;
+    }
     return result;
   }
 
   @Override
   public Module_Heating clone() throws CloneNotSupportedException {
-    Module_Heating module_heating = (Module_Heating) super.clone();
+    final Module_Heating module_heating = (Module_Heating) super.clone();
     module_heating.zone = zone.clone();
     return module_heating;
   }

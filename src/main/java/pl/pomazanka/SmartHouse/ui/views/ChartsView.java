@@ -24,12 +24,12 @@ import java.util.ArrayList;
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
 public class ChartsView extends View {
-  @Autowired Charts charts;
   // Objects
-  private Dialog chartDialog = new Dialog();
-  private Header header;
-  private Button buttonManage;
-  private Section[] section = new Section[2];
+  private final Dialog chartDialog = new Dialog();
+  private final Header header;
+  private final Button buttonManage;
+  private final Section[] section = new Section[2];
+  @Autowired Charts charts;
   private ApexCharts apexChart = new ApexCharts();
   private ArrayList<Charts.VariableList> variableList;
 
@@ -64,7 +64,7 @@ public class ChartsView extends View {
   }
 
   private void createInfoSection0() {
-    String[] colors = new String[10];
+    final String[] colors = new String[10];
     colors[0] = "#ffff00";
     colors[1] = "#247ba0";
     colors[2] = "#00ffff";
@@ -104,8 +104,8 @@ public class ChartsView extends View {
   }
 
   private void createDialog() {
-    MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
-    ArrayList<String> tempList = new ArrayList<>();
+    final MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
+    final ArrayList<String> tempList = new ArrayList<>();
     variableList.forEach(
         item -> {
           tempList.add(item.getVariableName());
@@ -113,17 +113,20 @@ public class ChartsView extends View {
     listBox.setItems(tempList);
     variableList.forEach(
         item -> {
-          if (item.isEnabled()) listBox.select(item.getVariableName());
+          if (item.isEnabled()) {
+            listBox.select(item.getVariableName());
+          }
         });
 
     listBox.addSelectionListener(
         event -> {
-          for (Charts.VariableList variable : variableList)
+          for (final Charts.VariableList variable : variableList) {
             variable.setEnabled(listBox.isSelected(variable.getVariableName()));
+          }
           charts.saveVariablesList(variableList);
           try {
             refreshCharts();
-          } catch (Exception e) {
+          } catch (final Exception e) {
             e.printStackTrace();
           }
         });
@@ -136,31 +139,37 @@ public class ChartsView extends View {
   private void refreshCharts() throws Exception {
     // Get number of series
     int chartCount = 0;
-    for (Charts.VariableList variable : variableList) if (variable.isEnabled()) chartCount++;
-    Series<Coordinate>[] series = new Series[chartCount];
+    for (final Charts.VariableList variable : variableList) {
+      if (variable.isEnabled()) {
+        chartCount++;
+      }
+    }
+    final Series<Coordinate>[] series = new Series[chartCount];
 
     // Get series according to the list
     chartCount = 0;
-    for (Charts.VariableList variable : variableList) {
-      if (!variable.isEnabled()) continue;
+    for (final Charts.VariableList variable : variableList) {
+      if (!variable.isEnabled()) {
+        continue;
+      }
 
-      String variableStr = variable.getVariableName();
-      int collectionEndIndex = variableStr.indexOf(".");
-      String collectionName = variableStr.substring(0, collectionEndIndex);
-      String variableName = variableStr.substring(collectionEndIndex + 1);
+      final String variableStr = variable.getVariableName();
+      final int collectionEndIndex = variableStr.indexOf(".");
+      final String collectionName = variableStr.substring(0, collectionEndIndex);
+      final String variableName = variableStr.substring(collectionEndIndex + 1);
 
       try {
-        Coordinate[] list =
+        final Coordinate[] list =
             charts.getSerie(
                 collectionName,
                 variableName,
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now());
-        series[chartCount] = new Series<Coordinate>(variableName, list);
+        series[chartCount] = new Series<>(variableName, list);
         chartCount++;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
-        Notification notification =
+        final Notification notification =
             new Notification(
                 "Błąd przy dodawaniu [" + variableName + "] z kolekcji [" + collectionName + "]",
                 10000);

@@ -22,7 +22,7 @@ public class SolarView extends View {
   Info[][][] info = new Info[1][2][4];
   Button tempButton;
 
-  public SolarView(Module_SolarPanels module_solarPanels) {
+  public SolarView(final Module_SolarPanels module_solarPanels) {
     this.module_solarPanels = module_solarPanels;
 
     // Header
@@ -42,7 +42,7 @@ public class SolarView extends View {
 
     section[0].getTileDetailsContainer(0).add(tempButton.getSource());
 
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[0]
         .getSection()

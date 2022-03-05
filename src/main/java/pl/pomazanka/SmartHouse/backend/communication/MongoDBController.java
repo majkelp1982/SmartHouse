@@ -26,6 +26,9 @@ import java.util.Map;
 @Service
 public class MongoDBController {
 
+  // MongoDB
+  private final MongoClient mongoClient = new MongoClient("192.168.0.200", 27017);
+  private final MongoDatabase mongoDatabase = mongoClient.getDatabase("house");
   @Autowired Module_Heating module_heating;
   @Autowired Module_Comfort module_comfort;
   @Autowired Module_Vent module_vent;
@@ -33,10 +36,6 @@ public class MongoDBController {
   @Autowired Module_Sewage module_sewage;
   @Autowired Module_ExtLights module_extLights;
   @Autowired Diagnostic diagnostic;
-  // MongoDB
-  private MongoClient mongoClient = new MongoClient("192.168.0.200", 27017);
-  private MongoDatabase mongoDatabase = mongoClient.getDatabase("house");
-
   private Module_Comfort module_comfortLastSaved;
   private Module_Weather module_weatherLastSaved;
   private Module_Sewage module_sewageLastSaved;
@@ -46,8 +45,8 @@ public class MongoDBController {
 
   public MongoDBController() throws CloneNotSupportedException {}
 
-  public void saveUDPFrame(int[] packetData) throws CloneNotSupportedException {
-    int moduleType = packetData[0]; // Get basic data from UDP frame
+  public void saveUDPFrame(final int[] packetData) throws CloneNotSupportedException {
+    final int moduleType = packetData[0]; // Get basic data from UDP frame
 
     Logger.debug("Obsługa komunikatu UDP");
     switch (moduleType) {
@@ -59,7 +58,9 @@ public class MongoDBController {
                 "module_comfort", module_comfort); // if data has been changed add new entry in DB
             module_comfort.setLastSaveDateTime(LocalDateTime.now());
             module_comfortLastSaved = module_comfort.clone();
-          } else updateLastEntry("module_comfort", module_comfort); // else update last entry
+          } else {
+            updateLastEntry("module_comfort", module_comfort); // else update last entry
+          }
         }
         break;
       case 11:
@@ -70,7 +71,9 @@ public class MongoDBController {
                 "module_weather", module_weather); // if data has been changed add new entry in DB
             module_weather.setLastSaveDateTime(LocalDateTime.now());
             module_weatherLastSaved = module_weather.clone();
-          } else updateLastEntry("module_weather", module_weather); // else update last entry
+          } else {
+            updateLastEntry("module_weather", module_weather); // else update last entry
+          }
         }
         break;
       case 12:
@@ -81,7 +84,9 @@ public class MongoDBController {
                 "module_sewage", module_sewage); // if data has been changed add new entry in DB
             module_sewage.setLastSaveDateTime(LocalDateTime.now());
             module_sewageLastSaved = module_sewage.clone();
-          } else updateLastEntry("module_weather", module_weather); // else update last entry
+          } else {
+            updateLastEntry("module_weather", module_weather); // else update last entry
+          }
         }
         break;
       case 13:
@@ -92,7 +97,9 @@ public class MongoDBController {
                 "module_vent", module_vent); // if data has been changed add new entry in DB
             module_vent.setLastSaveDateTime(LocalDateTime.now());
             module_ventLastSaved = module_vent.clone();
-          } else updateLastEntry("module_vent", module_vent); // else update last entry
+          } else {
+            updateLastEntry("module_vent", module_vent); // else update last entry
+          }
         }
         break;
 
@@ -104,7 +111,9 @@ public class MongoDBController {
                 "module_heating", module_heating); // if data has been changed add new entry in DB
             module_heating.setLastSaveDateTime(LocalDateTime.now());
             module_heatingLastSaved = module_heating.clone();
-          } else updateLastEntry("module_heating", module_heating); // else update last entry
+          } else {
+            updateLastEntry("module_heating", module_heating); // else update last entry
+          }
         }
         break;
       case 16:
@@ -116,129 +125,137 @@ public class MongoDBController {
                 module_extLights); // if data has been changed add new entry in DB
             module_extLights.setLastSaveDateTime(LocalDateTime.now());
             module_extLightsLastSaved = module_extLights.clone();
-          } else updateLastEntry("module_extLights", module_extLights); // else update last entry
+          } else {
+            updateLastEntry("module_extLights", module_extLights); // else update last entry
+          }
         }
         break;
     }
     Logger.debug("Obsługa komunikatu UDP zakończona");
   }
 
-  public void saveNotice(String source, String text) {
+  public void saveNotice(final String source, final String text) {
     // FIXME check if working
-    Document document = new Document();
+    final Document document = new Document();
     document.put(source, text);
-    MongoCollection mongoCollection = mongoDatabase.getCollection("Messages");
+    final MongoCollection mongoCollection = mongoDatabase.getCollection("Messages");
     mongoCollection.insertOne(document);
   }
 
-  public void saveError(String source, String text) {
+  public void saveError(final String source, final String text) {
     // FIXME check if working
-    Document document = new Document();
+    final Document document = new Document();
     document.put(source, text);
-    MongoCollection mongoCollection = mongoDatabase.getCollection("Error");
+    final MongoCollection mongoCollection = mongoDatabase.getCollection("Error");
     mongoCollection.insertOne(document);
   }
 
-  public void saveNewEntry(String collectionName, Object object) {
+  public void saveNewEntry(final String collectionName, final Object object) {
     Logger.debug("Zapis kolekcji do bazy");
     // Help variables
-    Gson gson = new Gson();
-    String json;
+    final Gson gson = new Gson();
+    final String json;
 
     // Parsing class data to JSON
     json = gson.toJson(object);
 
     // create BSON document
-    Document documentActual = Document.parse(json);
-    MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+    final Document documentActual = Document.parse(json);
+    final MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
     mongoCollection.insertOne(documentActual);
     Logger.debug("Zapis kolekcji do bazy zakończone");
   }
 
-  public void dropCollection(String collectionName) {
-    MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+  public void dropCollection(final String collectionName) {
+    final MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
     mongoCollection.drop();
   }
 
-  private void updateLastEntry(String collectionName, Object object) {
+  private void updateLastEntry(final String collectionName, final Object object) {
     Logger.debug("Aktualizacja kolekcji w bazie");
     // Help variables
-    Gson gson = new Gson();
-    String json;
+    final Gson gson = new Gson();
+    final String json;
 
     // Parsing class data to JSON
     json = gson.toJson(object);
 
     // create BSON document
-    Document documentNew = Document.parse(json);
-    MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
-    Document documentToUpdate =
+    final Document documentNew = Document.parse(json);
+    final MongoCollection mongoCollection = mongoDatabase.getCollection(collectionName);
+    final Document documentToUpdate =
         (Document) mongoCollection.find().limit(1).sort(new Document("_id", -1)).first();
-    if (documentToUpdate != null) mongoCollection.deleteOne(documentToUpdate);
+    if (documentToUpdate != null) {
+      mongoCollection.deleteOne(documentToUpdate);
+    }
     mongoCollection.insertOne(documentNew);
     Logger.debug("Aktualizacja kolekcji w bazie zakończona");
   }
 
   public ArrayList<Charts.Data> getValues(
-      String collectionName, String variableName, LocalDateTime from, LocalDateTime to)
+      final String collectionName,
+      final String variableName,
+      final LocalDateTime from,
+      final LocalDateTime to)
       throws Exception {
-    ArrayList<Charts.Data> list = new ArrayList<>();
-    MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(collectionName);
-    BasicDBObject gtQuery = new BasicDBObject();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    Long fromString = Long.valueOf(from.format(formatter));
-    Long toString = Long.valueOf(to.format(formatter));
+    final ArrayList<Charts.Data> list = new ArrayList<>();
+    final MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(collectionName);
+    final BasicDBObject gtQuery = new BasicDBObject();
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    final Long fromString = Long.valueOf(from.format(formatter));
+    final Long toString = Long.valueOf(to.format(formatter));
     gtQuery.put(
         "localDateTimeLong", new BasicDBObject("$gte", fromString).append("$lte", toString));
-    Gson gson = new Gson();
-    for (Document doc : mongoCollection.find(gtQuery)) {
-      String jsonDoc = gson.toJson(doc);
-      ObjectMapper mapper = new ObjectMapper();
-      JsonNode nodeDoc = mapper.readTree(jsonDoc);
+    final Gson gson = new Gson();
+    for (final Document doc : mongoCollection.find(gtQuery)) {
+      final String jsonDoc = gson.toJson(doc);
+      final ObjectMapper mapper = new ObjectMapper();
+      final JsonNode nodeDoc = mapper.readTree(jsonDoc);
       JsonNode valueNode = null;
-      int arrayIndex = variableName.indexOf("[");
+      final int arrayIndex = variableName.indexOf("[");
       if (arrayIndex != -1) {
-        String varName = variableName.substring(0, arrayIndex);
-        String arrayNumber = variableName.substring(arrayIndex + 1, arrayIndex + 2);
-        String variable = variableName.substring(arrayIndex + 4);
-        JsonNode varNameNode = nodeDoc.get(varName);
-        JsonNode arrayNumberNode = varNameNode.get(Integer.valueOf(arrayNumber));
-        JsonNode variableNode = arrayNumberNode.get(variable);
+        final String varName = variableName.substring(0, arrayIndex);
+        final String arrayNumber = variableName.substring(arrayIndex + 1, arrayIndex + 2);
+        final String variable = variableName.substring(arrayIndex + 4);
+        final JsonNode varNameNode = nodeDoc.get(varName);
+        final JsonNode arrayNumberNode = varNameNode.get(Integer.valueOf(arrayNumber));
+        final JsonNode variableNode = arrayNumberNode.get(variable);
         valueNode = variableNode;
       } else if (variableName.contains(".")) {
-        JsonNode subNode = nodeDoc.get(variableName.substring(0, variableName.indexOf(".")));
+        final JsonNode subNode = nodeDoc.get(variableName.substring(0, variableName.indexOf(".")));
         valueNode = subNode.get(variableName.substring(variableName.indexOf(".") + 1));
       } else {
         valueNode = nodeDoc.get(variableName);
       }
 
-      String value = valueNode.toString();
-      LocalDateTime dateTime = getDateTimeFromJson(nodeDoc);
+      final String value = valueNode.toString();
+      final LocalDateTime dateTime = getDateTimeFromJson(nodeDoc);
 
-      if (!value.equals("0.0") && !value.equals("10.0") && (!value.equals("100.0")))
+      if (!value.equals("0.0") && !value.equals("10.0") && (!value.equals("100.0"))) {
         list.add(new Charts.Data(dateTime, value));
+      }
     }
     return list;
   }
 
   public ArrayList<Charts.VariableList> refreshVariables() {
-    ArrayList<Charts.VariableList> variableList = new ArrayList<>();
-    ArrayList<String> variablesListByModule = new ArrayList<>();
+    final ArrayList<Charts.VariableList> variableList = new ArrayList<>();
+    final ArrayList<String> variablesListByModule = new ArrayList<>();
 
     diagnostic
         .getModules()
         .forEach(
             moduleDiagInfo -> {
-              String moduleStructureName = moduleDiagInfo.getModuleStructureName();
-              MongoCollection<Document> mongoCollection =
+              final String moduleStructureName = moduleDiagInfo.getModuleStructureName();
+              final MongoCollection<Document> mongoCollection =
                   mongoDatabase.getCollection(moduleStructureName);
               //            Document document = (Document) mongoCollection.find().limit(1).sort(new
               // Document("_id", -1));
-              for (Document document :
+              for (final Document document :
                   mongoCollection.find().limit(1).sort(new Document("_id", -1))) {
                 try {
                   variablesListByModule.addAll(getFields(moduleStructureName, document));
-                } catch (JsonProcessingException e) {
+                } catch (final JsonProcessingException e) {
                   e.printStackTrace();
                 }
               }
@@ -250,21 +267,21 @@ public class MongoDBController {
         });
 
     // Get last VariableList
-    MongoCollection mongoCollection = mongoDatabase.getCollection("chart_variable_list");
-    FindIterable<Document> iterable = mongoCollection.find();
-    for (Document doc : iterable) {
-      String jsonDoc = doc.toString();
+    final MongoCollection mongoCollection = mongoDatabase.getCollection("chart_variable_list");
+    final FindIterable<Document> iterable = mongoCollection.find();
+    for (final Document doc : iterable) {
+      final String jsonDoc = doc.toString();
       int startIndex = jsonDoc.indexOf("variableName=");
       int endIndex = jsonDoc.indexOf(",", startIndex);
-      String variableName = jsonDoc.substring(startIndex + 13, endIndex);
+      final String variableName = jsonDoc.substring(startIndex + 13, endIndex);
 
       startIndex = jsonDoc.indexOf("enabled=");
       endIndex = jsonDoc.indexOf("}", startIndex);
-      String value = jsonDoc.substring(startIndex + 8, endIndex);
+      final String value = jsonDoc.substring(startIndex + 8, endIndex);
 
-      Iterator iterator = variableList.iterator();
+      final Iterator iterator = variableList.iterator();
       while (iterator.hasNext()) {
-        Charts.VariableList variable = (Charts.VariableList) iterator.next();
+        final Charts.VariableList variable = (Charts.VariableList) iterator.next();
         if (variable.getVariableName().equals(variableName)) {
           variable.setEnabled((value.equals("true") ? true : false));
         }
@@ -273,75 +290,81 @@ public class MongoDBController {
     return variableList;
   }
 
-  private ArrayList<String> getFields(String collectionName, Document mongoDoc)
+  private ArrayList<String> getFields(final String collectionName, final Document mongoDoc)
       throws JsonProcessingException {
-    ArrayList<String> variableList = new ArrayList<>();
-    Gson gson = new Gson();
-    String jsonDoc = gson.toJson(mongoDoc);
-    ObjectMapper mapper = new ObjectMapper();
-    JsonNode root = mapper.readTree(jsonDoc);
-    Iterator<Map.Entry<String, JsonNode>> rootIterator = root.fields();
+    final ArrayList<String> variableList = new ArrayList<>();
+    final Gson gson = new Gson();
+    final String jsonDoc = gson.toJson(mongoDoc);
+    final ObjectMapper mapper = new ObjectMapper();
+    final JsonNode root = mapper.readTree(jsonDoc);
+    final Iterator<Map.Entry<String, JsonNode>> rootIterator = root.fields();
     while (rootIterator.hasNext()) {
-      String variable = collectionName;
-      Map.Entry<String, JsonNode> field = rootIterator.next();
+      final String variable = collectionName;
+      final Map.Entry<String, JsonNode> field = rootIterator.next();
       getVariable(variableList, field, variable);
     }
     return variableList;
   }
 
   private void getVariable(
-      ArrayList<String> variableList, Map.Entry<String, JsonNode> field, String name) {
-    String key = field.getKey();
+      final ArrayList<String> variableList,
+      final Map.Entry<String, JsonNode> field,
+      final String name) {
+    final String key = field.getKey();
     if (key.toUpperCase().contains("_ID")
         || (key.toUpperCase().contains("UPDATE"))
         || (key.toUpperCase().contains("DATETIME"))
-        || (key.toUpperCase().contains("MODULE"))) return;
-    String variable = name + "." + key;
-    Iterator<Map.Entry<String, JsonNode>> childIterator = field.getValue().fields();
+        || (key.toUpperCase().contains("MODULE"))) {
+      return;
+    }
+    final String variable = name + "." + key;
+    final Iterator<Map.Entry<String, JsonNode>> childIterator = field.getValue().fields();
     if (childIterator.hasNext()) {
       while (childIterator.hasNext()) {
-        Map.Entry<String, JsonNode> child = childIterator.next();
+        final Map.Entry<String, JsonNode> child = childIterator.next();
         getVariable(variableList, child, variable);
       }
     } else {
-      Iterator<JsonNode> iterElem = field.getValue().elements();
+      final Iterator<JsonNode> iterElem = field.getValue().elements();
       if (iterElem.hasNext()) {
         int i = 0;
         while (iterElem.hasNext()) {
-          JsonNode node = iterElem.next();
-          Iterator<String> namesIterator = node.fieldNames();
+          final JsonNode node = iterElem.next();
+          final Iterator<String> namesIterator = node.fieldNames();
           while (namesIterator.hasNext()) {
             variableList.add(variable + "[" + i + "]." + namesIterator.next());
           }
           i++;
         }
-      } else variableList.add(variable);
+      } else {
+        variableList.add(variable);
+      }
     }
   }
 
   public UserDetails getUser() {
-    MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
-    Document doc = (Document) mongoCollection.find().first();
-    UserInstance userInstance = new Gson().fromJson(doc.toJson(), UserInstance.class);
+    final MongoCollection mongoCollection = mongoDatabase.getCollection("Users");
+    final Document doc = (Document) mongoCollection.find().first();
+    final UserInstance userInstance = new Gson().fromJson(doc.toJson(), UserInstance.class);
 
     return userInstance;
   }
 
-  private LocalDateTime getDateTimeFromJson(JsonNode nodeDoc) {
-    JsonNode node = nodeDoc.get("frameLastUpdate");
-    JsonNode dateNode = node.get("date");
-    JsonNode timeNode = node.get("time");
+  private LocalDateTime getDateTimeFromJson(final JsonNode nodeDoc) {
+    final JsonNode node = nodeDoc.get("frameLastUpdate");
+    final JsonNode dateNode = node.get("date");
+    final JsonNode timeNode = node.get("time");
     try {
-      int year = Integer.valueOf((dateNode.get("year").toString()));
-      int month = Integer.valueOf(dateNode.get("month").toString());
-      int day = Integer.valueOf(dateNode.get("day").toString());
-      int hour = Integer.valueOf(timeNode.get("hour").toString());
-      int minute = Integer.valueOf(timeNode.get("minute").toString());
-      int second = Integer.valueOf(timeNode.get("second").toString());
-      LocalDateTime temp = LocalDateTime.of(year, month, day, hour, minute, second);
-      LocalDateTime temp1 = temp.plusHours(1);
+      final int year = Integer.valueOf((dateNode.get("year").toString()));
+      final int month = Integer.valueOf(dateNode.get("month").toString());
+      final int day = Integer.valueOf(dateNode.get("day").toString());
+      final int hour = Integer.valueOf(timeNode.get("hour").toString());
+      final int minute = Integer.valueOf(timeNode.get("minute").toString());
+      final int second = Integer.valueOf(timeNode.get("second").toString());
+      final LocalDateTime temp = LocalDateTime.of(year, month, day, hour, minute, second);
+      final LocalDateTime temp1 = temp.plusHours(1);
       return temp1;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw e;
     }
   }

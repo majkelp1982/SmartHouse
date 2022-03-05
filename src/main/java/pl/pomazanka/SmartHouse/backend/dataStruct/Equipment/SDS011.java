@@ -10,7 +10,7 @@ public class SDS011 implements Cloneable {
     return pm25;
   }
 
-  public void setPm25(int pm25) {
+  public void setPm25(final int pm25) {
     this.pm25 = pm25;
   }
 
@@ -18,7 +18,7 @@ public class SDS011 implements Cloneable {
     return pm10;
   }
 
-  public void setPm10(int pm10) {
+  public void setPm10(final int pm10) {
     this.pm10 = pm10;
   }
 

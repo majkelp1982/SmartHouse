@@ -29,11 +29,11 @@ public class MainLayout extends AppLayout {
   }
 
   private void createHeader() {
-    HorizontalLayout header = new HorizontalLayout();
+    final HorizontalLayout header = new HorizontalLayout();
     header.addClassName("appLayout-header");
 
-    H1 logo = new H1("Smart House");
-    Button loginButton = new Button("Zaloguj");
+    final H1 logo = new H1("Smart House");
+    final Button loginButton = new Button("Zaloguj");
     loginButton.addClickListener(
         buttonClickEvent -> UI.getCurrent().getPage().setLocation("/login"));
     if (View.isUserLoggedIn()) {
@@ -48,23 +48,25 @@ public class MainLayout extends AppLayout {
   }
 
   private void createDrawer() {
-    VerticalLayout drawer = new VerticalLayout();
+    final VerticalLayout drawer = new VerticalLayout();
     drawer.setWidth("100%");
     drawer.addClassName("appLayout-drawer");
 
     // prepare links
-    RouterLink weatherViewLink = createDrawerElement("cloud.svg", "Powietrze", WeatherView.class);
-    RouterLink ventViewLink = createDrawerElement("recu.svg", "Wentylacja", VentView.class);
-    RouterLink comfortViewLink = createDrawerElement("comfort.svg", "Komfort", ComfortView.class);
-    RouterLink heatingViewLink =
+    final RouterLink weatherViewLink =
+        createDrawerElement("cloud.svg", "Powietrze", WeatherView.class);
+    final RouterLink ventViewLink = createDrawerElement("recu.svg", "Wentylacja", VentView.class);
+    final RouterLink comfortViewLink =
+        createDrawerElement("comfort.svg", "Komfort", ComfortView.class);
+    final RouterLink heatingViewLink =
         createDrawerElement("thermometer.svg", "Ogrzewanie", HeatingView.class);
-    RouterLink sewageViewLink =
+    final RouterLink sewageViewLink =
         createDrawerElement("sewage.svg", "Oczyszczalnia", SewageView.class);
-    RouterLink extLightViewLink =
+    final RouterLink extLightViewLink =
         createDrawerElement("light-bulb.svg", "Oswietlenie", ExtLightsView.class);
-    RouterLink solarViewLink = createDrawerElement("solar.svg", "Solar", SolarView.class);
-    RouterLink chartsViewLink = createDrawerElement("graph.svg", "Wykresy", ChartsView.class);
-    RouterLink errorsViewLink =
+    final RouterLink solarViewLink = createDrawerElement("solar.svg", "Solar", SolarView.class);
+    final RouterLink chartsViewLink = createDrawerElement("graph.svg", "Wykresy", ChartsView.class);
+    final RouterLink errorsViewLink =
         createDrawerElement("support.svg", "Diagnostyka", DiagnosticView.class);
 
     drawer.add(
@@ -84,22 +86,24 @@ public class MainLayout extends AppLayout {
   }
 
   public RouterLink createDrawerElement(
-      String imageName, String name, Class<? extends Component> navigationTarget) {
+      final String imageName,
+      final String name,
+      final Class<? extends Component> navigationTarget) {
     // create container for elements
-    HorizontalLayout element = new HorizontalLayout();
+    final HorizontalLayout element = new HorizontalLayout();
     element.setAlignItems(FlexComponent.Alignment.CENTER);
 
     // create elements
-    Image image = new Image(imageName, imageName);
+    final Image image = new Image(imageName, imageName);
     image.setHeight("50px");
-    Label label = new Label(name);
+    final Label label = new Label(name);
     label.getStyle().set("color", "grey");
 
     // add to horizontal layout
     element.add(image, label);
 
     // create link
-    RouterLink routerLink = new RouterLink("", navigationTarget);
+    final RouterLink routerLink = new RouterLink("", navigationTarget);
     routerLink.getElement().appendChild(element.getElement());
 
     return routerLink;

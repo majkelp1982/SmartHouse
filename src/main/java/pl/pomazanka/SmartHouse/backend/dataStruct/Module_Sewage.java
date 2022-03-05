@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class Module_Sewage extends Module implements Cloneable {
   // Module heating type
-  private static byte MODULE_TYPE = 12;
+  private static final byte MODULE_TYPE = 12;
 
   // Values only to read
   private boolean airPump;
@@ -64,7 +64,7 @@ public class Module_Sewage extends Module implements Cloneable {
     return NVmaxWaterLevel;
   }
 
-  public void setNVmaxWaterLevel(int NVmaxWaterLevel) {
+  public void setNVmaxWaterLevel(final int NVmaxWaterLevel) {
     this.NVmaxWaterLevel = NVmaxWaterLevel;
     setUpToDate(false);
   }
@@ -73,7 +73,7 @@ public class Module_Sewage extends Module implements Cloneable {
     return NVminWaterLevel;
   }
 
-  public void setNVminWaterLevel(int NVminWaterLevel) {
+  public void setNVminWaterLevel(final int NVminWaterLevel) {
     this.NVminWaterLevel = NVminWaterLevel;
     setUpToDate(false);
   }
@@ -82,7 +82,7 @@ public class Module_Sewage extends Module implements Cloneable {
     return NVZeroRefWaterLevel;
   }
 
-  public void setNVZeroRefWaterLevel(int NVzeroRefWaterLevel) {
+  public void setNVZeroRefWaterLevel(final int NVzeroRefWaterLevel) {
     this.NVZeroRefWaterLevel = NVzeroRefWaterLevel;
     setUpToDate(false);
   }
@@ -91,17 +91,25 @@ public class Module_Sewage extends Module implements Cloneable {
     return NVIntervalAirPump;
   }
 
-  public void setNVIntervalAirPump(int NVitervalAirPump) {
+  public void setNVIntervalAirPump(final int NVitervalAirPump) {
     this.NVIntervalAirPump = NVitervalAirPump;
     setUpToDate(false);
   }
 
   public boolean isAllUpToDate() {
     setUpToDate(true);
-    if (isUpToDate()) setUpToDate(NVmaxWaterLevel == maxWaterLevel);
-    if (isUpToDate()) setUpToDate(NVminWaterLevel == minWaterLevel);
-    if (isUpToDate()) setUpToDate(NVZeroRefWaterLevel == zeroRefWaterLevel);
-    if (isUpToDate()) setUpToDate(NVIntervalAirPump == intervalAirPump);
+    if (isUpToDate()) {
+      setUpToDate(NVmaxWaterLevel == maxWaterLevel);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVminWaterLevel == minWaterLevel);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVZeroRefWaterLevel == zeroRefWaterLevel);
+    }
+    if (isUpToDate()) {
+      setUpToDate(NVIntervalAirPump == intervalAirPump);
+    }
 
     setReqUpdateValues(!isUpToDate());
 
@@ -109,8 +117,9 @@ public class Module_Sewage extends Module implements Cloneable {
   }
 
   // Parser for data package coming via UDP
-  public void dataParser(int[] packetData) {
-    int controllerFrameNumber = packetData[2];
+  @Override
+  public void dataParser(final int[] packetData) {
+    final int controllerFrameNumber = packetData[2];
 
     switch (controllerFrameNumber) {
       case 0: // standard frame 0
@@ -132,7 +141,7 @@ public class Module_Sewage extends Module implements Cloneable {
   }
 
   @Override
-  protected void assignNV(Object object) throws Exception {
+  protected void assignNV(final Object object) throws Exception {
     NVmaxWaterLevel = maxWaterLevel;
     NVminWaterLevel = minWaterLevel;
     NVZeroRefWaterLevel = zeroRefWaterLevel;
@@ -159,25 +168,45 @@ public class Module_Sewage extends Module implements Cloneable {
   }
 
   // compare data : last save status with new set
-  public boolean compare(Module_Sewage module_sewage) {
-    if (module_sewage == null) return false;
+  public boolean compare(final Module_Sewage module_sewage) {
+    if (module_sewage == null) {
+      return false;
+    }
     boolean result = true;
-    if (result) result = cmp(module_sewage.airPump, airPump);
-    if (result) result = cmp(module_sewage.waterPump, waterPump);
-    if (result) result = cmp(module_sewage.limitSensor, limitSensor);
+    if (result) {
+      result = cmp(module_sewage.airPump, airPump);
+    }
+    if (result) {
+      result = cmp(module_sewage.waterPump, waterPump);
+    }
+    if (result) {
+      result = cmp(module_sewage.limitSensor, limitSensor);
+    }
 
-    if (result) result = cmp(module_sewage.isWaterLevel, isWaterLevel, 1);
-    if (result) result = cmp(module_sewage.maxWaterLevel, maxWaterLevel, 0);
-    if (result) result = cmp(module_sewage.minWaterLevel, minWaterLevel, 0);
-    if (result) result = cmp(module_sewage.zeroRefWaterLevel, zeroRefWaterLevel, 0);
-    if (result) result = cmp(module_sewage.intervalAirPump, intervalAirPump, 0);
-    if (isTooLongWithoutSave()) result = false;
+    if (result) {
+      result = cmp(module_sewage.isWaterLevel, isWaterLevel, 1);
+    }
+    if (result) {
+      result = cmp(module_sewage.maxWaterLevel, maxWaterLevel, 0);
+    }
+    if (result) {
+      result = cmp(module_sewage.minWaterLevel, minWaterLevel, 0);
+    }
+    if (result) {
+      result = cmp(module_sewage.zeroRefWaterLevel, zeroRefWaterLevel, 0);
+    }
+    if (result) {
+      result = cmp(module_sewage.intervalAirPump, intervalAirPump, 0);
+    }
+    if (isTooLongWithoutSave()) {
+      result = false;
+    }
     return result;
   }
 
   @Override
   public Module_Sewage clone() throws CloneNotSupportedException {
-    Module_Sewage module_sewage = (Module_Sewage) super.clone();
+    final Module_Sewage module_sewage = (Module_Sewage) super.clone();
     return module_sewage;
   }
 }

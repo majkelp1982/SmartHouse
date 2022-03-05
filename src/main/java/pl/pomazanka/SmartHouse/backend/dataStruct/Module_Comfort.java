@@ -5,13 +5,15 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class Module_Comfort extends Module implements Cloneable {
   // Module comfort type
-  private static byte MODULE_TYPE = 10;
+  private static final byte MODULE_TYPE = 10;
 
   private Zone[] zone = new Zone[7];
 
   public Module_Comfort() throws Exception {
     super(MODULE_TYPE, "Komfort", "module_comfort");
-    for (int i = 0; i < 7; i++) zone[i] = new Zone();
+    for (int i = 0; i < 7; i++) {
+      zone[i] = new Zone();
+    }
 
     faultListInit();
   }
@@ -20,53 +22,57 @@ public class Module_Comfort extends Module implements Cloneable {
     return zone;
   }
 
-  public void setNVReqZ0(double NVReqTempZ0) {
+  public void setNVReqZ0(final double NVReqTempZ0) {
     zone[0].NVReqTemp = NVReqTempZ0;
     setUpToDate(false);
   }
 
-  public void setNVReqZ1(double NVReqTempZ1) {
+  public void setNVReqZ1(final double NVReqTempZ1) {
     zone[1].NVReqTemp = NVReqTempZ1;
     setUpToDate(false);
   }
 
-  public void setNVReqZ2(double NVReqTempZ2) {
+  public void setNVReqZ2(final double NVReqTempZ2) {
     zone[2].NVReqTemp = NVReqTempZ2;
     setUpToDate(false);
   }
 
-  public void setNVReqZ3(double NVReqTempZ3) {
+  public void setNVReqZ3(final double NVReqTempZ3) {
     zone[3].NVReqTemp = NVReqTempZ3;
     setUpToDate(false);
   }
 
-  public void setNVReqZ4(double NVReqTempZ4) {
+  public void setNVReqZ4(final double NVReqTempZ4) {
     zone[4].NVReqTemp = NVReqTempZ4;
     setUpToDate(false);
   }
 
-  public void setNVReqZ5(double NVReqTempZ5) {
+  public void setNVReqZ5(final double NVReqTempZ5) {
     zone[5].NVReqTemp = NVReqTempZ5;
     setUpToDate(false);
   }
 
-  public void setNVReqZ6(double NVReqTempZ6) {
+  public void setNVReqZ6(final double NVReqTempZ6) {
     zone[6].NVReqTemp = NVReqTempZ6;
     setUpToDate(false);
   }
 
   public boolean isAllUpToDate() {
     setUpToDate(true);
-    for (int i = 0; i <= 6; i++)
-      if (isUpToDate()) setUpToDate(zone[i].NVReqTemp == zone[i].reqTemp);
+    for (int i = 0; i <= 6; i++) {
+      if (isUpToDate()) {
+        setUpToDate(zone[i].NVReqTemp == zone[i].reqTemp);
+      }
+    }
 
     setReqUpdateValues(!isUpToDate());
     return isUpToDate();
   }
 
   // Parser for data package coming via UDP
-  public void dataParser(int[] packetData) {
-    int controllerFrameNumber = packetData[2];
+  @Override
+  public void dataParser(final int[] packetData) {
+    final int controllerFrameNumber = packetData[2];
 
     switch (controllerFrameNumber) {
       case 0: // standard frame 0
@@ -85,8 +91,10 @@ public class Module_Comfort extends Module implements Cloneable {
   }
 
   @Override
-  protected void assignNV(Object object) throws Exception {
-    for (int i = 0; i < 7; i++) zone[i].NVReqTemp = zone[i].reqTemp;
+  protected void assignNV(final Object object) throws Exception {
+    for (int i = 0; i < 7; i++) {
+      zone[i].NVReqTemp = zone[i].reqTemp;
+    }
   }
 
   @Override
@@ -106,29 +114,45 @@ public class Module_Comfort extends Module implements Cloneable {
     resetFaultPresent();
 
     // Fault check list
-    for (int i = 0; i < 7; i++) if (zone[i].isTemp < 11) setFaultPresent(i, true);
+    for (int i = 0; i < 7; i++) {
+      if (zone[i].isTemp < 11) {
+        setFaultPresent(i, true);
+      }
+    }
     // TODO fault list to extend
     updateGlobalFaultList();
   }
 
-  public boolean compare(Module_Comfort module_comfort) {
-    if (module_comfort == null) return false;
+  public boolean compare(final Module_Comfort module_comfort) {
+    if (module_comfort == null) {
+      return false;
+    }
     // return FALSE if compare data are different
     boolean result = true;
     for (int i = 0; i < 7; i++) {
-      if (result) result = cmp(module_comfort.zone[i].isTemp, zone[i].isTemp, 0.4);
-      if (result) result = cmp(module_comfort.zone[i].reqTemp, zone[i].reqTemp, 0);
-      if (result) result = cmp(module_comfort.zone[i].isHumidity, zone[i].isHumidity, 2);
+      if (result) {
+        result = cmp(module_comfort.zone[i].isTemp, zone[i].isTemp, 0.4);
+      }
+      if (result) {
+        result = cmp(module_comfort.zone[i].reqTemp, zone[i].reqTemp, 0);
+      }
+      if (result) {
+        result = cmp(module_comfort.zone[i].isHumidity, zone[i].isHumidity, 2);
+      }
     }
-    if (isTooLongWithoutSave()) result = false;
+    if (isTooLongWithoutSave()) {
+      result = false;
+    }
     return result;
   }
 
   @Override
   public Module_Comfort clone() throws CloneNotSupportedException {
-    Module_Comfort module_comfort = (Module_Comfort) super.clone();
+    final Module_Comfort module_comfort = (Module_Comfort) super.clone();
     module_comfort.zone = zone.clone();
-    for (int i = 0; i < 7; i++) module_comfort.zone[i] = zone[i].clone();
+    for (int i = 0; i < 7; i++) {
+      module_comfort.zone[i] = zone[i].clone();
+    }
     return module_comfort;
   }
 
@@ -140,7 +164,7 @@ public class Module_Comfort extends Module implements Cloneable {
 
     @Override
     protected Zone clone() throws CloneNotSupportedException {
-      Zone zone = (Zone) super.clone();
+      final Zone zone = (Zone) super.clone();
       return zone;
     }
   }

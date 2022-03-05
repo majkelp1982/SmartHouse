@@ -19,22 +19,21 @@ import java.util.Objects;
 @Route(value = "Diagnostyka", layout = MainLayout.class)
 public class DiagnosticView extends View {
 
+  // Objects
+  private final Header header;
+  private final Section[] section = new Section[2];
+  private final Grid<Diagnostic.ModuleDiagInfo> moduleGrid = new Grid<>();
+  private final List<Diagnostic.ModuleDiagInfo> modulesTable = new ArrayList<>();
   @Autowired Diagnostic diagnostic;
-
   // Update thread
   Thread thread;
   Grid<Diagnostic.ModuleFault> faultGrid = new Grid<>();
   List<Diagnostic.ModuleFault> globalFaultList = new ArrayList<>();
-  // Objects
-  private Header header;
-  private Section[] section = new Section[2];
-  private Grid<Diagnostic.ModuleDiagInfo> moduleGrid = new Grid<>();
   private List<Diagnostic.ModuleDiagInfo> moduleList = new ArrayList<>();
-  private List<Diagnostic.ModuleDiagInfo> modulesTable = new ArrayList<>();
   private Button globalResetButton;
   private Button groupButton;
 
-  public DiagnosticView(Diagnostic diagnostic) {
+  public DiagnosticView(final Diagnostic diagnostic) {
     this.diagnostic = diagnostic;
 
     this.diagnostic.refreshGlobalFaultList();
@@ -66,9 +65,11 @@ public class DiagnosticView extends View {
             faultGrid);
     section[1].getTileDetailsContainer(0).setMinHeight("100px");
     sectionResize();
-    if (diagnostic.isGlobalFaultsListGroupByFault())
+    if (diagnostic.isGlobalFaultsListGroupByFault()) {
       section[1].getTileDetailsContainer(0).setMinWidth("1600px");
-    else section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+    } else {
+      section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+    }
     section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size() * 35 + 180) + "px");
 
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
@@ -88,8 +89,8 @@ public class DiagnosticView extends View {
         .addColumn(
             new ComponentRenderer<>(
                 moduleDiagInfo -> {
-                  HorizontalLayout layout = new HorizontalLayout();
-                  Button button = new Button(moduleDiagInfo.getIP(), false, false);
+                  final HorizontalLayout layout = new HorizontalLayout();
+                  final Button button = new Button(moduleDiagInfo.getIP(), false, false);
                   button
                       .getSource()
                       .addClickListener(
@@ -109,12 +110,14 @@ public class DiagnosticView extends View {
         .addColumn(
             new ComponentRenderer<>(
                 moduleDiagInfo -> {
-                  HorizontalLayout layout = new HorizontalLayout();
-                  int signal = moduleDiagInfo.getSignal();
-                  Label label = new Label("" + signal);
+                  final HorizontalLayout layout = new HorizontalLayout();
+                  final int signal = moduleDiagInfo.getSignal();
+                  final Label label = new Label("" + signal);
                   if (signal <= -80) {
                     label.getStyle().set("color", View.COLOR_ALARM);
-                  } else label.getStyle().set("color", View.COLOR_OK);
+                  } else {
+                    label.getStyle().set("color", View.COLOR_OK);
+                  }
                   layout.add(label);
                   return layout;
                 }))
@@ -124,17 +127,18 @@ public class DiagnosticView extends View {
         .addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion)
         .setHeader("Firmware")
         .setWidth("150px");
-    ;
     moduleGrid
         .addColumn(
             new ComponentRenderer<>(
                 moduleDiagInfo -> {
-                  HorizontalLayout layout = new HorizontalLayout();
-                  Long duraiton = moduleDiagInfo.getDiagLastUpdate();
-                  Label label = new Label(duraiton.toString());
+                  final HorizontalLayout layout = new HorizontalLayout();
+                  final Long duraiton = moduleDiagInfo.getDiagLastUpdate();
+                  final Label label = new Label(duraiton.toString());
                   if (duraiton > 120) {
                     label.getStyle().set("color", View.COLOR_ALARM);
-                  } else label.getStyle().set("color", View.COLOR_OK);
+                  } else {
+                    label.getStyle().set("color", View.COLOR_OK);
+                  }
                   layout.add(label);
                   return layout;
                 }))
@@ -202,6 +206,7 @@ public class DiagnosticView extends View {
             });
   }
 
+  @Override
   void update() {
     header.setDiagnoseUpdate(diagnostic.getDiagnosticLastUpdate());
     groupButton.setButtonColor(
@@ -213,9 +218,11 @@ public class DiagnosticView extends View {
   }
 
   private void sectionResize() {
-    if (diagnostic.isGlobalFaultsListGroupByFault())
+    if (diagnostic.isGlobalFaultsListGroupByFault()) {
       section[1].getTileDetailsContainer(0).setMinWidth("1600px");
-    else section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+    } else {
+      section[1].getTileDetailsContainer(0).setMinWidth("1200px");
+    }
     section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size() * 35 + 180) + "px");
   }
 }

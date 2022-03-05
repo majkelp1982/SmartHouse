@@ -6,7 +6,7 @@ public class ControlValue {
   private Object isValue;
   private Object newValue;
 
-  public ControlValue(Object value) {
+  public ControlValue(final Object value) {
     isValue = value;
     newValue = value;
   }
@@ -15,7 +15,7 @@ public class ControlValue {
     return isValue;
   }
 
-  public void setIsValue(Object isValue) {
+  public void setIsValue(final Object isValue) {
     checkCompatibility(this.isValue, isValue);
     this.isValue = isValue;
   }
@@ -24,7 +24,7 @@ public class ControlValue {
     return newValue;
   }
 
-  public void setNewValue(Object newValue) {
+  public void setNewValue(final Object newValue) {
     checkCompatibility(this.newValue, newValue);
     this.newValue = newValue;
   }
@@ -37,18 +37,23 @@ public class ControlValue {
     setNewValue(getIsValue());
   }
 
-  private boolean checkCompatibility(Object obj1, Object obj2) {
-    if (!(obj1.getClass() == obj2.getClass()))
+  private boolean checkCompatibility(final Object obj1, final Object obj2) {
+    if (!(obj1.getClass() == obj2.getClass())) {
       throw new IllegalArgumentException(
           "Klasa " + obj1.getClass() + " jest niezgodnia z oczekiwaną klasa " + obj2.getClass());
+    }
     return true;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ControlValue that = (ControlValue) o;
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final ControlValue that = (ControlValue) o;
     return isValue.equals(that.isValue);
   }
 

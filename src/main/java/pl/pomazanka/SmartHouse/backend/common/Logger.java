@@ -15,25 +15,25 @@ public class Logger {
     return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss"));
   }
 
-  public static void debug(String message) {
+  public static void debug(final String message) {
     if (level >= DEBUG) {
       System.out.println("[DEBUG]" + dt() + " " + message);
     }
   }
 
-  public static void info(String message) {
+  public static void info(final String message) {
     if (level >= INFO) {
       System.out.println("[INFO]" + dt() + " " + message);
     }
   }
 
-  public static void warn(String message) {
+  public static void warn(final String message) {
     if (level >= INFO) {
       System.out.println("[WARN]" + dt() + " " + message);
     }
   }
 
-  public static void error(String message) {
+  public static void error(final String message) {
     if (level >= INFO) {
       System.out.println("[ERR]" + dt() + " " + message);
     }

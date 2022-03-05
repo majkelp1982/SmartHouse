@@ -27,7 +27,7 @@ public class HeatingView extends View {
   NumberField reqTempBufferCWU;
   NumberField heatPumpAlarmTemp;
 
-  public HeatingView(Module_Heating module_heating) {
+  public HeatingView(final Module_Heating module_heating) {
     this.module_heating = module_heating;
 
     // Header
@@ -62,11 +62,15 @@ public class HeatingView extends View {
     createInfoSection2();
 
     // Add components to details containers
-    for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 4; j++)
-        for (int k = 0; k < 4; k++)
-          if (info[i][j][k] != null)
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 4; j++) {
+        for (int k = 0; k < 4; k++) {
+          if (info[i][j][k] != null) {
             section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
+          }
+        }
+      }
+    }
     section[2]
         .getTileDetailsContainer(0)
         .add(cheapTariffOnly.getSource(), heatingActivated.getSource(), waterSuperHeat.getSource());
@@ -82,13 +86,15 @@ public class HeatingView extends View {
     section[2].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
 
     // Notification if user doesn't logged
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[2]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
 
     add(
@@ -254,7 +260,8 @@ public class HeatingView extends View {
     }
     info[1][0][0] = new Info("źródło ciepła", temp);
 
-    double temp1 = (float) module_heating.getValve_bypass() * 2.5; // scale from 1-40units to 1-100%
+    final double temp1 =
+        (float) module_heating.getValve_bypass() * 2.5; // scale from 1-40units to 1-100%
     temp = temp1 + "%";
     info[1][0][1] = new Info("bypass", temp);
 
@@ -277,7 +284,7 @@ public class HeatingView extends View {
     info[1][1][2] = new Info("pompa ciepła", true, module_heating.isReqHeatingPumpOn());
 
     // Section Tile 2 Zones
-    boolean[] zone = module_heating.getZone();
+    final boolean[] zone = module_heating.getZone();
 
     info[1][2][0] = new Info("salon", true, zone[0]);
     info[1][2][1] = new Info("pralnia", true, zone[1]);
@@ -354,6 +361,7 @@ public class HeatingView extends View {
             });
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_heating.getFrameLastUpdate());
@@ -408,7 +416,8 @@ public class HeatingView extends View {
     }
     info[1][0][0].setValue(temp);
 
-    double temp1 = (float) module_heating.getValve_bypass() * 2.5; // scale from 1-40units to 1-100%
+    final double temp1 =
+        (float) module_heating.getValve_bypass() * 2.5; // scale from 1-40units to 1-100%
     temp = temp1 + "%";
     info[1][0][1].setValue(temp);
 
@@ -431,7 +440,7 @@ public class HeatingView extends View {
     info[1][1][2].setValue(module_heating.isReqHeatingPumpOn());
 
     // Section Tile 2 Zones
-    boolean[] zone = module_heating.getZone();
+    final boolean[] zone = module_heating.getZone();
 
     info[1][2][0].setValue(zone[0]);
     info[1][2][1].setValue(zone[1]);

@@ -25,7 +25,7 @@ public class ExtLightsView extends View {
   Section[] section = new Section[2];
   Info[][][] info = new Info[1][2][4];
 
-  public ExtLightsView(Module_ExtLights module_extLights) {
+  public ExtLightsView(final Module_ExtLights module_extLights) {
     this.module_extLights = module_extLights;
 
     // Header
@@ -50,29 +50,33 @@ public class ExtLightsView extends View {
     createInfoSection0();
     createInfoSection1();
 
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[0]
         .getSection()
         .addClickListener(
             event -> {
               System.out.println("click");
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[1]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[0].getSection().setEnabled(isUserLoggedIn());
     section[1].getSection().setEnabled(isUserLoggedIn());
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }
 
-  private VerticalLayout createLightView(int id) {
-    VerticalLayout layout = new VerticalLayout();
-    Button button100 =
+  private VerticalLayout createLightView(final int id) {
+    final VerticalLayout layout = new VerticalLayout();
+    final Button button100 =
         new Button("Wymuś Max", true, module_extLights.getLightDimmer()[id].isForceMax());
     button100
         .getSource()
@@ -80,26 +84,29 @@ public class ExtLightsView extends View {
             buttonClickEvent -> {
               module_extLights.getNVLightDimmer()[id].setForceMax(
                   !module_extLights.getLightDimmer()[id].isForceMax());
-              if (module_extLights.getNVLightDimmer()[id].isForceMax())
+              if (module_extLights.getNVLightDimmer()[id].isForceMax()) {
                 module_extLights.getNVLightDimmer()[id].setForce0(false);
+              }
               setPendingColor(button100.getSource());
               module_extLights.setReqUpdateValues(true);
             });
 
-    Button button0 = new Button("Wymuś 0%", true, module_extLights.getLightDimmer()[id].isForce0());
+    final Button button0 =
+        new Button("Wymuś 0%", true, module_extLights.getLightDimmer()[id].isForce0());
     button0
         .getSource()
         .addClickListener(
             buttonClickEvent -> {
               module_extLights.getNVLightDimmer()[id].setForce0(
                   !module_extLights.getLightDimmer()[id].isForce0());
-              if (module_extLights.getNVLightDimmer()[id].isForce0())
+              if (module_extLights.getNVLightDimmer()[id].isForce0()) {
                 module_extLights.getNVLightDimmer()[id].setForceMax(false);
+              }
               setPendingColor(button0.getSource());
               module_extLights.setReqUpdateValues(true);
             });
 
-    Info info =
+    final Info info =
         new Info(
             "intensywność",
             "%",
@@ -110,7 +117,7 @@ public class ExtLightsView extends View {
             0,
             0);
 
-    NumberField setIntens =
+    final NumberField setIntens =
         new NumberField(
             "standBy [%]", module_extLights.getLightDimmer()[id].getStandByIntens(), 10, 90, 1);
     setIntens
@@ -123,7 +130,7 @@ public class ExtLightsView extends View {
               module_extLights.setReqUpdateValues(true);
             });
 
-    NumberField maxIntens =
+    final NumberField maxIntens =
         new NumberField(
             "Max [%]", module_extLights.getLightDimmer()[id].getMaxIntens(), 50, 100, 1);
     maxIntens
@@ -152,9 +159,9 @@ public class ExtLightsView extends View {
   }
 
   private void createInfoSection1() {
-    VerticalLayout layout = new VerticalLayout();
+    final VerticalLayout layout = new VerticalLayout();
 
-    NumberField setStartIntensLevel =
+    final NumberField setStartIntensLevel =
         new NumberField("próg załączenia [%]", module_extLights.getStartLightLevel(), 5, 50, 1);
     setStartIntensLevel
         .getSource()
@@ -165,7 +172,7 @@ public class ExtLightsView extends View {
               module_extLights.setReqUpdateValues(true);
             });
 
-    NumberField setOffTimeHour =
+    final NumberField setOffTimeHour =
         new NumberField("godzina wyłączenia", module_extLights.getOffTime().getHour(), 0, 23, 1);
     setOffTimeHour
         .getSource()
@@ -178,7 +185,7 @@ public class ExtLightsView extends View {
               setPendingColor(setOffTimeHour.getSource());
               module_extLights.setReqUpdateValues(true);
             });
-    NumberField setOffTimeMinute =
+    final NumberField setOffTimeMinute =
         new NumberField("minuta wyłączenia", module_extLights.getOffTime().getMinute(), 0, 59, 1);
     setOffTimeMinute
         .getSource()
@@ -197,37 +204,38 @@ public class ExtLightsView extends View {
     section[1].getTileDetailsContainer(0).add(layout);
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_extLights.getFrameLastUpdate());
     header.setDiagnoseUpdate(module_extLights.getDiagnosticLastUpdate());
 
     for (int i = 0; i < 4; i++) {
-      VerticalLayout layout =
+      final VerticalLayout layout =
           (VerticalLayout) section[0].getTileDetailsContainer(i).getComponentAt(0);
 
-      Button buttonMax =
+      final Button buttonMax =
           new Button((com.vaadin.flow.component.button.Button) layout.getComponentAt(0));
       buttonMax.setButtonColor(
           module_extLights.getLightDimmer()[i].isForceMax(),
           module_extLights.getNVLightDimmer()[i].isForceMax());
-      Button button0 =
+      final Button button0 =
           new Button((com.vaadin.flow.component.button.Button) layout.getComponentAt(1));
       button0.setButtonColor(
           module_extLights.getLightDimmer()[i].isForce0(),
           module_extLights.getNVLightDimmer()[i].isForce0());
 
-      Info intens = new Info((HorizontalLayout) layout.getComponentAt(2));
+      final Info intens = new Info((HorizontalLayout) layout.getComponentAt(2));
       intens.setValue(module_extLights.getLightDimmer()[i].getIntens());
 
-      NumberField standByIntens =
+      final NumberField standByIntens =
           new NumberField(
               (com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(3));
       standByIntens.setNumberField(
           module_extLights.getLightDimmer()[i].getStandByIntens(),
           module_extLights.getNVLightDimmer()[i].getStandByIntens());
 
-      NumberField maxIntens =
+      final NumberField maxIntens =
           new NumberField(
               (com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(4));
       maxIntens.setNumberField(
@@ -235,21 +243,21 @@ public class ExtLightsView extends View {
           module_extLights.getNVLightDimmer()[i].getMaxIntens());
     }
 
-    VerticalLayout layout =
+    final VerticalLayout layout =
         (VerticalLayout) section[1].getTileDetailsContainer(0).getComponentAt(0);
 
-    NumberField startLevel =
+    final NumberField startLevel =
         new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(0));
     startLevel.setNumberField(
         module_extLights.getStartLightLevel(), module_extLights.getNVstartLightLevel());
 
-    NumberField hour =
+    final NumberField hour =
         new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(1));
 
     hour.setNumberField(
         module_extLights.getOffTime().getHour(), module_extLights.getNVoffTime().getHour());
 
-    NumberField minute =
+    final NumberField minute =
         new NumberField((com.vaadin.flow.component.textfield.NumberField) layout.getComponentAt(2));
     minute.setNumberField(
         module_extLights.getOffTime().getMinute(), module_extLights.getNVoffTime().getMinute());

@@ -11,7 +11,7 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.VentZones;
 @Controller
 public class Module_Vent extends Module implements Cloneable {
   // Module ventilation type
-  private static transient int MODULE_TYPE = 13;
+  private static final transient int MODULE_TYPE = 13;
   private final transient byte ID_CZERPNIA = 0;
   private final transient byte ID_WYRZUTNIA = 1;
   private final transient byte ID_NAWIEW = 2;
@@ -24,6 +24,31 @@ public class Module_Vent extends Module implements Cloneable {
   private final transient byte ID_WATER_OUTLET = 1;
   private final transient byte ID_AIR_INLET = 2;
   private final transient byte ID_AIR_OUTLET = 3;
+  // normal heating is to weak then trigger vent heating system
+  private final ControlValue reqAutoDiagnosis = new ControlValue(false);
+  private final ControlValue activeCooling = new ControlValue(false);
+  private final ControlValue activeHeating = new ControlValue(false);
+  private final ControlValue reqLazDol = new ControlValue(false);
+  private final ControlValue reqLazGora = new ControlValue(false);
+  private final ControlValue reqKuchnia = new ControlValue(false);
+  // byte 22-25
+  private final Float[] heatExchanger = new Float[4];
+  // byte 30
+  private final Mode normalMode; // normal mode structure
+  // byte 31-32
+  private final Mode humidityAlertMode; // humidity mode structure
+  // byte 33-34
+  private final Mode defrostMode; // defrost mode structure
+  // byte 35-58
+  private final VentZones[] activeTempRegByHours =
+      new VentZones[24]; // active cooling/heating according to hours
+  // byte 59
+  private final ControlValue minTemp =
+      new ControlValue(
+          0); // min temp to trigger active cooling in zones. Priority is normal heating. Only when
+  // byte 60-83
+  private final VentZones[] normalOnByHours =
+      new VentZones[24]; // active cooling/heating according to hours
   // byte 87 - Flaps fresh
   boolean salon1 = false;
   boolean salon2 = false;
@@ -48,49 +73,34 @@ public class Module_Vent extends Module implements Cloneable {
   private boolean reqPumpColdWater = false;
   private boolean reqPumpHotWater = false;
   private boolean defrostActive = false;
-              // normal heating is to weak then trigger vent heating system
-  private ControlValue reqAutoDiagnosis = new ControlValue(false);
   // byte 1
   private boolean normalOn = false;
-  private ControlValue activeCooling = new ControlValue(false);
-  private ControlValue activeHeating = new ControlValue(false);
-  private ControlValue reqLazDol = new ControlValue(false);
-  private ControlValue reqLazGora = new ControlValue(false);
-  private ControlValue reqKuchnia = new ControlValue(false);
   // byte 2-17
   private BME280[] bme280 = new BME280[4];
   // byte 18-21
   private Fan[] fan = new Fan[2];
-  // byte 22-25
-  private Float heatExchanger[] = new Float[4];
-  // byte 30
-  private Mode normalMode; // normal mode structure
-  // byte 31-32
-  private Mode humidityAlertMode; // humidity mode structure
-  // byte 33-34
-  private Mode defrostMode; // defrost mode structure
-  // byte 35-58
-  private VentZones activeTempRegByHours[] =
-      new VentZones[24]; // active cooling/heating according to hours
-  // byte 59
-  private ControlValue minTemp =
-      new ControlValue(
-          0); // min temp to trigger active cooling in zones. Priority is normal heating. Only when
-  // byte 60-83
-  private VentZones normalOnByHours[] =
-      new VentZones[24]; // active cooling/heating according to hours
 
   public Module_Vent() {
     super(MODULE_TYPE, "Wentylacja", "module_vent");
-    for (int i = 0; i < 4; i++) bme280[i] = new BME280();
-    for (int i = 0; i < 2; i++) fan[i] = new Fan();
-    for (int i = 0; i < 4; i++) heatExchanger[i] = new Float(0f);
+    for (int i = 0; i < 4; i++) {
+      bme280[i] = new BME280();
+    }
+    for (int i = 0; i < 2; i++) {
+      fan[i] = new Fan();
+    }
+    for (int i = 0; i < 4; i++) {
+      heatExchanger[i] = new Float(0f);
+    }
     normalMode = new Mode();
     humidityAlertMode = new Mode();
     defrostMode = new Mode();
-    for (int i = 0; i < 24; i++) activeTempRegByHours[i] = new VentZones();
+    for (int i = 0; i < 24; i++) {
+      activeTempRegByHours[i] = new VentZones();
+    }
 
-    for (int i = 0; i < 24; i++) normalOnByHours[i] = new VentZones();
+    for (int i = 0; i < 24; i++) {
+      normalOnByHours[i] = new VentZones();
+    }
   }
 
   public boolean isSalon1() {
@@ -214,7 +224,7 @@ public class Module_Vent extends Module implements Cloneable {
     return bme280;
   }
 
-  public void setBme280(BME280[] bme280) {
+  public void setBme280(final BME280[] bme280) {
     this.bme280 = bme280;
   }
 
@@ -222,7 +232,7 @@ public class Module_Vent extends Module implements Cloneable {
     return fan;
   }
 
-  public void setFan(Fan[] fan) {
+  public void setFan(final Fan[] fan) {
     this.fan = fan;
   }
 
@@ -256,41 +266,94 @@ public class Module_Vent extends Module implements Cloneable {
 
   public boolean isAllUpToDate() {
     setUpToDate(true);
-    if (isUpToDate()) setUpToDate(reqAutoDiagnosis.isUpToDate());
-    if (isUpToDate()) setUpToDate(activeCooling.isUpToDate());
-    if (isUpToDate()) setUpToDate(activeHeating.isUpToDate());
-    if (isUpToDate()) setUpToDate(reqLazDol.isUpToDate());
-    if (isUpToDate()) setUpToDate(reqLazGora.isUpToDate());
-    if (isUpToDate()) setUpToDate(reqKuchnia.isUpToDate());
-
-    if (isUpToDate()) setUpToDate(normalMode.getTriggerInt().isUpToDate());
-    if (isUpToDate()) setUpToDate(normalMode.getDelayTime().isUpToDate());
-    if (isUpToDate()) setUpToDate(humidityAlertMode.getTriggerInt().isUpToDate());
-    if (isUpToDate()) setUpToDate(humidityAlertMode.getDelayTime().isUpToDate());
-    if (isUpToDate()) setUpToDate(defrostMode.getTriggerInt().isUpToDate());
-    if (isUpToDate()) setUpToDate(defrostMode.getDelayTime().isUpToDate());
-
-    for (int i = 0; i < 24; i++) {
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getSalon().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getPralnia().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getLazDol().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getRodzice().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getNatalia().getRequest().isUpToDate());
-      if (isUpToDate())
-        setUpToDate(activeTempRegByHours[i].getKarolina().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(activeTempRegByHours[i].getLazGora().getRequest().isUpToDate());
+    if (isUpToDate()) {
+      setUpToDate(reqAutoDiagnosis.isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(activeCooling.isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(activeHeating.isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(reqLazDol.isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(reqLazGora.isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(reqKuchnia.isUpToDate());
     }
 
-    if (isUpToDate()) setUpToDate(minTemp.isUpToDate());
+    if (isUpToDate()) {
+      setUpToDate(normalMode.getTriggerInt().isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(normalMode.getDelayTime().isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(humidityAlertMode.getTriggerInt().isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(humidityAlertMode.getDelayTime().isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(defrostMode.getTriggerInt().isUpToDate());
+    }
+    if (isUpToDate()) {
+      setUpToDate(defrostMode.getDelayTime().isUpToDate());
+    }
 
     for (int i = 0; i < 24; i++) {
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getSalon().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getPralnia().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getLazDol().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getRodzice().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getNatalia().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getKarolina().getRequest().isUpToDate());
-      if (isUpToDate()) setUpToDate(normalOnByHours[i].getLazGora().getRequest().isUpToDate());
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getSalon().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getPralnia().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getLazDol().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getRodzice().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getNatalia().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getKarolina().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(activeTempRegByHours[i].getLazGora().getRequest().isUpToDate());
+      }
+    }
+
+    if (isUpToDate()) {
+      setUpToDate(minTemp.isUpToDate());
+    }
+
+    for (int i = 0; i < 24; i++) {
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getSalon().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getPralnia().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getLazDol().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getRodzice().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getNatalia().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getKarolina().getRequest().isUpToDate());
+      }
+      if (isUpToDate()) {
+        setUpToDate(normalOnByHours[i].getLazGora().getRequest().isUpToDate());
+      }
     }
 
     setReqUpdateValues(!isUpToDate());
@@ -298,12 +361,15 @@ public class Module_Vent extends Module implements Cloneable {
   }
 
   // Parser for data package coming via UDP
-  public void dataParser(int[] packetData) {
-    int controllerFrameNumber = packetData[2];
+  @Override
+  public void dataParser(final int[] packetData) {
+    final int controllerFrameNumber = packetData[2];
 
     // CUT FIRST 3 BYTES FROM PACKET DATA. FIRST 3 BYTE IS MODULE ID's
-    int[] data = new int[UDPController.PACKET_SIZE_MODULE_13 - 3];
-    for (int i = 0; i < (UDPController.PACKET_SIZE_MODULE_13 - 3); i++) data[i] = packetData[i + 3];
+    final int[] data = new int[UDPController.PACKET_SIZE_MODULE_13 - 3];
+    for (int i = 0; i < (UDPController.PACKET_SIZE_MODULE_13 - 3); i++) {
+      data[i] = packetData[i + 3];
+    }
 
     switch (controllerFrameNumber) {
       case 0: // standard frame 0
@@ -326,7 +392,7 @@ public class Module_Vent extends Module implements Cloneable {
 
         // byte 2-17
         for (int i = 0; i < 4; i++) {
-          double tValue = data[2 + i * 4] + data[2 + i * 4 + 1] / 10.0;
+          final double tValue = data[2 + i * 4] + data[2 + i * 4 + 1] / 10.0;
           bme280[i].setTemp(getFloatValue(tValue));
           bme280[i].setHumidity(data[2 + i * 4 + 2]);
           bme280[i].setPressure(data[2 + i * 4 + 3] * 10);
@@ -340,8 +406,9 @@ public class Module_Vent extends Module implements Cloneable {
         fan[ID_WYRZUTNIA].setRev(data[21] * 100);
 
         // byte 22-29
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
           heatExchanger[0] = (float) (data[22 + i * 2] * 10 + (data[22 + i * 2 + 1] / 10.0));
+        }
 
         // byte 30
         normalMode.getDelayTime().setIsValue(data[30]);
@@ -422,157 +489,266 @@ public class Module_Vent extends Module implements Cloneable {
     updateGlobalFaultList();
   }
 
-  public boolean compare(Module_Vent module_vent) {
-    if (module_vent == null) return false;
+  public boolean compare(final Module_Vent module_vent) {
+    if (module_vent == null) {
+      return false;
+    }
     // return FALSE if compare data are different
     boolean result = true;
-    if (result) result = cmp(module_vent.humidityAlert, humidityAlert);
-    if (result) result = cmp(module_vent.bypassOpen, bypassOpen);
-    if (result) result = cmp(module_vent.circuitPump, circuitPump);
-    if (result) result = cmp(module_vent.reqPumpColdWater, reqPumpColdWater);
-    if (result) result = cmp(module_vent.reqPumpHotWater, reqPumpHotWater);
-    if (result) result = cmp(module_vent.defrostActive, defrostActive);
-    if (result) result = cmp(module_vent.defrostActive, reqPumpHotWater);
-    if (result) result = cmp(module_vent.reqAutoDiagnosis, reqAutoDiagnosis);
+    if (result) {
+      result = cmp(module_vent.humidityAlert, humidityAlert);
+    }
+    if (result) {
+      result = cmp(module_vent.bypassOpen, bypassOpen);
+    }
+    if (result) {
+      result = cmp(module_vent.circuitPump, circuitPump);
+    }
+    if (result) {
+      result = cmp(module_vent.reqPumpColdWater, reqPumpColdWater);
+    }
+    if (result) {
+      result = cmp(module_vent.reqPumpHotWater, reqPumpHotWater);
+    }
+    if (result) {
+      result = cmp(module_vent.defrostActive, defrostActive);
+    }
+    if (result) {
+      result = cmp(module_vent.defrostActive, reqPumpHotWater);
+    }
+    if (result) {
+      result = cmp(module_vent.reqAutoDiagnosis, reqAutoDiagnosis);
+    }
 
-    if (result) result = cmp(module_vent.normalOn, normalOn);
-    if (result) result = cmp(module_vent.activeCooling, activeCooling);
-    if (result) result = cmp(module_vent.activeHeating, activeHeating);
-    if (result) result = cmp(module_vent.reqLazDol, reqLazDol);
-    if (result) result = cmp(module_vent.reqLazGora, reqLazGora);
-    if (result) result = cmp(module_vent.reqKuchnia, reqKuchnia);
+    if (result) {
+      result = cmp(module_vent.normalOn, normalOn);
+    }
+    if (result) {
+      result = cmp(module_vent.activeCooling, activeCooling);
+    }
+    if (result) {
+      result = cmp(module_vent.activeHeating, activeHeating);
+    }
+    if (result) {
+      result = cmp(module_vent.reqLazDol, reqLazDol);
+    }
+    if (result) {
+      result = cmp(module_vent.reqLazGora, reqLazGora);
+    }
+    if (result) {
+      result = cmp(module_vent.reqKuchnia, reqKuchnia);
+    }
 
     for (int i = 0; i < 4; i++) {
-      if (result) result = cmp(module_vent.bme280[i].getTemp(), bme280[i].getTemp(), 1);
-      if (result) result = cmp(module_vent.bme280[i].getPressure(), bme280[i].getPressure(), 5);
-      if (result) result = cmp(module_vent.bme280[i].getHumidity(), bme280[i].getHumidity(), 3);
+      if (result) {
+        result = cmp(module_vent.bme280[i].getTemp(), bme280[i].getTemp(), 1);
+      }
+      if (result) {
+        result = cmp(module_vent.bme280[i].getPressure(), bme280[i].getPressure(), 5);
+      }
+      if (result) {
+        result = cmp(module_vent.bme280[i].getHumidity(), bme280[i].getHumidity(), 3);
+      }
     }
 
     for (int i = 0; i < 2; i++) {
-      if (result) result = cmp(module_vent.fan[i].getSpeed(), fan[i].getSpeed(), 10);
-      if (result) result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(), 100);
+      if (result) {
+        result = cmp(module_vent.fan[i].getSpeed(), fan[i].getSpeed(), 10);
+      }
+      if (result) {
+        result = cmp(module_vent.fan[i].getRev(), module_vent.fan[i].getRev(), 100);
+      }
     }
 
-    for (int i = 0; i < 4; i++)
-      if (result) result = cmp(module_vent.heatExchanger[i], heatExchanger[i], 0.2);
+    for (int i = 0; i < 4; i++) {
+      if (result) {
+        result = cmp(module_vent.heatExchanger[i], heatExchanger[i], 0.2);
+      }
+    }
 
     // byte 30
-    if (result) result = cmp(module_vent.normalMode.getTrigger(), normalMode.getTrigger());
-    if (result) result = cmp(module_vent.normalMode.getTriggerInt(), normalMode.getTriggerInt());
-    if (result) result = cmp(module_vent.normalMode.getDelayTime(), normalMode.getDelayTime());
-    if (result) result = cmp(module_vent.normalMode.getTimeLeft(), normalMode.getTimeLeft());
+    if (result) {
+      result = cmp(module_vent.normalMode.getTrigger(), normalMode.getTrigger());
+    }
+    if (result) {
+      result = cmp(module_vent.normalMode.getTriggerInt(), normalMode.getTriggerInt());
+    }
+    if (result) {
+      result = cmp(module_vent.normalMode.getDelayTime(), normalMode.getDelayTime());
+    }
+    if (result) {
+      result = cmp(module_vent.normalMode.getTimeLeft(), normalMode.getTimeLeft());
+    }
 
-    if (result)
+    if (result) {
       result = cmp(module_vent.humidityAlertMode.getTrigger(), humidityAlertMode.getTrigger());
-    if (result)
+    }
+    if (result) {
       result =
           cmp(module_vent.humidityAlertMode.getTriggerInt(), humidityAlertMode.getTriggerInt());
-    if (result)
+    }
+    if (result) {
       result = cmp(module_vent.humidityAlertMode.getDelayTime(), humidityAlertMode.getDelayTime());
-    if (result)
+    }
+    if (result) {
       result = cmp(module_vent.humidityAlertMode.getTimeLeft(), humidityAlertMode.getTimeLeft());
+    }
 
-    if (result) result = cmp(module_vent.defrostMode.getTrigger(), defrostMode.getTrigger());
-    if (result) result = cmp(module_vent.defrostMode.getTriggerInt(), defrostMode.getTriggerInt());
-    if (result) result = cmp(module_vent.defrostMode.getDelayTime(), defrostMode.getDelayTime());
-    if (result) result = cmp(module_vent.defrostMode.getTimeLeft(), defrostMode.getTimeLeft());
+    if (result) {
+      result = cmp(module_vent.defrostMode.getTrigger(), defrostMode.getTrigger());
+    }
+    if (result) {
+      result = cmp(module_vent.defrostMode.getTriggerInt(), defrostMode.getTriggerInt());
+    }
+    if (result) {
+      result = cmp(module_vent.defrostMode.getDelayTime(), defrostMode.getDelayTime());
+    }
+    if (result) {
+      result = cmp(module_vent.defrostMode.getTimeLeft(), defrostMode.getTimeLeft());
+    }
 
     for (int i = 0; i < 4; i++) {
-      if (result)
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getSalon().getRequest(),
                 activeTempRegByHours[i].getSalon().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getPralnia().getRequest(),
                 activeTempRegByHours[i].getPralnia().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getLazDol().getRequest(),
                 activeTempRegByHours[i].getLazDol().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getRodzice().getRequest(),
                 activeTempRegByHours[i].getRodzice().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getNatalia().getRequest(),
                 activeTempRegByHours[i].getNatalia().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getKarolina().getRequest(),
                 activeTempRegByHours[i].getKarolina().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.activeTempRegByHours[i].getLazGora().getRequest(),
                 activeTempRegByHours[i].getLazGora().getRequest());
+      }
     }
 
-    if (result) result = cmp(module_vent.minTemp, minTemp);
+    if (result) {
+      result = cmp(module_vent.minTemp, minTemp);
+    }
 
     for (int i = 0; i < 4; i++) {
-      if (result)
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getSalon().getRequest(),
                 normalOnByHours[i].getSalon().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getPralnia().getRequest(),
                 normalOnByHours[i].getPralnia().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getLazDol().getRequest(),
                 normalOnByHours[i].getLazDol().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getRodzice().getRequest(),
                 normalOnByHours[i].getRodzice().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getNatalia().getRequest(),
                 normalOnByHours[i].getNatalia().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getKarolina().getRequest(),
                 normalOnByHours[i].getKarolina().getRequest());
-      if (result)
+      }
+      if (result) {
         result =
             cmp(
                 module_vent.normalOnByHours[i].getLazGora().getRequest(),
                 normalOnByHours[i].getLazGora().getRequest());
+      }
     }
 
     // byte 87 - Flaps fresh
-    if (result) result = cmp(module_vent.salon1, salon1);
-    if (result) result = cmp(module_vent.salon2, salon2);
-    if (result) result = cmp(module_vent.gabinet, gabinet);
-    if (result) result = cmp(module_vent.warsztat, warsztat);
-    if (result) result = cmp(module_vent.rodzice, rodzice);
-    if (result) result = cmp(module_vent.natalia, natalia);
-    if (result) result = cmp(module_vent.karolina, karolina);
+    if (result) {
+      result = cmp(module_vent.salon1, salon1);
+    }
+    if (result) {
+      result = cmp(module_vent.salon2, salon2);
+    }
+    if (result) {
+      result = cmp(module_vent.gabinet, gabinet);
+    }
+    if (result) {
+      result = cmp(module_vent.warsztat, warsztat);
+    }
+    if (result) {
+      result = cmp(module_vent.rodzice, rodzice);
+    }
+    if (result) {
+      result = cmp(module_vent.natalia, natalia);
+    }
+    if (result) {
+      result = cmp(module_vent.karolina, karolina);
+    }
 
     // byte 88 - flaps used
-    if (result) result = cmp(module_vent.kuchnia, kuchnia);
-    if (result) result = cmp(module_vent.lazDol1, lazDol1);
-    if (result) result = cmp(module_vent.lazDol2, lazDol2);
-    if (result) result = cmp(module_vent.pralnia, pralnia);
-    if (result) result = cmp(module_vent.przedpokoj, przedpokoj);
-    if (result) result = cmp(module_vent.garderoba, garderoba);
-    if (result) result = cmp(module_vent.lazGora1, lazGora1);
-    if (result) result = cmp(module_vent.lazGora2, lazGora2);
+    if (result) {
+      result = cmp(module_vent.kuchnia, kuchnia);
+    }
+    if (result) {
+      result = cmp(module_vent.lazDol1, lazDol1);
+    }
+    if (result) {
+      result = cmp(module_vent.lazDol2, lazDol2);
+    }
+    if (result) {
+      result = cmp(module_vent.pralnia, pralnia);
+    }
+    if (result) {
+      result = cmp(module_vent.przedpokoj, przedpokoj);
+    }
+    if (result) {
+      result = cmp(module_vent.garderoba, garderoba);
+    }
+    if (result) {
+      result = cmp(module_vent.lazGora1, lazGora1);
+    }
+    if (result) {
+      result = cmp(module_vent.lazGora2, lazGora2);
+    }
 
     return result;
   }
@@ -580,7 +756,7 @@ public class Module_Vent extends Module implements Cloneable {
   @Override
   public Module_Vent clone() throws CloneNotSupportedException {
     // FIXME sprawdzic, bo pewnie nie klounują się objekty poprawnie
-    Module_Vent module_vent = (Module_Vent) super.clone();
+    final Module_Vent module_vent = (Module_Vent) super.clone();
     //		module_vent.hour = hour.clone();
     //		module_vent.NVHour = NVHour.clone();
     //		module_vent.bme280 = bme280.clone();

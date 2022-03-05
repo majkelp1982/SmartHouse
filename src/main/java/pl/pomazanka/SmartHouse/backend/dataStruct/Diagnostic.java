@@ -22,12 +22,11 @@ import static java.lang.System.currentTimeMillis;
 @Service
 @Configurable
 public class Diagnostic extends Module {
-  private static transient byte MODULE_TYPE = 01;
-  private String headerName = "Diagnostyka";
+  private static final transient byte MODULE_TYPE = 01;
+  private final String headerName = "Diagnostyka";
+  private final ArrayList<ModuleDiagInfo> modules;
+  private final ArrayList<ModuleFault> globalFaultsList;
   private LocalDateTime diagnosticLastUpdate = LocalDateTime.now();
-
-  private ArrayList<ModuleDiagInfo> modules;
-  private ArrayList<ModuleFault> globalFaultsList;
   private boolean globalFaultsListGroupByFault;
 
   public Diagnostic() throws Exception {
@@ -38,9 +37,10 @@ public class Diagnostic extends Module {
     faultListInit();
   }
 
+  @Override
   @PostConstruct
   public void postConstructor() {
-    InnerThread innerThread = new InnerThread(this);
+    final InnerThread innerThread = new InnerThread(this);
     innerThread.start();
   }
 
@@ -50,36 +50,40 @@ public class Diagnostic extends Module {
     resetFaultPresent();
 
     // Fault check list
-    for (ModuleDiagInfo module : modules) {
-      if ((module.getDiagLastUpdate() >= 720) && (module.getDiagLastUpdate() != 999999))
+    for (final ModuleDiagInfo module : modules) {
+      if ((module.getDiagLastUpdate() >= 720) && (module.getDiagLastUpdate() != 999999)) {
         setFaultPresent(module.getModuleType(), true);
+      }
     }
 
     // TODO fault list to extend
     try {
       updateGlobalFaultList();
-    } catch (Throwable e) {
+    } catch (final Throwable e) {
       e.printStackTrace();
     }
   }
 
   @Override
-  protected void assignNV(Object object) throws Exception {
+  protected void assignNV(final Object object) throws Exception {
     return;
   }
 
   @Override
   void faultListInit() throws Exception {}
 
+  @Override
   public String getModuleName() {
     return headerName;
   }
 
+  @Override
   public LocalDateTime getDiagnosticLastUpdate() {
     return diagnosticLastUpdate;
   }
 
-  public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
+  @Override
+  public void setDiagnosticLastUpdate(final LocalDateTime diagnosticLastUpdate) {
     this.diagnosticLastUpdate = diagnosticLastUpdate;
   }
 
@@ -91,9 +95,10 @@ public class Diagnostic extends Module {
     return globalFaultsListGroupByFault;
   }
 
-  public void addModule(int moduleType, String moduleName, String structureName) throws Exception {
+  public void addModule(final int moduleType, final String moduleName, final String structureName)
+      throws Exception {
     modules.add(new ModuleDiagInfo(moduleType, moduleName, structureName));
-    if (moduleType != 1)
+    if (moduleType != 1) {
       setFaultText(
           moduleType,
           "Moduł "
@@ -101,13 +106,14 @@ public class Diagnostic extends Module {
               + "["
               + moduleType
               + "] nie odpowiada od dłuższego czasu");
+    }
   }
 
-  public void updateDiag(int moduleTyp, int[] IP, int signal) {
+  public void updateDiag(final int moduleTyp, final int[] IP, final int signal) {
     Logger.debug("updateDiag");
     int i = 0;
     Logger.debug("ilość modułów " + modules.size());
-    for (ModuleDiagInfo module : modules) {
+    for (final ModuleDiagInfo module : modules) {
       i++;
       if (module.getModuleType() == moduleTyp) {
         Logger.debug("moduł odnaleziono na pozycji " + i);
@@ -124,30 +130,34 @@ public class Diagnostic extends Module {
     Logger.debug("updateDiag zakończone");
   }
 
-  public void updateModuleFaultList(int moduleTyp, Module.Fault[] moduleFaultList) {
+  public void updateModuleFaultList(final int moduleTyp, final Module.Fault[] moduleFaultList) {
     // Get proper module type
-    for (ModuleDiagInfo module : modules) {
+    for (final ModuleDiagInfo module : modules) {
       if (module.getModuleType() == moduleTyp) {
         // Get each fault already present in global list
-        for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+        for (final ModuleDiagInfo.Fault fault : module.getFaultList()) {
           // When fault active, but not present
-          if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null))
+          if ((!moduleFaultList[fault.getIndex()].isPresent()) && (fault.getOutgoing() == null)) {
             fault.setOutgoing(LocalDateTime.now());
+          }
         }
         // Get each fault from module list
         for (int i = 0; i < Module.FAULT_MAX; i++) {
-          if (moduleFaultList[i] == null) continue;
+          if (moduleFaultList[i] == null) {
+            continue;
+          }
 
           if (moduleFaultList[i].isPresent()) {
             boolean reqNewInstance = true;
-            for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
+            for (final ModuleDiagInfo.Fault fault : module.getFaultList()) {
               if ((fault.getIndex() == i) && (fault.getOutgoing() == null)) {
                 reqNewInstance = false;
                 continue;
               }
             }
-            if (reqNewInstance)
+            if (reqNewInstance) {
               module.addFault(i, LocalDateTime.now(), moduleFaultList[i].getText());
+            }
           }
         }
       }
@@ -156,10 +166,11 @@ public class Diagnostic extends Module {
   }
 
   void sendEmailAlert() {
-    if (globalFaultsList.size() == 0) return;
-    ;
-    Email email = new Email();
-    StringBuilder htmlTable = new StringBuilder();
+    if (globalFaultsList.size() == 0) {
+      return;
+    }
+    final Email email = new Email();
+    final StringBuilder htmlTable = new StringBuilder();
     htmlTable.append(
         "<!DOCTYPE html>\n"
             + "<html>\n"
@@ -230,16 +241,18 @@ public class Diagnostic extends Module {
 
   public void refreshGlobalFaultList() {
     // Clear global list
-    ArrayList<String> activeErrorList = new ArrayList<>();
-    for (ModuleFault fault : globalFaultsList) {
+    final ArrayList<String> activeErrorList = new ArrayList<>();
+    for (final ModuleFault fault : globalFaultsList) {
       activeErrorList.add("" + fault.getModuleType() + fault.getIndex());
     }
     globalFaultsList.clear();
-    for (ModuleDiagInfo module : modules) {
+    for (final ModuleDiagInfo module : modules) {
       // Update global fault list
-      for (ModuleDiagInfo.Fault fault : module.getFaultList()) {
-        if (fault == null) break;
-        if (!isGlobalFaultsListGroupByFault())
+      for (final ModuleDiagInfo.Fault fault : module.getFaultList()) {
+        if (fault == null) {
+          break;
+        }
+        if (!isGlobalFaultsListGroupByFault()) {
           globalFaultsList.add(
               new ModuleFault(
                   module.moduleType,
@@ -248,9 +261,9 @@ public class Diagnostic extends Module {
                   fault.outgoing,
                   fault.index,
                   fault.description));
-        else {
+        } else {
           boolean exist = false;
-          for (ModuleFault tmp : globalFaultsList) {
+          for (final ModuleFault tmp : globalFaultsList) {
             if ((tmp.getModuleType() == module.getModuleType())
                 && (tmp.index == fault.index)
                 && (tmp.outgoing != null)
@@ -263,7 +276,7 @@ public class Diagnostic extends Module {
               tmp.outgoing = fault.outgoing;
             }
           }
-          if (!exist)
+          if (!exist) {
             globalFaultsList.add(
                 new ModuleFault(
                     module.moduleType,
@@ -272,14 +285,16 @@ public class Diagnostic extends Module {
                     fault.outgoing,
                     fault.index,
                     fault.description));
+          }
         }
       }
     }
-    for (ModuleFault fault : globalFaultsList)
+    for (final ModuleFault fault : globalFaultsList) {
       if (!activeErrorList.contains("" + fault.getModuleType() + fault.getIndex())) {
         sendEmailAlert();
         break;
       }
+    }
   }
 
   public ArrayList<ModuleDiagInfo> getModules() {
@@ -291,12 +306,14 @@ public class Diagnostic extends Module {
   }
 
   public void resetGlobalList() {
-    for (Iterator<ModuleDiagInfo> iterator = modules.iterator(); iterator.hasNext(); ) {
-      ModuleDiagInfo module = iterator.next();
-      for (Iterator<ModuleDiagInfo.Fault> iterator1 = module.getFaultList().iterator();
+    for (final Iterator<ModuleDiagInfo> iterator = modules.iterator(); iterator.hasNext(); ) {
+      final ModuleDiagInfo module = iterator.next();
+      for (final Iterator<ModuleDiagInfo.Fault> iterator1 = module.getFaultList().iterator();
           iterator1.hasNext(); ) {
-        ModuleDiagInfo.Fault fault = iterator1.next();
-        if (fault.getOutgoing() != null) iterator1.remove();
+        final ModuleDiagInfo.Fault fault = iterator1.next();
+        if (fault.getOutgoing() != null) {
+          iterator1.remove();
+        }
       }
     }
   }
@@ -304,7 +321,7 @@ public class Diagnostic extends Module {
   private static class InnerThread extends Thread {
     Diagnostic diagnostic;
 
-    public InnerThread(Diagnostic diagnostic) {
+    public InnerThread(final Diagnostic diagnostic) {
       this.diagnostic = diagnostic;
     }
 
@@ -321,7 +338,7 @@ public class Diagnostic extends Module {
             // HH:mm:ss")) + " Diagnostic thread OK");
           }
           Thread.sleep(10000);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
           e.printStackTrace();
         }
       }
@@ -329,16 +346,17 @@ public class Diagnostic extends Module {
   }
 
   public class ModuleDiagInfo {
-    private int moduleType;
-    private String moduleName;
+    private final int moduleType;
+    private final String moduleName;
+    private final String moduleStructureName;
+    private final ArrayList<Fault> faultList;
     private String firmwareVersion;
-    private String moduleStructureName;
     private LocalDateTime diagLastUpdate;
     private int[] IP = new int[4];
     private int signal;
-    private ArrayList<Fault> faultList;
 
-    public ModuleDiagInfo(int moduleType, String moduleName, String moduleStructureName) {
+    public ModuleDiagInfo(
+        final int moduleType, final String moduleName, final String moduleStructureName) {
       this.moduleType = moduleType;
       this.moduleName = moduleName;
       this.moduleStructureName = moduleStructureName;
@@ -357,34 +375,37 @@ public class Diagnostic extends Module {
       return firmwareVersion;
     }
 
-    public void setFirmwareVersion(String IPAddress) {
+    public void setFirmwareVersion(final String IPAddress) {
       try {
-        URL url = new URL("http://" + IPAddress + "/");
-        URLConnection connection = url.openConnection();
+        final URL url = new URL("http://" + IPAddress + "/");
+        final URLConnection connection = url.openConnection();
         connection.setConnectTimeout(3000);
         connection.setReadTimeout(3000);
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine = in.readLine();
-        String version =
+        final BufferedReader in =
+            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        final String inputLine = in.readLine();
+        final String version =
             inputLine.substring(inputLine.indexOf("<i>") + 15, inputLine.indexOf("</i>"));
         this.firmwareVersion = version;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         Logger.error("Wyjątek przy pobrani firmware");
         this.firmwareVersion = e.toString();
       }
     }
 
     public Long getDiagLastUpdate() {
-      if (diagLastUpdate != null)
+      if (diagLastUpdate != null) {
         return Duration.between(diagLastUpdate, LocalDateTime.now()).getSeconds();
-      else return 999999L;
+      } else {
+        return 999999L;
+      }
     }
 
     public int getSignal() {
       return signal;
     }
 
-    public void setSignal(int signal) {
+    public void setSignal(final int signal) {
       this.signal = signal;
     }
 
@@ -392,12 +413,12 @@ public class Diagnostic extends Module {
       return String.format("%d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
     }
 
-    public void setIP(int[] IP) {
+    public void setIP(final int[] IP) {
       this.IP = IP;
       setDiagnosticLastUpdate(LocalDateTime.now());
     }
 
-    public void setLastDiagUpdate(LocalDateTime diagLastUpdate) {
+    public void setLastDiagUpdate(final LocalDateTime diagLastUpdate) {
       this.diagLastUpdate = diagLastUpdate;
     }
 
@@ -405,7 +426,7 @@ public class Diagnostic extends Module {
       return faultList;
     }
 
-    public void addFault(int index, LocalDateTime incoming, String description) {
+    public void addFault(final int index, final LocalDateTime incoming, final String description) {
       faultList.add(new Fault(index, incoming, description));
     }
 
@@ -414,12 +435,12 @@ public class Diagnostic extends Module {
     }
 
     private class Fault {
-      private LocalDateTime incoming;
+      private final LocalDateTime incoming;
+      private final int index;
+      private final String description;
       private LocalDateTime outgoing = null;
-      private int index;
-      private String description;
 
-      public Fault(int index, LocalDateTime incoming, String description) {
+      public Fault(final int index, final LocalDateTime incoming, final String description) {
         this.index = index;
         this.incoming = incoming;
         this.description = description;
@@ -433,7 +454,7 @@ public class Diagnostic extends Module {
         return outgoing;
       }
 
-      public void setOutgoing(LocalDateTime outgoing) {
+      public void setOutgoing(final LocalDateTime outgoing) {
         this.outgoing = outgoing;
       }
 
@@ -448,22 +469,22 @@ public class Diagnostic extends Module {
   }
 
   public class ModuleFault {
-    private int moduleType;
-    private String moduleName;
-    private LocalDateTime incoming;
+    private final int moduleType;
+    private final String moduleName;
+    private final LocalDateTime incoming;
+    private final int index;
+    private final String description;
     private LocalDateTime outgoing;
     private long activeTime;
-    private int index;
-    private String description;
     private int numberOfErrors;
 
     public ModuleFault(
-        int moduleType,
-        String moduleName,
-        LocalDateTime incoming,
-        LocalDateTime outgoing,
-        int index,
-        String description) {
+        final int moduleType,
+        final String moduleName,
+        final LocalDateTime incoming,
+        final LocalDateTime outgoing,
+        final int index,
+        final String description) {
       this.moduleType = moduleType;
       this.moduleName = moduleName;
       this.incoming = incoming;
@@ -472,8 +493,11 @@ public class Diagnostic extends Module {
       this.description = description;
       this.numberOfErrors = 1;
 
-      if (outgoing == null) activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
-      else activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
+      if (outgoing == null) {
+        activeTime = ChronoUnit.SECONDS.between(incoming, LocalDateTime.now());
+      } else {
+        activeTime = ChronoUnit.SECONDS.between(incoming, outgoing);
+      }
     }
 
     public int getModuleType() {
@@ -489,9 +513,12 @@ public class Diagnostic extends Module {
     }
 
     public String getIncomingToString() {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      if (incoming != null) return incoming.format(formatter);
-      else return null;
+      final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      if (incoming != null) {
+        return incoming.format(formatter);
+      } else {
+        return null;
+      }
     }
 
     public LocalDateTime getOutgoing() {
@@ -499,16 +526,19 @@ public class Diagnostic extends Module {
     }
 
     public String getOutgoingToString() {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      if (outgoing != null) return outgoing.format(formatter);
-      else return null;
+      final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      if (outgoing != null) {
+        return outgoing.format(formatter);
+      } else {
+        return null;
+      }
     }
 
     public long getActiveTime() {
       return activeTime;
     }
 
-    public void setActiveTime(long activeTime) {
+    public void setActiveTime(final long activeTime) {
       this.activeTime = activeTime;
     }
 

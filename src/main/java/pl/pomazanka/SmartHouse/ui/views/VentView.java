@@ -50,7 +50,7 @@ public class VentView extends View {
   Grid<VentZonesByHour> activeRegGrid;
   Grid<VentZonesByHour> normalModeGrid;
 
-  public VentView(Module_Vent module_vent) {
+  public VentView(final Module_Vent module_vent) {
     this.module_vent = module_vent;
     // Header
     header = new Header(module_vent, "recu.svg");
@@ -135,8 +135,9 @@ public class VentView extends View {
     section[index].getTileDetailsContainer(1).add(reqLazDolButton.getSource());
     section[index].getTileDetailsContainer(1).add(reqLazGoraButton.getSource());
     section[index].getTileDetailsContainer(1).add(reqKuchniaButton.getSource());
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
       section[index].getTileDetailsContainer(2).add(info[index][2][i].getSource());
+    }
 
     section[index].getTileDetailsContainer(3).add(info[index][3][0].getSource());
     section[index].getTileDetailsContainer(3).add(info[index][3][1].getSource());
@@ -181,43 +182,55 @@ public class VentView extends View {
     section[index].getTileDetailsContainer(0).setHeight("960px");
 
     // Notification if user doesn't logged
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[0]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[0]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[1]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[2]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[3]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[4]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
 
     section[0].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
@@ -237,7 +250,7 @@ public class VentView extends View {
   }
 
   private void createInfoSection0() {
-    int index = 0;
+    final int index = 0;
     // Tryby
     info[index][0][0] = new Info("normalON", true, module_vent.isNormalOn());
     info[index][0][1] = new Info("humidityAlert", true, module_vent.isHumidityAlert());
@@ -373,7 +386,7 @@ public class VentView extends View {
   }
 
   private void createInfoSection1() {
-    int index = 1;
+    final int index = 1;
     activeCoolingButton =
         new Button("chłodzenie", true, (boolean) module_vent.getActiveCooling().getIsValue());
     activeCoolingButton
@@ -526,8 +539,8 @@ public class VentView extends View {
   }
 
   private void createInfoSection2() {
-    int index = 2;
-    BME280[] bme280 = module_vent.getBme280();
+    final int index = 2;
+    final BME280[] bme280 = module_vent.getBme280();
     for (int i = 0; i < 4; i++) {
       info[index][i][0] = new Info("temp", "°C", false, false, bme280[i].getTemp(), 0, 0, 0);
       info[index][i][1] =
@@ -535,7 +548,7 @@ public class VentView extends View {
       info[index][i][2] =
           new Info("ciśnienie", "hPa", false, false, bme280[i].getPressure(), 0, 0, 0);
     }
-    Fan[] fans = module_vent.getFan();
+    final Fan[] fans = module_vent.getFan();
     info[index][4][0] =
         new Info("prędkość CZERPNIA", "%", false, false, fans[0].getSpeed(), 0, 0, 0);
     info[index][4][1] =
@@ -547,26 +560,26 @@ public class VentView extends View {
   }
 
   private void createInfoSection3() {
-    int index = 3;
+    final int index = 3;
     activeRegGrid = prepareGrid(module_vent.getActiveTempRegByHours());
     activeRegGrid.setItems(getDiagram(module_vent.getActiveTempRegByHours()));
   }
 
   private void createInfoSection4() {
-    int index = 4;
+    final int index = 4;
     normalModeGrid = prepareGrid(module_vent.getNormalOnByHours());
     normalModeGrid.setItems(getDiagram(module_vent.getNormalOnByHours()));
   }
 
-  private Grid prepareGrid(VentZones[] ventZonesArr) {
-    Grid<VentZonesByHour> grid = new Grid<>();
+  private Grid prepareGrid(final VentZones[] ventZonesArr) {
+    final Grid<VentZonesByHour> grid = new Grid<>();
     //		grid.addColumn(VentZonesByHour::getHour).setHeader("Godzina");
 
     grid.addColumn(
             new ComponentRenderer<>(
                 cell -> {
-                  HorizontalLayout layout = new HorizontalLayout();
-                  Label label = new Label("" + cell.getHour());
+                  final HorizontalLayout layout = new HorizontalLayout();
+                  final Label label = new Label("" + cell.getHour());
                   layout.add(label);
                   layout.addClickListener(
                       horizontalLayoutClickEvent -> {
@@ -647,21 +660,23 @@ public class VentView extends View {
     return grid;
   }
 
-  private HorizontalLayout setCell(Zone zone) {
-    boolean result = (boolean) zone.getRequest().getIsValue();
-    String text = result ? "❶" : "⓿";
+  private HorizontalLayout setCell(final Zone zone) {
+    final boolean result = (boolean) zone.getRequest().getIsValue();
+    final String text = result ? "❶" : "⓿";
     //		String text = result ? "●" : "◦";
-    Info info = new Info(text, true, result);
+    final Info info = new Info(text, true, result);
     info.getSource().addClickListener(horizontalLayoutClickEvent -> gridListener(zone));
     info.setValue(result);
-    if (!zone.getRequest().isUpToDate()) info.getNameLabel().getStyle().set("color", "orange");
+    if (!zone.getRequest().isUpToDate()) {
+      info.getNameLabel().getStyle().set("color", "orange");
+    }
     return info.getSource();
   }
 
-  private List<VentZonesByHour> getDiagram(VentZones[] ventZones) {
-    ArrayList<VentZonesByHour> list = new ArrayList<>();
+  private List<VentZonesByHour> getDiagram(final VentZones[] ventZones) {
+    final ArrayList<VentZonesByHour> list = new ArrayList<>();
     for (int i = 0; i < 24; i++) {
-      VentZonesByHour ventZonesByHour = new VentZonesByHour();
+      final VentZonesByHour ventZonesByHour = new VentZonesByHour();
       ventZonesByHour.setHour(i);
       ventZonesByHour.setVentZones(ventZones[i]);
       list.add(ventZonesByHour);
@@ -669,15 +684,19 @@ public class VentView extends View {
     return list;
   }
 
-  private void gridListener(Zone zone) {
-    if (!isUserLoggedIn()) return;
+  private void gridListener(final Zone zone) {
+    if (!isUserLoggedIn()) {
+      return;
+    }
     zone.getRequest().setNewValue(!(boolean) zone.getRequest().getIsValue());
     module_vent.setReqUpdateValues(true);
   }
 
-  private void gridListnerRow(VentZones ventZones) {
-    if (!isUserLoggedIn()) return;
-    boolean status = !(boolean) ventZones.getSalon().getRequest().getIsValue();
+  private void gridListnerRow(final VentZones ventZones) {
+    if (!isUserLoggedIn()) {
+      return;
+    }
+    final boolean status = !(boolean) ventZones.getSalon().getRequest().getIsValue();
     ventZones.getSalon().getRequest().setNewValue(status);
     ventZones.getPralnia().getRequest().setNewValue(status);
     ventZones.getLazDol().getRequest().setNewValue(status);
@@ -688,6 +707,7 @@ public class VentView extends View {
     module_vent.setReqUpdateValues(true);
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_vent.getFrameLastUpdate());
@@ -784,14 +804,14 @@ public class VentView extends View {
     info[index][6][3].setValue(module_vent.isLazGora2());
 
     index = 2;
-    BME280[] bme280 = module_vent.getBme280();
+    final BME280[] bme280 = module_vent.getBme280();
     for (int i = 0; i < 4; i++) {
       info[index][i][0].setValue(bme280[i].getTemp());
       info[index][i][1].setValue(bme280[i].getHumidity());
       info[index][i][2].setValue(bme280[i].getPressure());
     }
 
-    Fan[] fans = module_vent.getFan();
+    final Fan[] fans = module_vent.getFan();
     info[index][4][0].setValue(fans[0].getSpeed());
     info[index][4][1].setValue(fans[0].getRev());
     info[index][4][2].setValue(fans[1].getSpeed());
@@ -811,7 +831,7 @@ public class VentView extends View {
       return hour;
     }
 
-    public void setHour(int hour) {
+    public void setHour(final int hour) {
       this.hour = hour;
     }
 
@@ -819,7 +839,7 @@ public class VentView extends View {
       return ventZones;
     }
 
-    public void setVentZones(VentZones ventZones) {
+    public void setVentZones(final VentZones ventZones) {
       this.ventZones = ventZones;
     }
   }

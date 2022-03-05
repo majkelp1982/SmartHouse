@@ -22,15 +22,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
+  @Override
   @Bean
   public UserDetailsService userDetailsService() {
-    UserDetails user = mongoDBController.getUser();
+    final UserDetails user = mongoDBController.getUser();
 
     return new InMemoryUserDetailsManager(user);
   }
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  protected void configure(final HttpSecurity http) throws Exception {
     http.csrf().disable();
     http.authorizeRequests().anyRequest().permitAll().and().formLogin().permitAll();
   }

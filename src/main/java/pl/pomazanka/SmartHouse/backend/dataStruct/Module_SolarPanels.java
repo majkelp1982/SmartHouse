@@ -49,7 +49,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   public void saveWebPageData() {
-    StringBuilder source = new StringBuilder();
+    final StringBuilder source = new StringBuilder();
     try {
       Authenticator.setDefault(
           new Authenticator() {
@@ -58,11 +58,12 @@ public class Module_SolarPanels extends Module implements Cloneable {
               return new PasswordAuthentication("admin", "admin".toCharArray());
             }
           });
-      URL url = new URL("http://192.168.0.220/status.html");
-      URLConnection connection = url.openConnection();
+      final URL url = new URL("http://192.168.0.220/status.html");
+      final URLConnection connection = url.openConnection();
       connection.setConnectTimeout(5000);
       connection.setReadTimeout(5000);
-      BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      final BufferedReader in =
+          new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String line;
       do {
         line = in.readLine();
@@ -71,7 +72,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
       setFrameLastUpdate(getCurrentDate());
       setDiagnosticLastUpdate(getCurrentDate());
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       Logger.error("Wyjątek przy pobraniu danych z fotowoltaiki: " + e);
     }
     webdata_now_p = extractValue("webdata_now_p", source.toString());
@@ -88,12 +89,12 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   // Parser for data package coming via UDP
   @Override
-  public void dataParser(int[] packetData) {
+  public void dataParser(final int[] packetData) {
     super.dataParser(packetData);
   }
 
   @Override
-  protected void assignNV(Object object) throws Exception {}
+  protected void assignNV(final Object object) throws Exception {}
 
   @Override
   void faultListInit() throws Exception {
@@ -115,7 +116,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   // compare data : last save status with new set
-  public boolean compare(Module_SolarPanels module_sewage) {
+  public boolean compare(final Module_SolarPanels module_sewage) {
     if (module_sewage == null) {
       return false;
     }
@@ -136,13 +137,13 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   @Override
   public Module_SolarPanels clone() throws CloneNotSupportedException {
-    Module_SolarPanels module_sewage = (Module_SolarPanels) super.clone();
+    final Module_SolarPanels module_sewage = (Module_SolarPanels) super.clone();
     return module_sewage;
   }
 
-  private String extractValue(String name, String source) {
-    String key = name + " = \"";
-    String subSource = source.substring(source.indexOf(key) + key.length());
+  private String extractValue(final String name, final String source) {
+    final String key = name + " = \"";
+    final String subSource = source.substring(source.indexOf(key) + key.length());
     return subSource.substring(0, subSource.indexOf("\""));
   }
 }

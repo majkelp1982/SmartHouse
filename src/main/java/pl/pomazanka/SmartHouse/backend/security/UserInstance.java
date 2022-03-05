@@ -17,7 +17,8 @@ public class UserInstance implements UserDetails {
 
   public UserInstance() {}
 
-  public UserInstance(Long id, String username, String password, String role) {
+  public UserInstance(
+      final Long id, final String username, final String password, final String role) {
     this.id = id;
     this.username = username;
     this.password = password;

@@ -13,7 +13,7 @@ public class LightDimmer implements Cloneable {
     return force0;
   }
 
-  public void setForce0(boolean force0) {
+  public void setForce0(final boolean force0) {
     this.force0 = force0;
   }
 
@@ -21,7 +21,7 @@ public class LightDimmer implements Cloneable {
     return forceMax;
   }
 
-  public void setForceMax(boolean forceMax) {
+  public void setForceMax(final boolean forceMax) {
     this.forceMax = forceMax;
   }
 
@@ -29,7 +29,7 @@ public class LightDimmer implements Cloneable {
     return intens;
   }
 
-  public void setIntens(int intens) {
+  public void setIntens(final int intens) {
     this.intens = intens;
   }
 
@@ -37,7 +37,7 @@ public class LightDimmer implements Cloneable {
     return standByIntens;
   }
 
-  public void setStandByIntens(int standByIntens) {
+  public void setStandByIntens(final int standByIntens) {
     this.standByIntens = standByIntens;
   }
 
@@ -45,7 +45,7 @@ public class LightDimmer implements Cloneable {
     return maxIntens;
   }
 
-  public void setMaxIntens(int maxIntens) {
+  public void setMaxIntens(final int maxIntens) {
     this.maxIntens = maxIntens;
   }
 

@@ -10,7 +10,7 @@ public class Fan {
     return speed;
   }
 
-  public void setSpeed(int speed) {
+  public void setSpeed(final int speed) {
     this.speed = speed;
   }
 
@@ -18,7 +18,7 @@ public class Fan {
     return rev;
   }
 
-  public void setRev(int rev) {
+  public void setRev(final int rev) {
     this.rev = rev;
   }
 }

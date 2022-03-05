@@ -20,7 +20,7 @@ public class WeatherView extends View {
   Section[] section = new Section[2];
   Info[][][] info = new Info[2][4][3];
 
-  public WeatherView(Module_Weather module_weather) {
+  public WeatherView(final Module_Weather module_weather) {
     this.module_weather = module_weather;
 
     // Header
@@ -44,11 +44,15 @@ public class WeatherView extends View {
     createInfoSection1();
 
     // Add components to details containers
-    for (int i = 0; i < 2; i++)
-      for (int j = 0; j < 2; j++)
-        for (int k = 0; k < 3; k++)
-          if (info[i][j][k] != null)
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
+        for (int k = 0; k < 3; k++) {
+          if (info[i][j][k] != null) {
             section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
+          }
+        }
+      }
+    }
 
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }
@@ -76,6 +80,7 @@ public class WeatherView extends View {
         new Info("natężenie światła", "%", false, false, module_weather.getLightIntens(), 0, 0, 0);
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_weather.getFrameLastUpdate());

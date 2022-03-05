@@ -64,7 +64,7 @@ public class UDPController {
     try {
       datagramSocket = new DatagramSocket(localPort);
       datagramSocket.setBroadcast(true);
-    } catch (SocketException e) {
+    } catch (final SocketException e) {
       e.printStackTrace();
     }
     UDPThread.start();
@@ -72,27 +72,39 @@ public class UDPController {
     new Thread(new EventRunBackground()).start();
   }
 
-  private boolean packetDataCorrect(int[] packetData, int packetLength) {
+  private boolean packetDataCorrect(final int[] packetData, final int packetLength) {
     boolean packetCorrect = false;
     if (packetData[2] == 200) { // Only for diagnose frames
       switch (packetData[0]) {
         case 10:
-          if (packetLength == PACKET_SIZE_MODULE_10_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_10_DIAG) {
+            packetCorrect = true;
+          }
           break;
         case 11:
-          if (packetLength == PACKET_SIZE_MODULE_11_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_11_DIAG) {
+            packetCorrect = true;
+          }
           break;
         case 12:
-          if (packetLength == PACKET_SIZE_MODULE_12_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_12_DIAG) {
+            packetCorrect = true;
+          }
           break;
         case 13:
-          if (packetLength == PACKET_SIZE_MODULE_13_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_13_DIAG) {
+            packetCorrect = true;
+          }
           break;
         case 14:
-          if (packetLength == PACKET_SIZE_MODULE_14_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_14_DIAG) {
+            packetCorrect = true;
+          }
           break;
         case 16:
-          if (packetLength == PACKET_SIZE_MODULE_16_DIAG) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_16_DIAG) {
+            packetCorrect = true;
+          }
           break;
         default:
           System.out.println("Wrong data format : module[" + packetData[0] + "]");
@@ -103,22 +115,34 @@ public class UDPController {
           packetCorrect = true;
           break;
         case 10:
-          if (packetLength == PACKET_SIZE_MODULE_10) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_10) {
+            packetCorrect = true;
+          }
           break;
         case 11:
-          if (packetLength == PACKET_SIZE_MODULE_11) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_11) {
+            packetCorrect = true;
+          }
           break;
         case 12:
-          if (packetLength == PACKET_SIZE_MODULE_12) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_12) {
+            packetCorrect = true;
+          }
           break;
         case 13:
-          if (packetLength == PACKET_SIZE_MODULE_13) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_13) {
+            packetCorrect = true;
+          }
           break;
         case 14:
-          if (packetLength == PACKET_SIZE_MODULE_14) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_14) {
+            packetCorrect = true;
+          }
           break;
         case 16:
-          if (packetLength == PACKET_SIZE_MODULE_16) packetCorrect = true;
+          if (packetLength == PACKET_SIZE_MODULE_16) {
+            packetCorrect = true;
+          }
           break;
         default:
           System.out.println("Wrong data format : module[" + packetData[0] + "]");
@@ -138,29 +162,28 @@ public class UDPController {
     return packetCorrect;
   }
 
-  public void UDPSend(byte[] packetData) {
-    DatagramPacket dp;
+  public void UDPSend(final byte[] packetData) {
+    final DatagramPacket dp;
     try {
       // Prepare broadcast address
-      byte[] broadcastAddress = InetAddress.getLocalHost().getAddress();
+      final byte[] broadcastAddress = InetAddress.getLocalHost().getAddress();
       broadcastAddress[3] = (byte) 0xff;
       dp =
           new DatagramPacket(
               packetData, packetData.length, InetAddress.getByAddress(broadcastAddress), localPort);
       datagramSocket.send(dp);
-    } catch (IOException e1) {
+    } catch (final IOException e1) {
       e1.printStackTrace();
     }
   }
 
-  @SuppressWarnings("deprecation")
   private void sendTimeSynchro() {
-    Date actual = new Date();
-    int minutes = actual.getMinutes();
+    final Date actual = new Date();
+    final int minutes = actual.getMinutes();
     if (minutes != timeSynchroLast) {
       timeSynchroLast = minutes;
 
-      byte[] buf = new byte[10];
+      final byte[] buf = new byte[10];
       buf[0] = 1;
       buf[1] = 0;
       buf[2] = 0;
@@ -176,8 +199,13 @@ public class UDPController {
     }
   }
 
-  private void sendData(int senderTyp, int receiverTyp, int receiverNo, int byteNo, int newValue) {
-    byte[] buffer = new byte[5];
+  private void sendData(
+      final int senderTyp,
+      final int receiverTyp,
+      final int receiverNo,
+      final int byteNo,
+      final int newValue) {
+    final byte[] buffer = new byte[5];
 
     buffer[0] = (byte) senderTyp;
     buffer[1] = (byte) receiverTyp;
@@ -187,7 +215,7 @@ public class UDPController {
     UDPSend(buffer);
     try {
       TimeUnit.MILLISECONDS.sleep(50);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -214,7 +242,7 @@ public class UDPController {
 
   // send Comfort Module NV
   private void sendComfortNV() {
-    Module_Comfort.Zone[] zone = module_comfort.getZone();
+    final Module_Comfort.Zone[] zone = module_comfort.getZone();
     sendData(moduleMain, module_comfort.getModuleType(), 0, 2, (int) (zone[0].NVReqTemp * 2));
     sendData(moduleMain, module_comfort.getModuleType(), 0, 6, (int) (zone[1].NVReqTemp * 2));
     sendData(moduleMain, module_comfort.getModuleType(), 0, 10, (int) (zone[2].NVReqTemp * 2));
@@ -246,46 +274,51 @@ public class UDPController {
       sendData(moduleMain, module_vent.getModuleType(), 0, 1, newValue);
     }
 
-    if (!module_vent.getNormalMode().getDelayTime().isUpToDate())
+    if (!module_vent.getNormalMode().getDelayTime().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           30,
           (int) module_vent.getNormalMode().getDelayTime().getNewValue());
+    }
 
-    if (!module_vent.getHumidityAlertMode().getTriggerInt().isUpToDate())
+    if (!module_vent.getHumidityAlertMode().getTriggerInt().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           31,
           (int) module_vent.getHumidityAlertMode().getTriggerInt().getNewValue());
-    if (!module_vent.getHumidityAlertMode().getDelayTime().isUpToDate())
+    }
+    if (!module_vent.getHumidityAlertMode().getDelayTime().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           32,
           (int) module_vent.getHumidityAlertMode().getDelayTime().getNewValue());
+    }
 
-    if (!module_vent.getDefrostMode().getTriggerInt().isUpToDate())
+    if (!module_vent.getDefrostMode().getTriggerInt().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           33,
           (int) module_vent.getDefrostMode().getTriggerInt().getNewValue());
-    if (!module_vent.getDefrostMode().getDelayTime().isUpToDate())
+    }
+    if (!module_vent.getDefrostMode().getDelayTime().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           34,
           (int) module_vent.getDefrostMode().getDelayTime().getNewValue());
+    }
 
     for (int i = 35; i <= 58; i++) {
-      VentZones ventZones = module_vent.getActiveTempRegByHours()[i - 35];
+      final VentZones ventZones = module_vent.getActiveTempRegByHours()[i - 35];
       if (!ventZones.getSalon().getRequest().isUpToDate()
           || !ventZones.getPralnia().getRequest().isUpToDate()
           || !ventZones.getLazDol().getRequest().isUpToDate()
@@ -305,16 +338,17 @@ public class UDPController {
       }
     }
 
-    if (!module_vent.getMinTemp().isUpToDate())
+    if (!module_vent.getMinTemp().isUpToDate()) {
       sendData(
           moduleMain,
           module_vent.getModuleType(),
           0,
           59,
           (int) module_vent.getMinTemp().getNewValue());
+    }
 
     for (int i = 60; i <= 83; i++) {
-      VentZones ventZones = module_vent.getNormalOnByHours()[i - 60];
+      final VentZones ventZones = module_vent.getNormalOnByHours()[i - 60];
       if (!ventZones.getSalon().getRequest().isUpToDate()
           || !ventZones.getPralnia().getRequest().isUpToDate()
           || !ventZones.getLazDol().getRequest().isUpToDate()
@@ -438,26 +472,28 @@ public class UDPController {
   }
 
   public class UDPListener implements Runnable {
-    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
       long lastWatchdogCheck = currentTimeMillis();
       while (true) {
         try {
           buffer = new byte[BUFFER_SIZE];
-          DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
+          final DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
           packetData = new int[BUFFER_SIZE];
           try {
             datagramSocket.receive(packet);
-          } catch (IOException e) {
+          } catch (final IOException e) {
             e.printStackTrace();
           }
           if (packet.getLength() > 0) {
-            for (int i = 0; i < packet.getLength(); i++)
+            for (int i = 0; i < packet.getLength(); i++) {
               packetData[i] = (packet.getData()[i] & 0xff); // 0xFF to change values to unsigned int
+            }
 
             String message = "UDP=";
-            for (int i = 0; i < packet.getLength(); i++) message += "[" + packetData[i] + "]";
+            for (int i = 0; i < packet.getLength(); i++) {
+              message += "[" + packetData[i] + "]";
+            }
             Logger.info(message);
           }
           if (packetDataCorrect(packetData, packet.getLength())) {
@@ -479,7 +515,7 @@ public class UDPController {
                       + "]["
                       + packetData[2]
                       + "]* * * *");
-            } catch (CloneNotSupportedException e) {
+            } catch (final CloneNotSupportedException e) {
               e.printStackTrace();
             }
           }
@@ -488,17 +524,16 @@ public class UDPController {
             Logger.debug("UDP controller thread OK");
           }
 
-        } catch (Error error) {
+        } catch (final Error error) {
           System.out.println("ERROR wątku " + error.getMessage());
           mongoDBController.saveError("MAIN ERROR", error.getMessage());
-        } catch (Exception exc) {
+        } catch (final Exception exc) {
           System.out.println("EXCEPTION wątku " + exc.toString());
           mongoDBController.saveError("MAIN EXCEPTION", exc.toString());
 
-        } catch (Throwable throwable) {
+        } catch (final Throwable throwable) {
           throwable.printStackTrace();
           System.out.println("THROWABLE WĄTKU " + throwable);
-          ;
           mongoDBController.saveError("MAIN THROWABLE", throwable.getMessage());
         }
       }
@@ -506,7 +541,6 @@ public class UDPController {
   }
 
   public class EventRunBackground implements Runnable {
-    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
       do {
@@ -514,26 +548,33 @@ public class UDPController {
         if ((!UDPThread.isAlive()) || (UDPThread.isInterrupted())) {
           mongoDBController.saveError("MAIN", "PRÓBA PONOWNEGO URUCHOMIENIA UDP THREAD");
           System.out.println("PRÓBA PONOWNEGO URUCHOMIENIA UDP THREAD");
-          ;
           UDPThread.start();
         }
         try {
           TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
           e.printStackTrace();
         }
 
         sendTimeSynchro();
-        if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate()))
+        if ((module_heating.isReqUpdateValues()) && (!module_heating.isAllUpToDate())) {
           sendHeatingNV();
-        if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate()))
+        }
+        if ((module_comfort.isReqUpdateValues()) && (!module_comfort.isAllUpToDate())) {
           sendComfortNV();
-        if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) sendVentNV();
-        if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate()))
+        }
+        if ((module_vent.isReqUpdateValues()) && (!module_vent.isAllUpToDate())) {
+          sendVentNV();
+        }
+        if ((module_weather.isReqUpdateValues()) && (!module_weather.isAllUpToDate())) {
           sendWeatherNV();
-        if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) sendSewageNV();
-        if ((module_extLights.isReqUpdateValues()) && (!module_extLights.isAllUpToDate()))
+        }
+        if ((module_sewage.isReqUpdateValues()) && (!module_sewage.isAllUpToDate())) {
+          sendSewageNV();
+        }
+        if ((module_extLights.isReqUpdateValues()) && (!module_extLights.isAllUpToDate())) {
           sendExtLightNV();
+        }
       } while (true);
     }
   }

@@ -20,7 +20,7 @@ public class ComfortView extends View {
   NumberField[] numberFields = new NumberField[7];
   Module_Comfort.Zone[] zone;
 
-  public ComfortView(Module_Comfort module_comfort) {
+  public ComfortView(final Module_Comfort module_comfort) {
     this.module_comfort = module_comfort;
     zone = module_comfort.getZone();
 
@@ -49,15 +49,21 @@ public class ComfortView extends View {
     createInfoSection1();
 
     // Add components to details containers
-    for (int i = 0; i < 2; i++)
-      for (int j = 0; j < 4; j++)
-        for (int k = 0; k < 2; k++)
-          if (info[i][j][k] != null)
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 4; j++) {
+        for (int k = 0; k < 2; k++) {
+          if (info[i][j][k] != null) {
             section[i].getTileDetailsContainer(j).add(info[i][j][k].getSource());
-    for (int i = 0; i <= 2; i++)
+          }
+        }
+      }
+    }
+    for (int i = 0; i <= 2; i++) {
       section[0].getTileDetailsContainer(i).add(numberFields[i].getSource());
-    for (int i = 0; i <= 3; i++)
+    }
+    for (int i = 0; i <= 3; i++) {
       section[1].getTileDetailsContainer(i).add(numberFields[i + 3].getSource());
+    }
 
     // Click Listeners
     numberFields[0]
@@ -118,14 +124,16 @@ public class ComfortView extends View {
             });
 
     // Notification if user doesn't logged
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     for (int i = 0; i <= 2; i++) {
       section[0]
           .getSection()
           .addClickListener(
               event -> {
-                if (!isUserLoggedIn()) notification.open();
+                if (!isUserLoggedIn()) {
+                  notification.open();
+                }
               });
       section[0].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
     }
@@ -134,7 +142,9 @@ public class ComfortView extends View {
           .getSection()
           .addClickListener(
               event -> {
-                if (!isUserLoggedIn()) notification.open();
+                if (!isUserLoggedIn()) {
+                  notification.open();
+                }
               });
       section[1].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
     }
@@ -185,19 +195,25 @@ public class ComfortView extends View {
     numberFields[6] = new NumberField("nastawa [°C]", zone[6].reqTemp, 9, 99, 0.5);
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_comfort.getFrameLastUpdate());
     header.setDiagnoseUpdate(module_comfort.getDiagnosticLastUpdate());
 
     int k = 0;
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++) {
       for (int j = 0; j <= 3; j++) {
-        if (info[i][j][0] == null) break;
+        if (info[i][j][0] == null) {
+          break;
+        }
         info[i][j][0].setValue(zone[k].isTemp);
         info[i][j][1].setValue(zone[k].isHumidity);
         k++;
       }
-    for (int i = 0; i <= 6; i++) numberFields[i].setNumberField(zone[i].reqTemp, zone[i].NVReqTemp);
+    }
+    for (int i = 0; i <= 6; i++) {
+      numberFields[i].setNumberField(zone[i].reqTemp, zone[i].NVReqTemp);
+    }
   }
 }

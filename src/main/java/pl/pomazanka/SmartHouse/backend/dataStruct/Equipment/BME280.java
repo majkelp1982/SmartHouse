@@ -11,7 +11,7 @@ public class BME280 implements Cloneable {
     return temp;
   }
 
-  public void setTemp(double temp) {
+  public void setTemp(final double temp) {
     this.temp = temp;
   }
 
@@ -19,7 +19,7 @@ public class BME280 implements Cloneable {
     return humidity;
   }
 
-  public void setHumidity(int humidity) {
+  public void setHumidity(final int humidity) {
     this.humidity = humidity;
   }
 
@@ -27,7 +27,7 @@ public class BME280 implements Cloneable {
     return pressure;
   }
 
-  public void setPressure(int pressure) {
+  public void setPressure(final int pressure) {
     this.pressure = pressure;
   }
 

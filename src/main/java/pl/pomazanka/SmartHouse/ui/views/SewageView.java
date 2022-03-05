@@ -25,7 +25,7 @@ public class SewageView extends View {
   NumberField refZero;
   NumberField interwal;
 
-  public SewageView(Module_Sewage module_sewage) {
+  public SewageView(final Module_Sewage module_sewage) {
     this.module_sewage = module_sewage;
 
     // Header
@@ -54,13 +54,15 @@ public class SewageView extends View {
     section[0].getTileDetailsContainer(1).add(refZero.getSource());
     section[0].getTileDetailsContainer(1).add(interwal.getSource());
 
-    Notification notification =
+    final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[0]
         .getSection()
         .addClickListener(
             event -> {
-              if (!isUserLoggedIn()) notification.open();
+              if (!isUserLoggedIn()) {
+                notification.open();
+              }
             });
     section[0].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
     add(header.getHeader(), section[0].getSection());
@@ -120,6 +122,7 @@ public class SewageView extends View {
             });
   }
 
+  @Override
   void update() {
     // Header
     header.setLastUpdate(module_sewage.getFrameLastUpdate());

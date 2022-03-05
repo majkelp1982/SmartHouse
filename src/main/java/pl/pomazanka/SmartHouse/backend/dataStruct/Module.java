@@ -14,12 +14,12 @@ import java.time.temporal.ChronoUnit;
 
 public abstract class Module {
   public static final int FAULT_MAX = 200;
+  private final int moduleType;
+  private final String moduleName;
+  private final transient String moduleStructureName;
+  private final transient int[] IP = new int[4];
+  private final transient Fault[] fault = new Fault[FAULT_MAX];
   @Autowired transient Diagnostic diagnostic;
-  private int moduleType;
-  private String moduleName;
-  private transient String moduleStructureName;
-  private transient int[] IP = new int[4];
-  private transient Fault[] fault = new Fault[FAULT_MAX];
   private transient boolean upToDate = false;
   private LocalDateTime frameLastUpdate = LocalDateTime.now();
   private long localDateTimeLong;
@@ -27,7 +27,7 @@ public abstract class Module {
   private transient boolean reqUpdateValues = false;
   private LocalDateTime lastSaveDateTime = LocalDateTime.now();
 
-  public Module(int moduleType, String moduleName, String moduleStructureName) {
+  public Module(final int moduleType, final String moduleName, final String moduleStructureName) {
     this.moduleType = moduleType;
     this.moduleName = moduleName;
     this.moduleStructureName = moduleStructureName;
@@ -55,36 +55,50 @@ public abstract class Module {
     return IP;
   }
 
-  public void updateDiag(int[] packetData) {
+  public void updateDiag(final int[] packetData) {
     diagnostic.updateDiag(
         getModuleType(),
         new int[] {packetData[3], packetData[4], packetData[5], packetData[6]},
         (-1 * packetData[7]));
   }
 
-  protected void assignNV(Object object) throws Exception {
-    Field[] fields = this.getClass().getDeclaredFields();
+  protected void assignNV(final Object object) throws Exception {
+    final Field[] fields = this.getClass().getDeclaredFields();
 
     for (int i = 0; i < fields.length; i++) {
-      String fieldType = fields[i].getGenericType().getTypeName();
-      if (fieldType == null) throw new Exception("Zmienna nie może być typem null");
-      if (fieldType.toUpperCase().contains("INT")) continue;
-      if (fieldType.toUpperCase().contains("BYTE")) continue;
-      if (fieldType.toUpperCase().contains("BOOLEAN")) continue;
-      if (fieldType.toUpperCase().contains("FLOAT")) continue;
-      if (fieldType.toUpperCase().contains("BME")) continue;
-      if (fieldType.toUpperCase().contains("FAN")) continue;
+      final String fieldType = fields[i].getGenericType().getTypeName();
+      if (fieldType == null) {
+        throw new Exception("Zmienna nie może być typem null");
+      }
+      if (fieldType.toUpperCase().contains("INT")) {
+        continue;
+      }
+      if (fieldType.toUpperCase().contains("BYTE")) {
+        continue;
+      }
+      if (fieldType.toUpperCase().contains("BOOLEAN")) {
+        continue;
+      }
+      if (fieldType.toUpperCase().contains("FLOAT")) {
+        continue;
+      }
+      if (fieldType.toUpperCase().contains("BME")) {
+        continue;
+      }
+      if (fieldType.toUpperCase().contains("FAN")) {
+        continue;
+      }
       fields[i].setAccessible(true);
       if (fields[i].getType() == ControlValue.class) {
-        ControlValue value = (ControlValue) fields[i].get(this);
+        final ControlValue value = (ControlValue) fields[i].get(this);
         value.setUpToDate();
         continue;
       }
       if (fields[i].getType() == Mode.class) {
-        Mode value = (Mode) fields[i].get(this);
-        ControlValue trigger = value.getTrigger();
-        ControlValue triggerInt = value.getTriggerInt();
-        ControlValue delayTime = value.getDelayTime();
+        final Mode value = (Mode) fields[i].get(this);
+        final ControlValue trigger = value.getTrigger();
+        final ControlValue triggerInt = value.getTriggerInt();
+        final ControlValue delayTime = value.getDelayTime();
         trigger.setUpToDate();
         triggerInt.setUpToDate();
         delayTime.setUpToDate();
@@ -92,13 +106,13 @@ public abstract class Module {
       }
 
       if (fields[i].getType() == VentZones[].class) {
-        VentZones[] ventZones = (VentZones[]) fields[i].get(this);
+        final VentZones[] ventZones = (VentZones[]) fields[i].get(this);
         for (int j = 0; j < ventZones.length; j++) {
-          Field[] subFields = ventZones[j].getClass().getDeclaredFields();
+          final Field[] subFields = ventZones[j].getClass().getDeclaredFields();
           for (int k = 0; k < subFields.length; k++) {
             subFields[k].setAccessible(true);
-            Zone zone = (Zone) subFields[k].get(ventZones[j]);
-            ControlValue subValue = zone.getRequest();
+            final Zone zone = (Zone) subFields[k].get(ventZones[j]);
+            final ControlValue subValue = zone.getRequest();
             subValue.setUpToDate();
           }
         }
@@ -109,20 +123,27 @@ public abstract class Module {
     }
   }
 
-  public void setFaultPresent(int faultNo, boolean present) {
-    if (fault[faultNo] != null) fault[faultNo].setPresent(present);
+  public void setFaultPresent(final int faultNo, final boolean present) {
+    if (fault[faultNo] != null) {
+      fault[faultNo].setPresent(present);
+    }
   }
 
-  public void setFaultText(int faultNo, String text) throws Exception {
-    if (fault[faultNo] == null) fault[faultNo] = new Fault(text);
-    else {
+  public void setFaultText(final int faultNo, final String text) throws Exception {
+    if (fault[faultNo] == null) {
+      fault[faultNo] = new Fault(text);
+    } else {
       throw new Exception("Double declaration of fault number " + faultNo);
     }
   }
 
   public void resetFaultPresent() {
     // Clear old fault present status
-    for (int i = 0; i < FAULT_MAX; i++) if (fault[i] != null) setFaultPresent(i, false);
+    for (int i = 0; i < FAULT_MAX; i++) {
+      if (fault[i] != null) {
+        setFaultPresent(i, false);
+      }
+    }
   }
 
   public void updateGlobalFaultList() {
@@ -133,10 +154,10 @@ public abstract class Module {
     return frameLastUpdate;
   }
 
-  public void setFrameLastUpdate(LocalDateTime frameLastUpdate) {
+  public void setFrameLastUpdate(final LocalDateTime frameLastUpdate) {
     this.frameLastUpdate = frameLastUpdate;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    String value = frameLastUpdate.format(formatter);
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    final String value = frameLastUpdate.format(formatter);
     this.localDateTimeLong = Long.valueOf(value);
   }
 
@@ -148,7 +169,7 @@ public abstract class Module {
     return diagnosticLastUpdate;
   }
 
-  public void setDiagnosticLastUpdate(LocalDateTime diagnosticLastUpdate) {
+  public void setDiagnosticLastUpdate(final LocalDateTime diagnosticLastUpdate) {
     this.diagnosticLastUpdate = diagnosticLastUpdate;
   }
 
@@ -156,7 +177,7 @@ public abstract class Module {
     return upToDate;
   }
 
-  public void setUpToDate(boolean upToDate) {
+  public void setUpToDate(final boolean upToDate) {
     this.upToDate = upToDate;
   }
 
@@ -164,30 +185,32 @@ public abstract class Module {
     return reqUpdateValues;
   }
 
-  public void setReqUpdateValues(boolean reqUpdateValues) {
+  public void setReqUpdateValues(final boolean reqUpdateValues) {
     this.reqUpdateValues = reqUpdateValues;
   }
 
   // return bit status from corresponding byte according to position in byte
-  public boolean bitStatus(int data, int bytePos) {
+  public boolean bitStatus(final int data, final int bytePos) {
     return ((data >> bytePos) & 1) == 1;
   }
 
-  public boolean cmp(int value1, int value2) {
+  public boolean cmp(final int value1, final int value2) {
     return value1 == value2;
   }
 
-  public boolean cmp(double value1, double value2, double tolerance) {
+  public boolean cmp(final double value1, final double value2, final double tolerance) {
     if (Math.abs(value1 - value2) > tolerance) {
       return false;
-    } else return true;
+    } else {
+      return true;
+    }
   }
 
-  public boolean cmp(boolean value1, boolean value2) {
+  public boolean cmp(final boolean value1, final boolean value2) {
     return value1 == value2;
   }
 
-  public boolean cmp(ControlValue value1, ControlValue value2) {
+  public boolean cmp(final ControlValue value1, final ControlValue value2) {
     return value1.getIsValue().equals(value2.getIsValue());
   }
 
@@ -196,32 +219,42 @@ public abstract class Module {
   }
 
   public boolean isTooLongWithoutSave() {
-    long lastTime = ChronoUnit.MINUTES.between(lastSaveDateTime, getCurrentDate());
-    if (lastTime > 10) return true;
+    final long lastTime = ChronoUnit.MINUTES.between(lastSaveDateTime, getCurrentDate());
+    if (lastTime > 10) {
+      return true;
+    }
     return false;
   }
 
-  public void setLastSaveDateTime(LocalDateTime lastSaveDateTime) {
+  public void setLastSaveDateTime(final LocalDateTime lastSaveDateTime) {
     this.lastSaveDateTime = lastSaveDateTime;
   }
 
-  public double getFloatValue(double value) {
-    double result;
-    if (value >= 128) result = 128 - value;
-    else result = value;
-    int temp = (int) (result * 10.0);
+  public double getFloatValue(final double value) {
+    final double result;
+    if (value >= 128) {
+      result = 128 - value;
+    } else {
+      result = value;
+    }
+    final int temp = (int) (result * 10.0);
     return ((double) temp) / 10.0;
   }
 
-  public void dataParser(int[] packetData) {
-    int controllerFrameNumber = packetData[2];
-    if (controllerFrameNumber != 200) setFrameLastUpdate(getCurrentDate());
-    else setDiagnosticLastUpdate(getCurrentDate());
+  public void dataParser(final int[] packetData) {
+    final int controllerFrameNumber = packetData[2];
+    if (controllerFrameNumber != 200) {
+      setFrameLastUpdate(getCurrentDate());
+    } else {
+      setDiagnosticLastUpdate(getCurrentDate());
+    }
 
     faultCheck();
     try {
-      if (!isReqUpdateValues()) assignNV(this);
-    } catch (Exception e) {
+      if (!isReqUpdateValues()) {
+        assignNV(this);
+      }
+    } catch (final Exception e) {
       e.printStackTrace();
       // FIXME tłumimy?
     }
@@ -230,9 +263,8 @@ public abstract class Module {
   public class Fault {
     private boolean present;
     private String text;
-    ;
 
-    public Fault(String text) {
+    public Fault(final String text) {
       this.text = text;
     }
 
@@ -240,7 +272,7 @@ public abstract class Module {
       return present;
     }
 
-    public void setPresent(boolean present) {
+    public void setPresent(final boolean present) {
       this.present = present;
     }
 
@@ -248,7 +280,7 @@ public abstract class Module {
       return text;
     }
 
-    public void setText(String text) {
+    public void setText(final String text) {
       this.text = text;
     }
   }

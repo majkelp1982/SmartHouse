@@ -1,13 +1,13 @@
 package pl.pomazanka.SmartHouse.backend.dataStruct.Substructures;
 
 public class VentZones {
-  private Zone salon = new Zone("salon");
-  private Zone pralnia = new Zone("pralnia");
-  private Zone lazDol = new Zone("lazDol");
-  private Zone rodzice = new Zone("rodzice");
-  private Zone natalia = new Zone("natalia");
-  private Zone karolina = new Zone("karolina");
-  private Zone lazGora = new Zone("lazGora");
+  private final Zone salon = new Zone("salon");
+  private final Zone pralnia = new Zone("pralnia");
+  private final Zone lazDol = new Zone("lazDol");
+  private final Zone rodzice = new Zone("rodzice");
+  private final Zone natalia = new Zone("natalia");
+  private final Zone karolina = new Zone("karolina");
+  private final Zone lazGora = new Zone("lazGora");
 
   public VentZones() {}
 
