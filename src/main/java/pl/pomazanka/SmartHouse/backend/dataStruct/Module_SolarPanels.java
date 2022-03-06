@@ -5,7 +5,9 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.pomazanka.SmartHouse.backend.common.Logger;
+import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
@@ -20,7 +22,8 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   // Module heating type
   private static final byte MODULE_TYPE = 99;
-  @Autowired Module_Heating module_heating;
+  @Autowired transient Module_Heating module_heating;
+  @Autowired transient MongoDBController mongoDBController;
   int powerEnableLimit;
   int powerResetLimit;
   double reqHeatTempCO;
@@ -34,7 +37,8 @@ public class Module_SolarPanels extends Module implements Cloneable {
   private double webdata_today_e; // = "0.48";
   private double webdata_total_e; // = "50.0";
   private String webdata_alarm = "";
-  private boolean isAutoconsumption;
+  private boolean autoConsumption;
+  private boolean autoConsumptionActive;
   //	private String cover_sta_ip = "192.168.0.220";
   //	private String cover_sta_mac = "34:EA:E7:EC:96:CA";
   //	private String status_a = "1";
@@ -57,8 +61,18 @@ public class Module_SolarPanels extends Module implements Cloneable {
     super(MODULE_TYPE, "Fotowoltaika", "module_solarPanels");
   }
 
+  @Override
+  @PostConstruct
+  public void postConstructor() {
+    final Module_SolarPanels module_solarPanels =
+        mongoDBController.getLastSolarPanelsValues(getModuleStructureName());
+    powerEnableLimit = module_solarPanels.getPowerEnableLimit();
+    powerResetLimit = module_solarPanels.getPowerResetLimit();
+    reqHeatTempCO = module_solarPanels.getReqHeatTempCO();
+  }
+
   public void autoConsumption() {
-    isAutoconsumption = !isAutoconsumption;
+    autoConsumption = !autoConsumption;
   }
 
   public void saveWebData() {
@@ -97,18 +111,20 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   public boolean isAllUpToDate() {
-    if (!isAutoconsumption) {
+    if (!autoConsumptionActive) {
       oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
     }
 
-    if (isAutoconsumption && (getWebdata_now_p() >= powerEnableLimit)) {
+    if (autoConsumption && (getWebdata_now_p() >= powerEnableLimit)) {
       module_heating.setNVCheapTariffOnly(false);
       module_heating.setNVReqTempBufferCO(reqHeatTempCO);
       module_heating.setReqUpdateValues(true);
-    } else if (!isAutoconsumption || getWebdata_now_p() < powerResetLimit) {
+      autoConsumptionActive = true;
+    } else if (!autoConsumption || getWebdata_now_p() < powerResetLimit) {
       module_heating.setNVCheapTariffOnly(true);
       module_heating.setNVReqTempBufferCO(oldReqTempBufferC0);
       module_heating.setReqUpdateValues(true);
+      autoConsumptionActive = false;
     }
 
     setUpToDate(true);
@@ -141,6 +157,21 @@ public class Module_SolarPanels extends Module implements Cloneable {
     boolean result = true;
     if (result) {
       result = cmp(module_solarPanels.webdata_now_p, webdata_now_p, 300);
+    }
+    if (result) {
+      result = cmp(module_solarPanels.powerEnableLimit, powerEnableLimit, 0);
+    }
+    if (result) {
+      result = cmp(module_solarPanels.powerResetLimit, powerResetLimit, 0);
+    }
+    if (result) {
+      result = cmp(module_solarPanels.reqHeatTempCO, reqHeatTempCO, 0);
+    }
+    if (result) {
+      result = cmp(module_solarPanels.autoConsumption, autoConsumption);
+    }
+    if (result) {
+      result = cmp(module_solarPanels.autoConsumptionActive, autoConsumptionActive);
     }
     if (isTooLongWithoutSave()) {
       result = false;

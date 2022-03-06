@@ -290,6 +290,14 @@ public class MongoDBController {
     return variableList;
   }
 
+  public Module_SolarPanels getLastSolarPanelsValues(final String collectionName) {
+    final MongoCollection<Document> mongoCollection = mongoDatabase.getCollection(collectionName);
+    final Gson gson = new Gson();
+    final String json =
+        gson.toJson(mongoCollection.find().limit(1).sort(new Document("_id", -1)).first());
+    return new Gson().fromJson(json, Module_SolarPanels.class);
+  }
+
   private ArrayList<String> getFields(final String collectionName, final Document mongoDoc)
       throws JsonProcessingException {
     final ArrayList<String> variableList = new ArrayList<>();

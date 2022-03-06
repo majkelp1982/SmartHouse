@@ -84,7 +84,7 @@ public class SolarView extends View {
   private void createInfoSection1() {
     // Status
     autoconsumptionButton =
-        new Button("Auto-konsumpcja", false, module_solarPanels.isAutoconsumption());
+        new Button("Auto-konsumpcja", false, module_solarPanels.isAutoConsumption());
     autoconsumptionButton
         .getSource()
         .addClickListener(
@@ -124,7 +124,7 @@ public class SolarView extends View {
     header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
     header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
     autoconsumptionButton.setButtonColor(
-        module_solarPanels.isAutoconsumption(), module_solarPanels.isAutoconsumption());
+        module_solarPanels.isAutoConsumption(), module_solarPanels.isAutoConsumption());
     info[0][0][0].setValue(module_solarPanels.getWebdata_now_p());
     info[0][0][1].setValue(module_solarPanels.getWebdata_today_e());
     info[0][0][2].setValue(module_solarPanels.getWebdata_total_e());

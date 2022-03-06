@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_SolarPanels;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 @ConditionalOnProperty(value = "app.scheduling.enable", havingValue = "true", matchIfMissing = true)
@@ -22,7 +23,12 @@ public class SolarPanelScheduler {
   @Autowired MongoDBController mongoDBController;
   private Module_SolarPanels module_solarPanelsLastSaved;
 
-  @Scheduled(initialDelay = 20, fixedDelay = 60000)
+  @PostConstruct
+  public void postConstructor() throws CloneNotSupportedException {
+    module_solarPanelsLastSaved = solarPanels.clone();
+  }
+
+  @Scheduled(initialDelay = 20000, fixedDelay = 60000)
   public void solarPanelsScheduler() throws CloneNotSupportedException {
     log.info("Scheduler triggered");
     solarPanels.saveWebData();
