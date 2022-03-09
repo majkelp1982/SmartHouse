@@ -14,6 +14,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDateTime;
 
 @Controller
 @Getter
@@ -21,39 +22,21 @@ import java.net.URLConnection;
 public class Module_SolarPanels extends Module implements Cloneable {
 
   // Module heating type
-  private static final byte MODULE_TYPE = 99;
+  private static final byte MODULE_TYPE = 20;
+  private static final int DELAY_TIME = 300;
   @Autowired transient Module_Heating module_heating;
   @Autowired transient MongoDBController mongoDBController;
   int powerEnableLimit;
   int powerResetLimit;
   double reqHeatTempCO;
-  // Values only to read
-  //	private String webdata_sn = "SF4ES006M7S394  ";
-  //	private String webdata_msvn = "G310";
-  //	private String webdata_ssvn = "";
-  //	private String webdata_pv_type = "SF4ES006";
-  //	private String webdata_rate_p = "";
-  private double webdata_now_p; // = "740";
-  private double webdata_today_e; // = "0.48";
-  private double webdata_total_e; // = "50.0";
+  private transient LocalDateTime stateChangeTime = LocalDateTime.now();
+  private double webdata_now_p;
+  private double webdata_today_e;
+  private double webdata_total_e;
   private String webdata_alarm = "";
-  private boolean autoConsumption;
+  private boolean autoConsumptionEnabled;
   private boolean autoConsumptionActive;
-  //	private String cover_sta_ip = "192.168.0.220";
-  //	private String cover_sta_mac = "34:EA:E7:EC:96:CA";
-  //	private String status_a = "1";
-  //	private String status_b = "0";
-  //	private String status_c = "0";
-  //	private String webdata_utime = "0";
-  //	private String cover_mid = "2300094760";
-  //	private String cover_ver = "LSW3_15_FFFF_1.0.57";
-  //	private String cover_wmode = "APSTA";
-  //	private String cover_ap_ssid = "AP_2300094760";
-  //	private String cover_ap_ip = "10.10.100.254";
-  //	private String cover_ap_mac = "30:EA:E7:EC:96:CA";
-  //	private String cover_sta_ssid = "Majkel";
   private String cover_sta_rssi;
-  // = "49%";
 
   private transient float oldReqTempBufferC0;
 
@@ -72,7 +55,10 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   public void autoConsumption() {
-    autoConsumption = !autoConsumption;
+    autoConsumptionEnabled = !autoConsumptionEnabled;
+    if (!autoConsumptionEnabled) {
+      resetAutoConsumption();
+    }
   }
 
   public void saveWebData() {
@@ -111,24 +97,44 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   public boolean isAllUpToDate() {
-    if (!autoConsumptionActive) {
-      oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
-    }
-
-    if (autoConsumption && (getWebdata_now_p() >= powerEnableLimit)) {
-      module_heating.setNVCheapTariffOnly(false);
-      module_heating.setNVReqTempBufferCO(reqHeatTempCO);
-      module_heating.setReqUpdateValues(true);
-      autoConsumptionActive = true;
-    } else if (!autoConsumption || getWebdata_now_p() < powerResetLimit) {
-      module_heating.setNVCheapTariffOnly(true);
-      module_heating.setNVReqTempBufferCO(oldReqTempBufferC0);
-      module_heating.setReqUpdateValues(true);
-      autoConsumptionActive = false;
-    }
-
+    checkAutoConsumption();
     setUpToDate(true);
     return isUpToDate();
+  }
+
+  private void resetAutoConsumption() {
+    module_heating.setNVCheapTariffOnly(true);
+    module_heating.setNVReqTempBufferCO(oldReqTempBufferC0);
+    module_heating.setReqUpdateValues(true);
+    autoConsumptionActive = false;
+  }
+
+  private void checkAutoConsumption() {
+    if (!autoConsumptionActive) {
+      oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
+      if (getWebdata_now_p() < powerEnableLimit) {
+        stateChangeTime = LocalDateTime.now().plusSeconds(DELAY_TIME);
+      }
+    } else if (getWebdata_now_p() > powerResetLimit) {
+      stateChangeTime = LocalDateTime.now().plusSeconds(DELAY_TIME);
+    }
+
+    if (!autoConsumptionEnabled) {
+      return;
+    }
+
+    if (LocalDateTime.now().isAfter(stateChangeTime)) {
+      if (getWebdata_now_p() >= powerEnableLimit) {
+        module_heating.setNVCheapTariffOnly(false);
+        module_heating.setNVReqTempBufferCO(reqHeatTempCO);
+        module_heating.setReqUpdateValues(true);
+        autoConsumptionActive = true;
+      }
+      if (getWebdata_now_p() < powerResetLimit) {
+        autoConsumptionActive = false;
+        resetAutoConsumption();
+      }
+    }
   }
 
   @Override
@@ -168,7 +174,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
       result = cmp(module_solarPanels.reqHeatTempCO, reqHeatTempCO, 0);
     }
     if (result) {
-      result = cmp(module_solarPanels.autoConsumption, autoConsumption);
+      result = cmp(module_solarPanels.autoConsumptionEnabled, autoConsumptionEnabled);
     }
     if (result) {
       result = cmp(module_solarPanels.autoConsumptionActive, autoConsumptionActive);

@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pomazanka.SmartHouse.backend.dataStruct.Module_SolarPanels;
 import pl.pomazanka.SmartHouse.ui.MainLayout;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @PageTitle("Smart House | Solar")
 @Route(value = "Solar", layout = MainLayout.class)
 public class SolarView extends View {
@@ -20,7 +23,7 @@ public class SolarView extends View {
   Header header;
   Section[] section = new Section[2];
   Info[][][] info = new Info[1][2][4];
-  Button autoconsumptionButton;
+  Button autoConsumptionButton;
   NumberField powerEnableLimit;
   NumberField powerResetLimit;
   NumberField reqHeatTempCO;
@@ -40,6 +43,7 @@ public class SolarView extends View {
     // Create tile for sections
     // Section 0
     section[0].createTile("solar.svg", "Solar");
+    section[0].createTile("status.svg", "Solar");
     section[1].createTile("settings.svg", "Ustawienia");
 
     // Create sections info/buttons/number fields
@@ -50,8 +54,10 @@ public class SolarView extends View {
     section[0].getTileDetailsContainer(0).add(info[0][0][1].getSource());
     section[0].getTileDetailsContainer(0).add(info[0][0][2].getSource());
     section[0].getTileDetailsContainer(0).add(info[0][0][3].getSource());
+    section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
+    section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
 
-    section[1].getTileDetailsContainer(0).add(autoconsumptionButton.getSource());
+    section[1].getTileDetailsContainer(0).add(autoConsumptionButton.getSource());
     section[1].getTileDetailsContainer(0).add(powerEnableLimit.getSource());
     section[1].getTileDetailsContainer(0).add(powerResetLimit.getSource());
     section[1].getTileDetailsContainer(0).add(reqHeatTempCO.getSource());
@@ -79,13 +85,26 @@ public class SolarView extends View {
         new Info("Razem", "kWh", false, false, module_solarPanels.getWebdata_total_e(), 0, 0, 0);
     info[0][0][3] =
         new Info("Alarm: " + module_solarPanels.getWebdata_alarm(), "", false, false, 0, 0, 0, 0);
+
+    info[0][1][0] = new Info("Konsumpcja", true, module_solarPanels.isAutoConsumptionActive());
+    info[0][1][1] =
+        new Info(
+            "Opóźnienie",
+            "s",
+            false,
+            false,
+            Duration.between(LocalDateTime.now(), module_solarPanels.getStateChangeTime())
+                .getSeconds(),
+            0,
+            0,
+            0);
   }
 
   private void createInfoSection1() {
     // Status
-    autoconsumptionButton =
-        new Button("Auto-konsumpcja", false, module_solarPanels.isAutoConsumption());
-    autoconsumptionButton
+    autoConsumptionButton =
+        new Button("Auto-konsumpcja", false, module_solarPanels.isAutoConsumptionEnabled());
+    autoConsumptionButton
         .getSource()
         .addClickListener(
             buttonClickEvent -> {
@@ -123,12 +142,18 @@ public class SolarView extends View {
     // Header
     header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
     header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
-    autoconsumptionButton.setButtonColor(
-        module_solarPanels.isAutoConsumption(), module_solarPanels.isAutoConsumption());
+    autoConsumptionButton.setButtonColor(
+        module_solarPanels.isAutoConsumptionEnabled(),
+        module_solarPanels.isAutoConsumptionEnabled());
     info[0][0][0].setValue(module_solarPanels.getWebdata_now_p());
     info[0][0][1].setValue(module_solarPanels.getWebdata_today_e());
     info[0][0][2].setValue(module_solarPanels.getWebdata_total_e());
     info[0][0][3].setValue(module_solarPanels.getWebdata_alarm());
+
+    info[0][1][0].setValue(module_solarPanels.isAutoConsumptionActive());
+    info[0][1][1].setValue(
+        Duration.between(LocalDateTime.now(), module_solarPanels.getStateChangeTime())
+            .getSeconds());
 
     module_solarPanels.isAllUpToDate();
   }
