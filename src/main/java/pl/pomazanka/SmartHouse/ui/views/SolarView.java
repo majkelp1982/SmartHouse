@@ -23,10 +23,13 @@ public class SolarView extends View {
   Header header;
   Section[] section = new Section[2];
   Info[][][] info = new Info[1][2][4];
-  Button autoConsumptionButton;
-  NumberField powerEnableLimit;
-  NumberField powerResetLimit;
+  Button forceCOBufferButton;
+  NumberField forceCOBufferEnableLimit;
+  NumberField forceCOBufferResetLimit;
   NumberField reqHeatTempCO;
+  Button forceWaterSuperHeatButton;
+  NumberField forceWaterSuperHeatEnableLimit;
+  NumberField forceWaterSuperHeatResetLimit;
 
   public SolarView(final Module_SolarPanels module_solarPanels) {
     this.module_solarPanels = module_solarPanels;
@@ -44,7 +47,8 @@ public class SolarView extends View {
     // Section 0
     section[0].createTile("solar.svg", "Solar");
     section[0].createTile("status.svg", "Solar");
-    section[1].createTile("settings.svg", "Ustawienia");
+    section[1].createTile("settings.svg", "Bufor CO");
+    section[1].createTile("settings.svg", "Gorąca woda");
 
     // Create sections info/buttons/number fields
     createInfoSection0();
@@ -57,10 +61,14 @@ public class SolarView extends View {
     section[0].getTileDetailsContainer(1).add(info[0][1][0].getSource());
     section[0].getTileDetailsContainer(1).add(info[0][1][1].getSource());
 
-    section[1].getTileDetailsContainer(0).add(autoConsumptionButton.getSource());
-    section[1].getTileDetailsContainer(0).add(powerEnableLimit.getSource());
-    section[1].getTileDetailsContainer(0).add(powerResetLimit.getSource());
+    section[1].getTileDetailsContainer(0).add(forceCOBufferButton.getSource());
+    section[1].getTileDetailsContainer(0).add(forceCOBufferEnableLimit.getSource());
+    section[1].getTileDetailsContainer(0).add(forceCOBufferResetLimit.getSource());
     section[1].getTileDetailsContainer(0).add(reqHeatTempCO.getSource());
+
+    section[1].getTileDetailsContainer(1).add(forceWaterSuperHeatButton.getSource());
+    section[1].getTileDetailsContainer(1).add(forceWaterSuperHeatEnableLimit.getSource());
+    section[1].getTileDetailsContainer(1).add(forceWaterSuperHeatResetLimit.getSource());
 
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
@@ -86,7 +94,7 @@ public class SolarView extends View {
     info[0][0][3] =
         new Info("Alarm: " + module_solarPanels.getWebdata_alarm(), "", false, false, 0, 0, 0, 0);
 
-    info[0][1][0] = new Info("Konsumpcja", true, module_solarPanels.isAutoConsumptionActive());
+    info[0][1][0] = new Info("Konsumpcja", true, module_solarPanels.isForceCOBufferActive());
     info[0][1][1] =
         new Info(
             "Opóźnienie",
@@ -102,31 +110,40 @@ public class SolarView extends View {
 
   private void createInfoSection1() {
     // Status
-    autoConsumptionButton =
-        new Button("Auto-konsumpcja", false, module_solarPanels.isAutoConsumptionEnabled());
-    autoConsumptionButton
+    forceCOBufferButton = new Button("Zezwól", false, module_solarPanels.isForceCOBufferEnabled());
+    forceCOBufferButton
         .getSource()
         .addClickListener(
             buttonClickEvent -> {
-              module_solarPanels.autoConsumption();
+              module_solarPanels.forceCOBuffer();
             });
-    powerEnableLimit =
+    forceCOBufferEnableLimit =
         new NumberField(
-            "moc załączenia [W]", module_solarPanels.getPowerEnableLimit(), -2000, 5000, 100);
-    powerEnableLimit
+            "moc załączenia [W]",
+            module_solarPanels.getForceCOBufferEnableLimit(),
+            -2000,
+            5000,
+            100);
+    forceCOBufferEnableLimit
         .getSource()
         .addValueChangeListener(
             valueChangeEvent -> {
-              module_solarPanels.setPowerEnableLimit((int) Math.round(valueChangeEvent.getValue()));
+              module_solarPanels.setForceCOBufferEnableLimit(
+                  (int) Math.round(valueChangeEvent.getValue()));
             });
-    powerResetLimit =
+    forceCOBufferResetLimit =
         new NumberField(
-            "moc wyłączenia [W]", module_solarPanels.getPowerResetLimit(), -2000, 4000, 100);
-    powerResetLimit
+            "moc wyłączenia [W]",
+            module_solarPanels.getForceCOBufferResetLimit(),
+            -2000,
+            4000,
+            100);
+    forceCOBufferResetLimit
         .getSource()
         .addValueChangeListener(
             valueChangeEvent -> {
-              module_solarPanels.setPowerResetLimit((int) Math.round(valueChangeEvent.getValue()));
+              module_solarPanels.setForceCOBufferResetLimit(
+                  (int) Math.round(valueChangeEvent.getValue()));
             });
     reqHeatTempCO = new NumberField("CO [°C]", module_solarPanels.getReqHeatTempCO(), 35, 55, 0.5);
     reqHeatTempCO
@@ -135,6 +152,43 @@ public class SolarView extends View {
             valueChangeEvent -> {
               module_solarPanels.setReqHeatTempCO(valueChangeEvent.getValue());
             });
+
+    forceWaterSuperHeatButton =
+        new Button("Zezwól", false, module_solarPanels.isForceWaterSuperHeatEnabled());
+    forceWaterSuperHeatButton
+        .getSource()
+        .addClickListener(
+            buttonClickEvent -> {
+              module_solarPanels.forceWaterSuperHeat();
+            });
+    forceWaterSuperHeatEnableLimit =
+        new NumberField(
+            "moc załączenia [W]",
+            module_solarPanels.getForceWaterSuperHeatEnableLimit(),
+            -2000,
+            5000,
+            100);
+    forceWaterSuperHeatEnableLimit
+        .getSource()
+        .addValueChangeListener(
+            valueChangeEvent -> {
+              module_solarPanels.setForceWaterSuperHeatEnableLimit(
+                  (int) Math.round(valueChangeEvent.getValue()));
+            });
+    forceWaterSuperHeatResetLimit =
+        new NumberField(
+            "moc wyłączenia [W]",
+            module_solarPanels.getForceWaterSuperHeatResetLimit(),
+            -2000,
+            4000,
+            100);
+    forceWaterSuperHeatResetLimit
+        .getSource()
+        .addValueChangeListener(
+            valueChangeEvent -> {
+              module_solarPanels.setForceWaterSuperHeatResetLimit(
+                  (int) Math.round(valueChangeEvent.getValue()));
+            });
   }
 
   @Override
@@ -142,15 +196,17 @@ public class SolarView extends View {
     // Header
     header.setLastUpdate(module_solarPanels.getFrameLastUpdate());
     header.setDiagnoseUpdate(module_solarPanels.getDiagnosticLastUpdate());
-    autoConsumptionButton.setButtonColor(
-        module_solarPanels.isAutoConsumptionEnabled(),
-        module_solarPanels.isAutoConsumptionEnabled());
+    forceCOBufferButton.setButtonColor(
+        module_solarPanels.isForceCOBufferEnabled(), module_solarPanels.isForceCOBufferEnabled());
+    forceWaterSuperHeatButton.setButtonColor(
+        module_solarPanels.isForceWaterSuperHeatEnabled(),
+        module_solarPanels.isForceWaterSuperHeatEnabled());
     info[0][0][0].setValue(module_solarPanels.getWebdata_now_p());
     info[0][0][1].setValue(module_solarPanels.getWebdata_today_e());
     info[0][0][2].setValue(module_solarPanels.getWebdata_total_e());
     info[0][0][3].setValue(module_solarPanels.getWebdata_alarm());
 
-    info[0][1][0].setValue(module_solarPanels.isAutoConsumptionActive());
+    info[0][1][0].setValue(module_solarPanels.isForceCOBufferActive());
     info[0][1][1].setValue(
         Duration.between(LocalDateTime.now(), module_solarPanels.getStateChangeTime())
             .getSeconds());

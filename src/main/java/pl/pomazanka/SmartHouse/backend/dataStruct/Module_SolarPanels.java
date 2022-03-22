@@ -10,6 +10,7 @@ import pl.pomazanka.SmartHouse.backend.communication.MongoDBController;
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -23,19 +24,22 @@ public class Module_SolarPanels extends Module implements Cloneable {
 
   // Module heating type
   private static final byte MODULE_TYPE = 20;
-  private static final int DELAY_TIME = 300;
+  private static final int DELAY_TIME = 600;
   @Autowired transient Module_Heating module_heating;
   @Autowired transient MongoDBController mongoDBController;
-  int powerEnableLimit;
-  int powerResetLimit;
+  int forceCOBufferEnableLimit;
+  int forceCOBufferResetLimit;
+  int forceWaterSuperHeatEnableLimit;
+  int forceWaterSuperHeatResetLimit;
   double reqHeatTempCO;
   private transient LocalDateTime stateChangeTime = LocalDateTime.now();
   private double webdata_now_p;
   private double webdata_today_e;
   private double webdata_total_e;
   private String webdata_alarm = "";
-  private boolean autoConsumptionEnabled;
-  private boolean autoConsumptionActive;
+  private boolean forceCOBufferEnabled = true;
+  private boolean forceWaterSuperHeatEnabled = true;
+  private boolean forceCOBufferActive;
   private String cover_sta_rssi;
 
   private transient float oldReqTempBufferC0;
@@ -49,15 +53,25 @@ public class Module_SolarPanels extends Module implements Cloneable {
   public void postConstructor() {
     final Module_SolarPanels module_solarPanels =
         mongoDBController.getLastSolarPanelsValues(getModuleStructureName());
-    powerEnableLimit = module_solarPanels.getPowerEnableLimit();
-    powerResetLimit = module_solarPanels.getPowerResetLimit();
+    forceCOBufferEnableLimit = module_solarPanels.getForceCOBufferEnableLimit();
+    forceCOBufferResetLimit = module_solarPanels.getForceCOBufferResetLimit();
+    forceWaterSuperHeatEnableLimit = module_solarPanels.getForceWaterSuperHeatEnableLimit();
+    forceWaterSuperHeatResetLimit = module_solarPanels.getForceWaterSuperHeatResetLimit();
     reqHeatTempCO = module_solarPanels.getReqHeatTempCO();
   }
 
-  public void autoConsumption() {
-    autoConsumptionEnabled = !autoConsumptionEnabled;
-    if (!autoConsumptionEnabled) {
-      resetAutoConsumption();
+  public void forceCOBuffer() {
+    forceCOBufferEnabled = !forceCOBufferEnabled;
+    if (!forceCOBufferEnabled) {
+      resetForceCOBuffer();
+    }
+  }
+
+  public void forceWaterSuperHeat() {
+    forceWaterSuperHeatEnabled = !forceWaterSuperHeatEnabled;
+    if (!forceWaterSuperHeatEnabled) {
+      module_heating.setNVWaterSuperheat(false);
+      module_heating.setReqUpdateValues(true);
     }
   }
 
@@ -97,42 +111,64 @@ public class Module_SolarPanels extends Module implements Cloneable {
   }
 
   public boolean isAllUpToDate() {
-    checkAutoConsumption();
+    checkForceCOBuffer();
+    checkWaterSuperHeat();
     setUpToDate(true);
     return isUpToDate();
   }
 
-  private void resetAutoConsumption() {
+  private void resetForceCOBuffer() {
     module_heating.setNVCheapTariffOnly(true);
     module_heating.setNVReqTempBufferCO(oldReqTempBufferC0);
     module_heating.setReqUpdateValues(true);
-    autoConsumptionActive = false;
+    forceCOBufferActive = false;
   }
 
-  private void checkAutoConsumption() {
-    if (!autoConsumptionActive) {
+  private void checkWaterSuperHeat() {
+    if (!forceWaterSuperHeatEnabled || forceWaterSuperHeatEnableLimit == 0) {
+      return;
+    }
+    final long currentTimeMillis = System.currentTimeMillis();
+    final long processStartTime = ManagementFactory.getRuntimeMXBean().getStartTime();
+    final long upTimeMillis = currentTimeMillis - processStartTime;
+    if (upTimeMillis < 30000) {
+      return;
+    }
+
+    if (getWebdata_now_p() >= forceWaterSuperHeatEnableLimit) {
+      module_heating.setNVWaterSuperheat(true);
+      module_heating.setReqUpdateValues(true);
+    }
+    if (getWebdata_now_p() < forceWaterSuperHeatResetLimit) {
+      module_heating.setNVWaterSuperheat(false);
+      module_heating.setReqUpdateValues(true);
+    }
+  }
+
+  private void checkForceCOBuffer() {
+    if (!forceCOBufferActive) {
       oldReqTempBufferC0 = module_heating.getReqTempBufferCO();
-      if (getWebdata_now_p() < powerEnableLimit) {
+      if (getWebdata_now_p() < forceCOBufferEnableLimit) {
         stateChangeTime = LocalDateTime.now().plusSeconds(DELAY_TIME);
       }
-    } else if (getWebdata_now_p() > powerResetLimit) {
+    } else if (getWebdata_now_p() > forceCOBufferResetLimit) {
       stateChangeTime = LocalDateTime.now().plusSeconds(DELAY_TIME);
     }
 
-    if (!autoConsumptionEnabled) {
+    if (!forceCOBufferEnabled) {
       return;
     }
 
     if (LocalDateTime.now().isAfter(stateChangeTime)) {
-      if (getWebdata_now_p() >= powerEnableLimit) {
+      if (getWebdata_now_p() >= forceCOBufferEnableLimit) {
         module_heating.setNVCheapTariffOnly(false);
         module_heating.setNVReqTempBufferCO(reqHeatTempCO);
         module_heating.setReqUpdateValues(true);
-        autoConsumptionActive = true;
+        forceCOBufferActive = true;
       }
-      if (getWebdata_now_p() < powerResetLimit) {
-        autoConsumptionActive = false;
-        resetAutoConsumption();
+      if (getWebdata_now_p() < forceCOBufferResetLimit) {
+        forceCOBufferActive = false;
+        resetForceCOBuffer();
       }
     }
   }
@@ -165,19 +201,27 @@ public class Module_SolarPanels extends Module implements Cloneable {
       result = cmp(module_solarPanels.webdata_now_p, webdata_now_p, 300);
     }
     if (result) {
-      result = cmp(module_solarPanels.powerEnableLimit, powerEnableLimit, 0);
+      result = cmp(module_solarPanels.forceCOBufferEnableLimit, forceCOBufferEnableLimit, 0);
     }
     if (result) {
-      result = cmp(module_solarPanels.powerResetLimit, powerResetLimit, 0);
+      result = cmp(module_solarPanels.forceCOBufferResetLimit, forceCOBufferResetLimit, 0);
     }
     if (result) {
       result = cmp(module_solarPanels.reqHeatTempCO, reqHeatTempCO, 0);
     }
     if (result) {
-      result = cmp(module_solarPanels.autoConsumptionEnabled, autoConsumptionEnabled);
+      result = cmp(module_solarPanels.forceCOBufferEnabled, forceCOBufferEnabled);
     }
     if (result) {
-      result = cmp(module_solarPanels.autoConsumptionActive, autoConsumptionActive);
+      result = cmp(module_solarPanels.forceCOBufferActive, forceCOBufferActive);
+    }
+    if (result) {
+      result =
+          cmp(module_solarPanels.forceWaterSuperHeatEnableLimit, forceWaterSuperHeatEnableLimit, 0);
+    }
+    if (result) {
+      result =
+          cmp(module_solarPanels.forceWaterSuperHeatResetLimit, forceWaterSuperHeatResetLimit, 0);
     }
     if (isTooLongWithoutSave()) {
       result = false;
