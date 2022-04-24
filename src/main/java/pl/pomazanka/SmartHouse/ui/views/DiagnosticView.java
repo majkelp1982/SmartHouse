@@ -3,6 +3,7 @@ package pl.pomazanka.SmartHouse.ui.views;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -18,10 +19,11 @@ import java.util.Objects;
 @PageTitle("Smart House | Diagnostyka")
 @Route(value = "Diagnostyka", layout = MainLayout.class)
 public class DiagnosticView extends View {
+  private static final int SECTIONS = 2;
 
   // Objects
   private final Header header;
-  private final Section[] section = new Section[2];
+  private final Section[] section = new Section[SECTIONS];
   private final Grid<Diagnostic.ModuleDiagInfo> moduleGrid = new Grid<>();
   private final List<Diagnostic.ModuleDiagInfo> modulesTable = new ArrayList<>();
   @Autowired Diagnostic diagnostic;
@@ -71,6 +73,17 @@ public class DiagnosticView extends View {
       section[1].getTileDetailsContainer(0).setMinWidth("1200px");
     }
     section[1].getTileDetailsContainer(0).setHeight((globalFaultList.size() * 35 + 180) + "px");
+    final Notification notification =
+        new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
 
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }

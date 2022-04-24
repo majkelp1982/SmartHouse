@@ -10,6 +10,7 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 @PageTitle("Smart House | Oczyszczalnia")
 @Route(value = "Oczyszczalnia", layout = MainLayout.class)
 public class SewageView extends View {
+  private static final int SECTIONS = 1;
 
   @Autowired Module_Sewage module_sewage;
 
@@ -18,7 +19,7 @@ public class SewageView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[1];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[1][2][4];
   NumberField maxLevel;
   NumberField minLevel;
@@ -56,15 +57,15 @@ public class SewageView extends View {
 
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    section[0]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[0].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(header.getHeader(), section[0].getSection());
   }
 

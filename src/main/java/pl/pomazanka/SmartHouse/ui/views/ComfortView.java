@@ -10,12 +10,13 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 @PageTitle("Smart House | Komfort")
 @Route(value = "Komfort", layout = MainLayout.class)
 public class ComfortView extends View {
+  private static final int SECTIONS = 2;
 
   @Autowired Module_Comfort module_comfort;
 
   // Objects
   Header header;
-  Section[] section = new Section[2];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[2][4][3];
   NumberField[] numberFields = new NumberField[7];
   Module_Comfort.Zone[] zone;
@@ -126,29 +127,15 @@ public class ComfortView extends View {
     // Notification if user doesn't logged
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    for (int i = 0; i <= 2; i++) {
-      section[0]
-          .getSection()
-          .addClickListener(
-              event -> {
-                if (!isUserLoggedIn()) {
-                  notification.open();
-                }
-              });
-      section[0].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
     }
-    for (int i = 0; i <= 3; i++) {
-      section[1]
-          .getSection()
-          .addClickListener(
-              event -> {
-                if (!isUserLoggedIn()) {
-                  notification.open();
-                }
-              });
-      section[1].getTileDetailsContainer(i).setEnabled(isUserLoggedIn());
-    }
-
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }
 

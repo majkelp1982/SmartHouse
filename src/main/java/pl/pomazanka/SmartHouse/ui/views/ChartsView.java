@@ -24,11 +24,12 @@ import java.util.ArrayList;
 @PageTitle("Smart House | Wykresy")
 @Route(value = "Wykresy", layout = MainLayout.class)
 public class ChartsView extends View {
+  private static final int SECTIONS = 1;
   // Objects
   private final Dialog chartDialog = new Dialog();
   private final Header header;
   private final Button buttonManage;
-  private final Section[] section = new Section[2];
+  private final Section[] section = new Section[SECTIONS];
   @Autowired Charts charts;
   private ApexCharts apexChart = new ApexCharts();
   private ArrayList<Charts.VariableList> variableList;
@@ -46,7 +47,18 @@ public class ChartsView extends View {
 
     // Create sections info/buttons/number fields
     createInfoSection0();
+    final Notification notification =
+        new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
     section[0].getTileDetailsContainer(0).add(apexChart);
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(header.getHeader(), section[0].getSection());
   }
 

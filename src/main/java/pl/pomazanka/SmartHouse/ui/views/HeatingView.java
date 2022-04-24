@@ -10,6 +10,7 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 @PageTitle("Smart House | Ogrzewanie")
 @Route(value = "Ogrzewanie", layout = MainLayout.class)
 public class HeatingView extends View {
+  private static final int SECTIONS = 3;
 
   @Autowired Module_Heating module_heating;
 
@@ -18,7 +19,7 @@ public class HeatingView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[3];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[3][4][4];
   Button cheapTariffOnly;
   Button heatingActivated;
@@ -81,22 +82,18 @@ public class HeatingView extends View {
             reqTempBufferCWU.getSource(),
             heatPumpAlarmTemp.getSource());
 
-    //  <--!!!settings disabled when user not sign in !!!-->
-    section[2].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-    section[2].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
-
     // Notification if user doesn't logged
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    section[2]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(
         header.getHeader(),
         section[0].getSection(),

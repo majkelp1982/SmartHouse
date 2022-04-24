@@ -22,6 +22,7 @@ import java.util.List;
 @PageTitle("Smart House | Wentylacja")
 @Route(value = "", layout = MainLayout.class)
 public class VentView extends View {
+  private static final int SECTIONS = 5;
 
   @Autowired Module_Vent module_vent;
 
@@ -30,7 +31,7 @@ public class VentView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[5];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[4][7][4];
 
   NumberField normalDelayTime;
@@ -184,62 +185,15 @@ public class VentView extends View {
     // Notification if user doesn't logged
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    section[0]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[0]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[1]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[2]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[3]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[4]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-
-    section[0].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-    section[0].getTileDetailsContainer(3).setEnabled(isUserLoggedIn());
-    section[0].getTileDetailsContainer(4).setEnabled(isUserLoggedIn());
-
-    section[1].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
-    section[1].getTileDetailsContainer(1).setEnabled(isUserLoggedIn());
-
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(
         header.getHeader(),
         section[0].getSection(),

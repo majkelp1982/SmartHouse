@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @PageTitle("Smart House | Solar")
 @Route(value = "Solar", layout = MainLayout.class)
 public class SolarView extends View {
+  private static final int SECTIONS = 2;
 
   @Autowired Module_SolarPanels module_solarPanels;
 
@@ -21,7 +22,7 @@ public class SolarView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[2];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[1][2][4];
   Button forceCOBufferButton;
   NumberField forceCOBufferEnableLimit;
@@ -72,15 +73,15 @@ public class SolarView extends View {
 
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    section[1]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[1].getTileDetailsContainer(0).setEnabled(isUserLoggedIn());
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }
 

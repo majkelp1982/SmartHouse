@@ -1,5 +1,6 @@
 package pl.pomazanka.SmartHouse.ui.views;
 
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import pl.pomazanka.SmartHouse.ui.MainLayout;
 @PageTitle("Smart House | Powietrze")
 @Route(value = "Powietrze", layout = MainLayout.class)
 public class WeatherView extends View {
+  private static final int SECTIONS = 2;
 
   @Autowired Module_Weather module_weather;
 
@@ -17,7 +19,7 @@ public class WeatherView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[2];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[2][4][3];
 
   public WeatherView(final Module_Weather module_weather) {
@@ -53,6 +55,17 @@ public class WeatherView extends View {
         }
       }
     }
+    final Notification notification =
+        new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
 
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }

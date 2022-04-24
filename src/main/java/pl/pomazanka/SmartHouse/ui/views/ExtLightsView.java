@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @PageTitle("Smart House | Oświetlenie")
 @Route(value = "Oswietlenie", layout = MainLayout.class)
 public class ExtLightsView extends View {
+  private static final int SECTIONS = 2;
 
   @Autowired Module_ExtLights module_extLights;
 
@@ -22,7 +23,7 @@ public class ExtLightsView extends View {
 
   // Objects
   Header header;
-  Section[] section = new Section[2];
+  Section[] section = new Section[SECTIONS];
   Info[][][] info = new Info[1][2][4];
 
   public ExtLightsView(final Module_ExtLights module_extLights) {
@@ -52,25 +53,15 @@ public class ExtLightsView extends View {
 
     final Notification notification =
         new Notification("Brak możliwości zmian ustawień. Zaloguj się.", 5000);
-    section[0]
-        .getSection()
-        .addClickListener(
-            event -> {
-              System.out.println("click");
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[1]
-        .getSection()
-        .addClickListener(
-            event -> {
-              if (!isUserLoggedIn()) {
-                notification.open();
-              }
-            });
-    section[0].getSection().setEnabled(isUserLoggedIn());
-    section[1].getSection().setEnabled(isUserLoggedIn());
+    for (int i = 0; i < SECTIONS; i++) {
+      section[i].getSection().setEnabled(isUserLoggedIn());
+    }
+    addClickListener(
+        event -> {
+          if (!isUserLoggedIn()) {
+            notification.open();
+          }
+        });
     add(header.getHeader(), section[0].getSection(), section[1].getSection());
   }
 
