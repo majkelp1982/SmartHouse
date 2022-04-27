@@ -12,6 +12,8 @@ import java.util.ArrayList;
 @Controller
 public class Charts {
 
+  private final int OFFSET = 1;
+
   // Wired classes
   @Autowired MongoDBController mongoDBController;
 
@@ -38,7 +40,7 @@ public class Charts {
     for (final Data temp : list) {
       final LocalDateTime timeStamp = temp.getTimeStamp();
       // Add offset
-      final LocalDateTime timeWithOffset = timeStamp.plusHours(0);
+      final LocalDateTime timeWithOffset = timeStamp.plusHours(OFFSET);
       if (temp.isNumber) {
         serie[i] =
             new Coordinate<>(
