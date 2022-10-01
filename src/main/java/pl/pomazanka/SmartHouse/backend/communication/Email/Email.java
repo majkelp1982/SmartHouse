@@ -27,7 +27,7 @@ public class Email {
 
     javaMailSender.setJavaMailProperties(getMailProperties());
     javaMailSender.setUsername("pomazanka.dom@gmail.com");
-    javaMailSender.setPassword("szaman21");
+    javaMailSender.setPassword("fotrcqxqmvjzqesb");
 
     return javaMailSender;
   }

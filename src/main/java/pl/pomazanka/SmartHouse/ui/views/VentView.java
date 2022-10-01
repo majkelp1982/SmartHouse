@@ -40,6 +40,7 @@ public class VentView extends View {
   NumberField defrostTriggerInt;
   NumberField defrostDelayTime;
   NumberField minTempNumberField;
+  NumberField activeCoolingFanSpeedField;
 
   Button activeCoolingButton;
   Button activeHeatingButton;
@@ -131,6 +132,7 @@ public class VentView extends View {
     index = 1;
     section[index].getTileDetailsContainer(0).add(activeCoolingButton.getSource());
     section[index].getTileDetailsContainer(0).add(activeHeatingButton.getSource());
+    section[index].getTileDetailsContainer(0).add(activeCoolingFanSpeedField.getSource());
     section[index].getTileDetailsContainer(0).add(minTempNumberField.getSource());
 
     section[index].getTileDetailsContainer(1).add(reqLazDolButton.getSource());
@@ -364,6 +366,24 @@ public class VentView extends View {
                   .getActiveHeating()
                   .setNewValue(!(boolean) module_vent.getActiveHeating().getIsValue());
               setPendingColor(activeHeatingButton.getSource());
+              module_vent.setReqUpdateValues(true);
+            });
+
+    activeCoolingFanSpeedField =
+        new NumberField(
+            "prędkość czerpni",
+            (int) module_vent.getActiveCoolingFanSpeed().getIsValue(),
+            10,
+            100,
+            10);
+    activeCoolingFanSpeedField
+        .getSource()
+        .addValueChangeListener(
+            valueChangeEvent -> {
+              module_vent
+                  .getActiveCoolingFanSpeed()
+                  .setNewValue((int) Math.round(valueChangeEvent.getValue()));
+              setPendingColor(activeCoolingFanSpeedField.getSource());
               module_vent.setReqUpdateValues(true);
             });
 
@@ -773,6 +793,10 @@ public class VentView extends View {
 
     activeRegGrid.setItems(getDiagram(module_vent.getActiveTempRegByHours()));
     normalModeGrid.setItems(getDiagram(module_vent.getNormalOnByHours()));
+
+    activeCoolingFanSpeedField.setNumberField(
+        (int) module_vent.getActiveCoolingFanSpeed().getIsValue(),
+        (int) module_vent.getActiveCoolingFanSpeed().getNewValue());
   }
 
   private static class VentZonesByHour {

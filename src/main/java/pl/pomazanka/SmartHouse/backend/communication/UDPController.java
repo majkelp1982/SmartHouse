@@ -20,7 +20,7 @@ import static java.lang.System.currentTimeMillis;
 public class UDPController {
 
   public static final int PACKET_SIZE_MODULE_13 =
-      92; // length of UDP data from module 3 "wentylacja"
+      93; // length of UDP data from module 3 "wentylacja"
   public static final int PACKET_SIZE_MODULE_13_DIAG =
       8; // length of UDP diagnose from module 3 "wentylacja"
   private static final int BUFFER_SIZE = 128;
@@ -367,6 +367,15 @@ public class UDPController {
         sendData(moduleMain, module_vent.getModuleType(), 0, i, newValue);
       }
     }
+
+    if (!module_vent.getActiveCoolingFanSpeed().isUpToDate()) {
+      sendData(
+          moduleMain,
+          module_vent.getModuleType(),
+          0,
+          89,
+          (int) module_vent.getActiveCoolingFanSpeed().getNewValue());
+    }
   }
 
   private void sendWeatherNV() {}
@@ -525,9 +534,11 @@ public class UDPController {
           }
 
         } catch (final Error error) {
+          error.printStackTrace();
           System.out.println("ERROR wątku " + error.getMessage());
           mongoDBController.saveError("MAIN ERROR", error.getMessage());
         } catch (final Exception exc) {
+          exc.printStackTrace();
           System.out.println("EXCEPTION wątku " + exc.toString());
           mongoDBController.saveError("MAIN EXCEPTION", exc.toString());
 

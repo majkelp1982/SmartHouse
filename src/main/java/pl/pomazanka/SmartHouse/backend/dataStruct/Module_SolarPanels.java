@@ -53,11 +53,15 @@ public class Module_SolarPanels extends Module implements Cloneable {
   public void postConstructor() {
     final Module_SolarPanels module_solarPanels =
         mongoDBController.getLastSolarPanelsValues(getModuleStructureName());
-    forceCOBufferEnableLimit = module_solarPanels.getForceCOBufferEnableLimit();
-    forceCOBufferResetLimit = module_solarPanels.getForceCOBufferResetLimit();
-    forceWaterSuperHeatEnableLimit = module_solarPanels.getForceWaterSuperHeatEnableLimit();
-    forceWaterSuperHeatResetLimit = module_solarPanels.getForceWaterSuperHeatResetLimit();
-    reqHeatTempCO = module_solarPanels.getReqHeatTempCO();
+    try {
+      forceCOBufferEnableLimit = module_solarPanels.getForceCOBufferEnableLimit();
+      forceCOBufferResetLimit = module_solarPanels.getForceCOBufferResetLimit();
+      forceWaterSuperHeatEnableLimit = module_solarPanels.getForceWaterSuperHeatEnableLimit();
+      forceWaterSuperHeatResetLimit = module_solarPanels.getForceWaterSuperHeatResetLimit();
+      reqHeatTempCO = module_solarPanels.getReqHeatTempCO();
+    } catch (Exception e) {
+      // TODO
+    }
   }
 
   public void forceCOBuffer() {
@@ -105,7 +109,7 @@ public class Module_SolarPanels extends Module implements Cloneable {
       setFrameLastUpdate(getCurrentDate());
       setDiagnosticLastUpdate(getCurrentDate());
     } catch (final Exception e) {
-      webdata_now_p = -100.00;
+      //      webdata_now_p = -100.00;
       Logger.error("Wyjątek przy pobraniu danych z fotowoltaiki: " + e);
     }
   }

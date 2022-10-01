@@ -66,6 +66,9 @@ public class Module_Vent extends Module implements Cloneable {
   boolean garderoba = false;
   boolean lazGora1 = false;
   boolean lazGora2 = false;
+
+  // byte 89
+  ControlValue activeCoolingFanSpeed = new ControlValue(50);
   // byte 0
   private boolean humidityAlert = false;
   private boolean bypassOpen = false;
@@ -260,6 +263,10 @@ public class Module_Vent extends Module implements Cloneable {
     return minTemp;
   }
 
+  public ControlValue getActiveCoolingFanSpeed() {
+    return activeCoolingFanSpeed;
+  }
+
   public VentZones[] getNormalOnByHours() {
     return normalOnByHours;
   }
@@ -354,6 +361,10 @@ public class Module_Vent extends Module implements Cloneable {
       if (isUpToDate()) {
         setUpToDate(normalOnByHours[i].getLazGora().getRequest().isUpToDate());
       }
+    }
+
+    if (isUpToDate()) {
+      setUpToDate(activeCoolingFanSpeed.isUpToDate());
     }
 
     setReqUpdateValues(!isUpToDate());
@@ -473,6 +484,7 @@ public class Module_Vent extends Module implements Cloneable {
         garderoba = bitStatus(data[88], 2);
         lazGora1 = bitStatus(data[88], 1);
         lazGora2 = bitStatus(data[88], 0);
+        activeCoolingFanSpeed.setIsValue(data[89]);
         break;
       case 200: // diagnostic frame
         updateDiag(packetData);
@@ -748,6 +760,11 @@ public class Module_Vent extends Module implements Cloneable {
     }
     if (result) {
       result = cmp(module_vent.lazGora2, lazGora2);
+    }
+
+    // 89
+    if (result) {
+      result = cmp(module_vent.activeCoolingFanSpeed, activeCoolingFanSpeed);
     }
 
     return result;
