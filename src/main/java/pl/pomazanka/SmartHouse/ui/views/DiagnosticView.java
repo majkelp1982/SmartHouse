@@ -139,7 +139,7 @@ public class DiagnosticView extends View {
     moduleGrid
         .addColumn(Diagnostic.ModuleDiagInfo::getFirmwareVersion)
         .setHeader("Firmware")
-        .setWidth("150px");
+        .setWidth("350px");
     moduleGrid
         .addColumn(
             new ComponentRenderer<>(
