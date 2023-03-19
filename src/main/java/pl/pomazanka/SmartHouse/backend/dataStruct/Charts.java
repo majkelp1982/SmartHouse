@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Controller
 public class Charts {
 
-  private final int OFFSET = 1;
+  private final int OFFSET = 0;
 
   // Wired classes
   @Autowired MongoDBController mongoDBController;

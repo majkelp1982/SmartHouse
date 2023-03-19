@@ -8,9 +8,8 @@ import pl.pomazanka.SmartHouse.backend.dataStruct.Substructures.VentZones;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.MulticastSocket;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +42,7 @@ public class UDPController {
       19; // length of UDP data from module 16 "Oświetlenie zewnętrzne"
   private static final int PACKET_SIZE_MODULE_16_DIAG =
       8; // length of UDP diagnose from module 16 "Oświetlenie zewnętrzne"
-  private static DatagramSocket datagramSocket;
+  private static MulticastSocket multiSocket;
   private static byte[] buffer;
   private static int[] packetData;
   private final int moduleMain = 1;
@@ -62,9 +61,9 @@ public class UDPController {
 
   public UDPController() {
     try {
-      datagramSocket = new DatagramSocket(localPort);
-      datagramSocket.setBroadcast(true);
-    } catch (final SocketException e) {
+      multiSocket = new MulticastSocket(localPort);
+      multiSocket.setBroadcast(true);
+    } catch (final IOException e) {
       e.printStackTrace();
     }
     UDPThread.start();
@@ -171,7 +170,7 @@ public class UDPController {
       dp =
           new DatagramPacket(
               packetData, packetData.length, InetAddress.getByAddress(broadcastAddress), localPort);
-      datagramSocket.send(dp);
+      multiSocket.send(dp);
     } catch (final IOException e1) {
       e1.printStackTrace();
     }
@@ -490,7 +489,7 @@ public class UDPController {
           final DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
           packetData = new int[BUFFER_SIZE];
           try {
-            datagramSocket.receive(packet);
+            multiSocket.receive(packet);
           } catch (final IOException e) {
             e.printStackTrace();
           }
